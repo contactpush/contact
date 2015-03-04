@@ -27,4 +27,4 @@ User stories:
  * Location Aware Phone redirecting
    * Send your calls to a number based on where you are
    
-![Wireframes](http://contactpush.github.io./)
+[Wireframes](http://contactpush.github.io./)
