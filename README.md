@@ -24,3 +24,5 @@ User stories:
  * User acquisition
    * Invite friends via Facebook, Twitter or other social media
    * Offer to send messages to all of the contacts in their address book
+ * Location Aware Phone redirecting
+   * Send your calls to a number based on where you are
