@@ -67,8 +67,10 @@ public class GetUsernameTask extends AsyncTask<Object[], Void, String>  {
         String headerValue = "Bearer " + token;
         Log.d(TAG, "Authorization: " + headerValue);
         client.addHeader("Authorization", headerValue);
+        RequestParams params = new RequestParams();
+        params.add("alt", "json");
         String url = "https://www.google.com/m8/feeds/contacts/" + mEmail + "/full";
-        client.get(mActivity, url,
+        client.get(mActivity, url, params,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
