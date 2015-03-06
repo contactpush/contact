@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="login_label">Login</string>
+    <string name="pick_account">Pick Account</string>
 </resources>
