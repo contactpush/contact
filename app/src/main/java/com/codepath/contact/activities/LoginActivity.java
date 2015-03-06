@@ -24,17 +24,12 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
     static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
     String mEmail;
     Activity mActivity;
-    private static final String SCOPE =
-            "oauth2:https://www.googleapis.com/auth/userinfo.profile";
-    private final static String GPLUS_SCOPE
-            = "https://www.googleapis.com/auth/plus.login";
-    private final static String BOOKS_API_SCOPE
-            = "https://www.googleapis.com/auth/books";
+    private static final String PROFILE_SCOPE =
+            "https://www.googleapis.com/auth/userinfo.profile";
     private final static String FULL_CONTACTS_SCOPE =
-            "https://www.google.com/m8/feeds/contacts/contacttestusr%40gmail.com/full";
+            "https://www.google.com/m8/feeds";
     private final static String mScopes
-            = "oauth2:" + BOOKS_API_SCOPE + " " + GPLUS_SCOPE;
-    //String token = GoogleAuthUtil.getToken(mActivity, mEmail, mScopes);
+            = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
     static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
 
@@ -59,23 +54,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
         pickUserAccount();
     }
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
-            // Receiving a result from the AccountPicker
-            if (resultCode == RESULT_OK) {
-                mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                // With the account name acquired, go get the auth token
-                getUsername();
-            } else if (resultCode == RESULT_CANCELED) {
-                // The account picker dialog closed without selecting an account.
-                // Notify users that they must pick an account to proceed.
-                Toast.makeText(this, R.string.pick_account, Toast.LENGTH_SHORT).show();
-            }
-        }
-        // Later, more code will go here to handle the result from some exceptions...
-    } */
-
     /**
      * Attempts to retrieve the username.
      * If the account is not yet known, invoke the picker. Once the account is known,
@@ -86,7 +64,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
             pickUserAccount();
         } else {
             //if (isDeviceOnline()) {
-                new GetUsernameTask(LoginActivity.this, mEmail, SCOPE).execute();
+            new GetUsernameTask(LoginActivity.this, mEmail, mScopes).execute();
             /*} else {
                 Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
             }*/
