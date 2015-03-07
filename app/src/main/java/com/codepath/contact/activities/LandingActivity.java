@@ -14,9 +14,11 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
-import com.codepath.contact.fragments.ContactsFragment;
+import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 
-public class LandingActivity extends ActionBarActivity implements ContactsFragment.OnFragmentInteractionListener {
+public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
+        OnAuthTokenResolvedListener{
     private static final String TAG = "LandingActivity";
     private ViewPager vpPager;
     private ContactPagerAdapter contactPagerAdapter;
@@ -33,7 +35,6 @@ public class LandingActivity extends ActionBarActivity implements ContactsFragme
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,6 +71,16 @@ public class LandingActivity extends ActionBarActivity implements ContactsFragme
         //TODO implement method
     }
 
+    @Override
+    public void receiveAuthToken(String token) {
+        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).receiveAuthToken(token);
+    }
+
+    @Override
+    public void handleAuthTokenException(Exception e) {
+        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).handleAuthTokenException(e);
+    }
+
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
         private final String[] tabTitles = {"Contacts", "Requests"};
 
@@ -80,9 +91,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsFragme
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return ContactsFragment.newInstance("Contacts"); // frag 1
+                return ContactsListFragment.newInstance("Contacts"); // frag 1
             } else if (position == 1) {
-                return ContactsFragment.newInstance("Requests"); // frag 2
+                return ContactsListFragment.newInstance("Requests"); // frag 2
             }
             Log.e(TAG, "frag index not found");
             return null;

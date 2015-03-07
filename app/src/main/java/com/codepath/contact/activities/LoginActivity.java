@@ -33,7 +33,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
     // we may want to grab some of the data from the profile if the user is new
     private static final String PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
     private final static String FULL_CONTACTS_SCOPE = "https://www.google.com/m8/feeds";
-    private final static String scopes = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
+    public final static String SCOPES = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
             startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
         } else {
             //if (isDeviceOnline()) {
-            new GetAuthTokenTask(LoginActivity.this, email, scopes).execute();
+            new GetAuthTokenTask(this, email, SCOPES).execute();
             /*} else {
                 Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
             }*/
@@ -110,8 +110,9 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
                     Log.d(TAG, ab.toString());
                     Intent i = new Intent(LoginActivity.this, LandingActivity.class);
                     startActivity(i);
+                } else {
+                    Log.e(TAG, "Could not parse AddressBook");
                 }
-                else Log.e(TAG, "Could not parse AddressBook");
             }
 
             @Override

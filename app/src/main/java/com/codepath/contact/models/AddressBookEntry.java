@@ -37,4 +37,16 @@ public class AddressBookEntry {
     public String toString() {
         return String.format("{name: %s, phone: %s, email: %s}", name, phone, email);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
 }
