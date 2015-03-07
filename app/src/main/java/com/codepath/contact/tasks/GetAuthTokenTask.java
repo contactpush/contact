@@ -59,10 +59,6 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
      */
     protected String fetchToken() throws IOException {
         try {
-            //TODO add in mechanism to check if token is valid rather than clearing each time
-            //clear cached token
-            //String token = GoogleAuthUtil.getToken(activity, email, scope);
-            //GoogleAuthUtil.clearToken(activity, token);
             return GoogleAuthUtil.getToken(activity, email, scope);
         } catch (UserRecoverableAuthException userRecoverableException) {
             // GooglePlayServices.apk is either old, disabled, or not present
