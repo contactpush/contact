@@ -14,6 +14,7 @@ import com.codepath.contact.models.AddressBook;
 import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.codepath.contact.GoogleClient;
 import com.codepath.contact.R;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
@@ -28,7 +29,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
     private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
     private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
-    String mEmail;
+    String email = "contacttestusr@gmail.com"; //hardcoding for now. need to persist
     // we may want to grab some of the data from the profile if the user is new
     private static final String PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
     private final static String FULL_CONTACTS_SCOPE = "https://www.google.com/m8/feeds";
@@ -41,23 +42,22 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
     }
 
     public void loginToRest(View view) {
-        String[] accountTypes = new String[]{"com.google"};
-        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                accountTypes, false, null, null, null, null);
-        startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
+        getAuthToken();
     }
 
     /**
-     * Attempts to retrieve the username.
-     * If the account is not yet known, invoke the picker. Once the account is known,
-     * start an instance of the AsyncTask to get the auth token and do work with it.
+     * This method will prompt the user to select an account
+     * and then begin the request for an auth token.
      */
-    private void getUsername() {
-        if (mEmail == null) {
-            loginToRest(null);
+    private void getAuthToken() {
+        if (email == null) {
+            String[] accountTypes = new String[]{"com.google"};
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    accountTypes, false, null, null, null, null);
+            startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
         } else {
             //if (isDeviceOnline()) {
-            new GetAuthTokenTask(LoginActivity.this, mEmail, scopes).execute();
+            new GetAuthTokenTask(LoginActivity.this, email, scopes).execute();
             /*} else {
                 Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
             }*/
@@ -69,9 +69,9 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
         if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
             // Receiving a result from the AccountPicker
             if (resultCode == RESULT_OK) {
-                mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                 // With the account name acquired, go get the auth token
-                getUsername();
+                getAuthToken();
             } else if (resultCode == RESULT_CANCELED) {
                 // The account picker dialog closed without selecting an account.
                 // Notify users that they must pick an account to proceed.
@@ -81,7 +81,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
                 requestCode == REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR)
                 && resultCode == RESULT_OK) {
             // Receiving a result that follows a GoogleAuthException, try auth again
-            getUsername();
+            getAuthToken();
         }
     }
 
@@ -94,18 +94,15 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void receiveAuthToken(String token) {
-        GoogleClient.getFullAddressBook(token, mEmail, new JsonHttpResponseHandler(){
+    public void receiveAuthToken(final String token) {
+        GoogleClient.getFullAddressBook(token, email, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
                 AddressBook ab = AddressBook.getAddressBook(jsonObject);
@@ -117,6 +114,12 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, responseString);
                 Log.e(TAG, throwable.getMessage());
+                // allegedly, if you try again when you get 401, it will work...
+                //http://stackoverflow.com/questions/26969622/how-to-get-refreshtoken-when-using-googleauthutil
+                if (statusCode == 401) {
+                    GetAuthTokenTask.clearToken(LoginActivity.this, token);
+                    getAuthToken();
+                }
             }
         });
     }
@@ -144,8 +147,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
                     // the app access to the account, but the user can fix this.
                     // Forward the user to an activity in Google Play services.
                     Intent intent = ((UserRecoverableAuthException) e).getIntent();
-                    startActivityForResult(intent,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
+                    startActivityForResult(intent, REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
                 }
             }
         });

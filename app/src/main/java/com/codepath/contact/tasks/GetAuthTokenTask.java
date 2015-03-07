@@ -12,10 +12,10 @@ import java.io.IOException;
 
 public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
     private static final String TAG = GetAuthTokenTask.class.getSimpleName();
-    Activity mActivity;
+    Activity activity;
     OnAuthTokenResolvedListener listener;
-    String mScope;
-    String mEmail;
+    String scope;
+    String email;
 
     public interface OnAuthTokenResolvedListener{
         void receiveAuthToken(String token);
@@ -25,10 +25,10 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
     public GetAuthTokenTask(Activity activity, String email, String scope) {
         if (!(activity instanceof OnAuthTokenResolvedListener))
             throw new ClassCastException("Class must implement OnAuthTokenResolvedListener");
-        this.mActivity =  activity;
+        this.activity =  activity;
         this.listener = (OnAuthTokenResolvedListener) activity;
-        this.mScope = scope;
-        this.mEmail = email;
+        this.scope = scope;
+        this.email = email;
     }
 
     /**
@@ -61,9 +61,9 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
         try {
             //TODO add in mechanism to check if token is valid rather than clearing each time
             //clear cached token
-            String token = GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
-            GoogleAuthUtil.clearToken(mActivity, token);
-            return GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
+            //String token = GoogleAuthUtil.getToken(activity, email, scope);
+            //GoogleAuthUtil.clearToken(activity, token);
+            return GoogleAuthUtil.getToken(activity, email, scope);
         } catch (UserRecoverableAuthException userRecoverableException) {
             // GooglePlayServices.apk is either old, disabled, or not present
             // so we need to show the user some UI in the activity to recover.
@@ -72,5 +72,15 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
             Log.e(TAG, fatalException.getMessage());
         }
         return null;
+    }
+
+    public static void clearToken(Activity activity, String token){
+        try {
+            GoogleAuthUtil.clearToken(activity, token);
+        } catch (GoogleAuthException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 }
