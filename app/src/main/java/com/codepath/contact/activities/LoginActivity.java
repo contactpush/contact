@@ -106,7 +106,11 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
                 AddressBook ab = AddressBook.getAddressBook(jsonObject);
-                if (ab != null) Log.d(TAG, ab.toString());
+                if (ab != null) {
+                    Log.d(TAG, ab.toString());
+                    Intent i = new Intent(LoginActivity.this, LandingActivity.class);
+                    startActivity(i);
+                }
                 else Log.e(TAG, "Could not parse AddressBook");
             }
 

@@ -33,8 +33,6 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.6'
     // ActiveAndroid for simple persistence with an ORM
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
-    compile files('libs/codepath-oauth-0.4.1.jar')
-    compile files('libs/codepath-utils.jar')
-    compile files('libs/scribe-codepath-0.0.3.jar')
     compile 'com.google.android.gms:play-services:6.5.+'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }
