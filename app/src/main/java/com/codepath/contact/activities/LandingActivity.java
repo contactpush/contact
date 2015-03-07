@@ -1,11 +1,11 @@
 package com.codepath.contact.activities;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +15,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.RequestsListFragment;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 
 public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
@@ -91,9 +92,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return ContactsListFragment.newInstance("Contacts"); // frag 1
+                return ContactsListFragment.newInstance(); // frag 1
             } else if (position == 1) {
-                return ContactsListFragment.newInstance("Requests"); // frag 2
+                return RequestsListFragment.newInstance(); // frag 2
             }
             Log.e(TAG, "frag index not found");
             return null;

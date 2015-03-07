@@ -10,11 +10,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.codepath.contact.models.AddressBook;
-import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.codepath.contact.GoogleClient;
 import com.codepath.contact.R;
-import com.google.android.gms.auth.GoogleAuthUtil;
+import com.codepath.contact.models.AddressBook;
+import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
