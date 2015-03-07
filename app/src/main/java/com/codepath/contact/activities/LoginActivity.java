@@ -1,37 +1,37 @@
 package com.codepath.contact.activities;
 
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.codepath.contact.GetUsernameTask;
+import com.codepath.contact.GetAuthTokenTask;
 import com.codepath.contact.GoogleClient;
 import com.codepath.contact.R;
-import com.codepath.oauth.OAuthLoginActionBarActivity;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 
-public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
+public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask.OnAuthTokenResolvedListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
+    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
+    private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
+    private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
     String mEmail;
-    Activity mActivity;
-    private static final String PROFILE_SCOPE =
-            "https://www.googleapis.com/auth/userinfo.profile";
-    private final static String FULL_CONTACTS_SCOPE =
-            "https://www.google.com/m8/feeds";
-    private final static String mScopes
-            = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
-    static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
+    // we may want to grab some of the data from the profile if the user is new
+    private static final String PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
+    private final static String FULL_CONTACTS_SCOPE = "https://www.google.com/m8/feeds";
+    private final static String scopes = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,19 +39,11 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
         setContentView(R.layout.activity_login);
     }
 
-    private void pickUserAccount() {
+    public void loginToRest(View view) {
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                 accountTypes, false, null, null, null, null);
         startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
-    }
-
-    // Click handler method for the button used to start OAuth flow
-    // Uses the client to initiate OAuth authorization
-    // This should be tied to a button used to login
-    public void loginToRest(View view) {
-        //getClient().connect();
-        pickUserAccount();
     }
 
     /**
@@ -61,47 +53,14 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
      */
     private void getUsername() {
         if (mEmail == null) {
-            pickUserAccount();
+            loginToRest(null);
         } else {
             //if (isDeviceOnline()) {
-            new GetUsernameTask(LoginActivity.this, mEmail, mScopes).execute();
+            new GetAuthTokenTask(LoginActivity.this, mEmail, scopes).execute();
             /*} else {
                 Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
             }*/
         }
-    }
-
-    /**
-     * This method is a hook for background threads and async tasks that need to
-     * provide the user a response UI when an exception occurs.
-     */
-    public void handleException(final Exception e) {
-        // Because this call comes from the AsyncTask, we must ensure that the following
-        // code instead executes on the UI thread.
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (e instanceof GooglePlayServicesAvailabilityException) {
-                    // The Google Play services APK is old, disabled, or not present.
-                    // Show a dialog created by Google Play services that allows
-                    // the user to update the APK
-                    int statusCode = ((GooglePlayServicesAvailabilityException)e)
-                            .getConnectionStatusCode();
-                    /*Dialog dialog = GooglePlayServicesUtil.getErrorDialog(statusCode,
-                            HelloActivity.this,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                    dialog.show(); */
-                    Log.d(this.getClass().getSimpleName(), "Play services error: " + statusCode);
-                } else if (e instanceof UserRecoverableAuthException) {
-                    // Unable to authenticate, such as when the user has not yet granted
-                    // the app access to the account, but the user can fix this.
-                    // Forward the user to an activity in Google Play services.
-                    Intent intent = ((UserRecoverableAuthException)e).getIntent();
-                    startActivityForResult(intent,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                }
-            }
-        });
     }
 
     @Override
@@ -110,7 +69,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
             // Receiving a result from the AccountPicker
             if (resultCode == RESULT_OK) {
                 mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                Log.d(TAG, "email: " + mEmail);
                 // With the account name acquired, go get the auth token
                 getUsername();
             } else if (resultCode == RESULT_CANCELED) {
@@ -148,18 +106,49 @@ public class LoginActivity extends OAuthLoginActionBarActivity<GoogleClient> {
         return super.onOptionsItemSelected(item);
     }
 
-    // OAuth authenticated successfully, launch primary authenticated activity
-    // i.e Display application "homepage"
     @Override
-    public void onLoginSuccess() {
-        // Intent i = new Intent(this, PhotosActivity.class);
-        // startActivity(i);
+    public void receiveAuthToken(String token) {
+        GoogleClient.getFullAddressBook(token, mEmail, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                Log.d(TAG, jsonObject.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(TAG, responseString);
+                Log.e(TAG, throwable.getMessage());
+            }
+        });
     }
 
-    // OAuth authentication flow failed, handle the error
-    // i.e Display an error dialog or toast
     @Override
-    public void onLoginFailure(Exception e) {
-        e.printStackTrace();
+    public void handleAuthTokenException(final Exception e) {
+        // Because this call comes from the AsyncTask, we must ensure that the following
+        // code instead executes on the UI thread.
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (e instanceof GooglePlayServicesAvailabilityException) {
+                    // The Google Play services APK is old, disabled, or not present.
+                    // Show a dialog created by Google Play services that allows
+                    // the user to update the APK
+                    int statusCode = ((GooglePlayServicesAvailabilityException) e)
+                            .getConnectionStatusCode();
+                    /*Dialog dialog = GooglePlayServicesUtil.getErrorDialog(statusCode,
+                            HelloActivity.this,
+                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
+                    dialog.show(); */
+                    Log.d(this.getClass().getSimpleName(), "Play services error: " + statusCode);
+                } else if (e instanceof UserRecoverableAuthException) {
+                    // Unable to authenticate, such as when the user has not yet granted
+                    // the app access to the account, but the user can fix this.
+                    // Forward the user to an activity in Google Play services.
+                    Intent intent = ((UserRecoverableAuthException) e).getIntent();
+                    startActivityForResult(intent,
+                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
+                }
+            }
+        });
     }
 }

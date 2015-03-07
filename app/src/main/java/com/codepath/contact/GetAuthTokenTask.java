@@ -1,37 +1,35 @@
 package com.codepath.contact;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.codepath.contact.activities.LoginActivity;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.ParseException;
 
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * https://developer.android.com/google/auth/http-auth.html
  */
-public class GetUsernameTask extends AsyncTask<Object[], Void, String>  {
-    private static final String TAG = GetUsernameTask.class.getSimpleName();
-    LoginActivity mActivity;
+public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
+    private static final String TAG = GetAuthTokenTask.class.getSimpleName();
+    Activity mActivity;
+    OnAuthTokenResolvedListener listener;
     String mScope;
     String mEmail;
 
-    public GetUsernameTask(Activity activity, String email, String scope) {
-        this.mActivity = (LoginActivity) activity;
+    public interface OnAuthTokenResolvedListener{
+        void receiveAuthToken(String token);
+        void handleAuthTokenException(Exception e);
+    }
+
+    public GetAuthTokenTask(Activity activity, String email, String scope) {
+        if (!(activity instanceof OnAuthTokenResolvedListener))
+            throw new ClassCastException("Class must implement OnAuthTokenResolvedListener");
+        this.mActivity =  activity;
+        this.listener = (OnAuthTokenResolvedListener) activity;
         this.mScope = scope;
         this.mEmail = email;
     }
@@ -63,25 +61,7 @@ public class GetUsernameTask extends AsyncTask<Object[], Void, String>  {
 
     @Override
     protected void onPostExecute(final String token) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        String headerValue = "Bearer " + token;
-        Log.d(TAG, "Authorization: " + headerValue);
-        client.addHeader("Authorization", headerValue);
-        RequestParams params = new RequestParams();
-        params.add("alt", "json");
-        String url = "https://www.google.com/m8/feeds/contacts/" + mEmail + "/full";
-        client.get(mActivity, url, params,
-                new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d(TAG, "success: " + new String(responseBody));
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Log.d(TAG, "fail: " + new String(responseBody));
-                    }
-                });
+        listener.receiveAuthToken(token);
     }
 
     /**
@@ -98,7 +78,7 @@ public class GetUsernameTask extends AsyncTask<Object[], Void, String>  {
         } catch (UserRecoverableAuthException userRecoverableException) {
             // GooglePlayServices.apk is either old, disabled, or not present
             // so we need to show the user some UI in the activity to recover.
-            mActivity.handleException(userRecoverableException);
+            listener.handleAuthTokenException(userRecoverableException);
         } catch (GoogleAuthException fatalException) {
             // Some other type of unrecoverable exception has occurred.
             // Report and log the error as appropriate for your app.
