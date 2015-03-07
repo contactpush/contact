@@ -52,6 +52,13 @@
             android:name="com.google.android.maps"
             android:required="true" />
 
+        <meta-data
+            android:name="com.parse.APPLICATION_ID"
+            android:value="@string/parse_app_id" />
+        <meta-data
+            android:name="com.parse.CLIENT_KEY"
+            android:value="@string/parse_client_key" />
+
         <!--
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

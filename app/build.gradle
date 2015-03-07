@@ -1,4 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.parse'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.parse.com/repo' }
+    }
+    dependencies {
+        classpath 'com.parse.tools:gradle:1.+'
+    }
+}
 
 android {
     compileSdkVersion 21
@@ -35,4 +46,5 @@ dependencies {
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'com.google.android.gms:play-services:6.5.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.parse.bolts:bolts-android:1.1.4'
 }
