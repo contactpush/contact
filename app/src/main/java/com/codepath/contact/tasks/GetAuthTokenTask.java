@@ -1,4 +1,4 @@
-package com.codepath.contact;
+package com.codepath.contact.tasks;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -10,9 +10,6 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 
 import java.io.IOException;
 
-/**
- * https://developer.android.com/google/auth/http-auth.html
- */
 public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
     private static final String TAG = GetAuthTokenTask.class.getSimpleName();
     Activity mActivity;
@@ -44,17 +41,9 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
             String token = fetchToken();
             if (token != null) {
                 return token;
-                // Insert the good stuff here.
-                // Use the token to access the user's Google data.
-                //...
-
             }
         } catch (IOException e) {
             Log.d(TAG, "error getting token!: " + e.getMessage());
-            // The fetchToken() method handles Google-specific exceptions,
-            // so this indicates something went wrong at a higher level.
-            // TIP: Check for network connectivity before starting the AsyncTask.
-            //...
         }
         return null;
     }
@@ -80,11 +69,8 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
             // so we need to show the user some UI in the activity to recover.
             listener.handleAuthTokenException(userRecoverableException);
         } catch (GoogleAuthException fatalException) {
-            // Some other type of unrecoverable exception has occurred.
-            // Report and log the error as appropriate for your app.
-            //...
+            Log.e(TAG, fatalException.getMessage());
         }
         return null;
     }
-    //...
 }

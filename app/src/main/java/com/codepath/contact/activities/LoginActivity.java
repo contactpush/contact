@@ -10,7 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.codepath.contact.GetAuthTokenTask;
+import com.codepath.contact.models.AddressBook;
+import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.codepath.contact.GoogleClient;
 import com.codepath.contact.R;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
@@ -93,12 +94,8 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -111,7 +108,9 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
         GoogleClient.getFullAddressBook(token, mEmail, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
-                Log.d(TAG, jsonObject.toString());
+                AddressBook ab = AddressBook.getAddressBook(jsonObject);
+                if (ab != null) Log.d(TAG, ab.toString());
+                else Log.e(TAG, "Could not parse AddressBook");
             }
 
             @Override
