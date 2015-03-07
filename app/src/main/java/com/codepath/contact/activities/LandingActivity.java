@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,11 +25,16 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     private ViewPager vpPager;
     private ContactPagerAdapter contactPagerAdapter;
     private ProgressBar pb;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         pb = (ProgressBar) findViewById(R.id.pbLoading);
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         contactPagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());

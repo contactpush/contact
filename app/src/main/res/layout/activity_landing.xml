@@ -5,12 +5,35 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.contact.activities.LandingActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title=" "
+        android:background="#8800ddbd"
+        >
+
+        <TextView
+            android:id="@+id/tvToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textAllCaps="false"
+            android:text="contact"
+            android:textColor="@android:color/white"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
         app:pstsShouldExpand="true"
         app:pstsTextAllCaps="true"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="48dp"
+        android:layout_below="@id/toolbar"
+        >
     </com.astuetz.PagerSlidingTabStrip>
 
     <android.support.v4.view.ViewPager
