@@ -18,8 +18,11 @@ import java.util.List;
 public class RequestsListFragment extends ListFragment {
     private static final String TAG = "RequestsListFragment";
 
-    public static RequestsListFragment newInstance() {
+    private boolean isLookingForReceivedRequests = true;
+
+    public static RequestsListFragment newInstance(boolean forReceivedRequests) {
         RequestsListFragment fragment = new RequestsListFragment();
+        fragment.isLookingForReceivedRequests = forReceivedRequests;
         return fragment;
     }
 
@@ -33,7 +36,7 @@ public class RequestsListFragment extends ListFragment {
 
     private void populateList(){
         final ParseQuery<ParseObject> request = ParseQuery.getQuery("Request");
-        request.whereEqualTo("userId", userName);
+        request.whereEqualTo(isLookingForReceivedRequests ? "userId" : "requesterId", userName);
         request.whereEqualTo("approved", false);
         request.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> requests, ParseException e) {
@@ -77,16 +80,16 @@ public class RequestsListFragment extends ListFragment {
     private void getMyContactInfo(){
         ParseQuery<ParseObject> request = ParseQuery.getQuery("ContactInfo");
         request.whereEqualTo("userId", userName);
-        request.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> requests, ParseException e) {
-                if (e == null) {
+        request.findInBackground(new FindCallback<ParseObject>(){
+            public void done(List<ParseObject> requests, ParseException e){
+                if(e == null){
                     Log.d(TAG, "Retrieved " + requests.size() + " requests");
-                    if (requests.size() > 0){
+                    if(requests.size() > 0){
                         ContactInfo c = (ContactInfo) requests.get(0);
                         Log.d(TAG, "Name: " + c.getName());
                         createRequest(c);
                     }
-                } else {
+                }else{
                     Log.d(TAG, "Error: " + e.getMessage());
                     Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
