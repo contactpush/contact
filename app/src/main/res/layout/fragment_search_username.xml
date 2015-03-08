@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    >
+
+    <EditText android:id="@+id/etAddContactUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textWebEmailAddress"
+        android:layout_toLeftOf="@+id/btnSearchContactButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@id/btnSearchContactButton"
+        android:hint="@string/username"
+        android:singleLine="true"
+
+        />
+    <Button android:id="@+id/btnSearchContactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:enabled="false"
+        android:text="@string/search"
+        />
+
+</RelativeLayout>

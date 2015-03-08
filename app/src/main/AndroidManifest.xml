@@ -72,6 +72,10 @@
             android:name=".activities.LandingActivity"
             android:label="@string/title_activity_landing" >
         </activity>
+        <activity
+            android:name=".activities.AddContactActivity"
+            android:label="@string/title_activity_add_contact" >
+        </activity>
     </application>
 
 </manifest>

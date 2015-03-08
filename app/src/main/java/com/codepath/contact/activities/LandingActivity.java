@@ -1,5 +1,6 @@
 package com.codepath.contact.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -57,12 +58,21 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        if(id == R.id.action_add_contact){
+            this.addContactButtonPressed();
+            return true;
+        }
+
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addContactButtonPressed(){
+        //go to AddContactActivity
+        startActivity(new Intent(this, AddContactActivity.class));
     }
 
     public void showProgressBar() {
