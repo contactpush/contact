@@ -11,11 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.codepath.contact.R;
+import com.codepath.contact.models.Request;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class SearchUsernameFragment extends Fragment{
     private static final String TAG = "SearchUsernameFragment";
+
+    Button btnSearch;
+    EditText etUsername;
 
     public static SearchUsernameFragment newInstance(){
         SearchUsernameFragment fragment = new SearchUsernameFragment();
@@ -32,8 +40,8 @@ public class SearchUsernameFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_search_username, container, false);
 
-        final Button btnSearch = (Button) v.findViewById(R.id.btnSearchContactButton);
-        final EditText etUsername = (EditText) v.findViewById(R.id.etAddContactUsername);
+        btnSearch = (Button) v.findViewById(R.id.btnSearchContactButton);
+        etUsername = (EditText) v.findViewById(R.id.etAddContactUsername);
 
         etUsername.addTextChangedListener(new TextWatcher(){
             @Override
@@ -70,7 +78,19 @@ public class SearchUsernameFragment extends Fragment{
         super.onAttach(activity);
     }
 
-    private void searchForUsername(String username){
-        // TODO search on Parse for this user and add a connection request
+    private void searchForUsername(final String username){
+        Request.makeRequestForUsername(username, new Request.requestAttemptHandler(){
+            @Override
+            public void onSuccess(ParseUser requestee, Request request){
+                Toast.makeText(getActivity(), "Request to " + requestee.getUsername() + " sent.", Toast.LENGTH_SHORT).show();
+                SearchUsernameFragment.this.getActivity().finish(); // TODO fragment interface should report a success and let activity handle this, including sending request back to be added to request list of landing activity
+            }
+
+            @Override
+            public void onFailure(ParseException e, int numberOfMatches){
+                Toast.makeText(getActivity(), "Request to " + username + " failed.", Toast.LENGTH_SHORT).show();
+                btnSearch.setEnabled(false); // make user change username to request again
+            }
+        });
     }
 }
