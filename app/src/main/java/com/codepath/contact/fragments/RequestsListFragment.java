@@ -39,13 +39,9 @@ public class RequestsListFragment extends ListFragment {
             public void done(List<ParseObject> requests, ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "Retrieved " + requests.size() + " requests");
-                    if (requests.size() > 0){
-                        for (int i = 0; i < requests.size(); i++){
-                            Request r = (Request) requests.get(0);
-                            AddressBookEntry a = new AddressBookEntry();
-                            a.setName(r.getRequesterName());
-                            contactsAdapter.add(a);
-                        }
+                    for (int i = 0; i < requests.size(); i++){
+                        Request r = (Request) requests.get(i);
+                        RequestsListFragment.this.addRequestToList(r);
                     }
                 } else {
                     Log.d(TAG, "Error: " + e.getMessage());
@@ -53,6 +49,12 @@ public class RequestsListFragment extends ListFragment {
                 }
             }
         });
+    }
+
+    public void addRequestToList(Request request){
+        AddressBookEntry a = new AddressBookEntry();
+        a.setName(request.getRequesterName());
+        contactsAdapter.add(a);
     }
 
     private void createRequest(ContactInfo contactInfo){

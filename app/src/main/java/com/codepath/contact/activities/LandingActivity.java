@@ -18,13 +18,23 @@ import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
+import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
         OnAuthTokenResolvedListener{
     private static final String TAG = "LandingActivity";
+
+    private static final int ADD_USER = 432;
+
     private ViewPager vpPager;
     private ContactPagerAdapter contactPagerAdapter;
+    private ContactsListFragment contactsListFragment;
+    private RequestsListFragment requestsListFragment;
+
     private ProgressBar pb;
     private Toolbar toolbar;
 
@@ -72,7 +82,31 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
 
     public void addContactButtonPressed(){
         //go to AddContactActivity
-        startActivity(new Intent(this, AddContactActivity.class));
+        startActivityForResult(new Intent(this, AddContactActivity.class), LandingActivity.ADD_USER);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == LandingActivity.ADD_USER){
+            switch(resultCode){
+                case AddContactActivity.SUCCESSFUL_REQUEST:
+                    String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
+                    Request request;
+                    try{
+                        request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
+                        requestsListFragment.addRequestToList(request);
+                    }catch(ParseException e){
+                        e.printStackTrace();
+                    }
+                    break;
+
+                case AddContactActivity.FAILED_REQUEST:
+                    // TODO need to do anything here?
+                    break;
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void showProgressBar() {
@@ -108,9 +142,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return ContactsListFragment.newInstance(); // frag 1
+                return LandingActivity.this.contactsListFragment =  ContactsListFragment.newInstance(); // frag 1
             } else if (position == 1) {
-                return RequestsListFragment.newInstance(); // frag 2
+                return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(); // frag 2
             }
             Log.e(TAG, "frag index not found");
             return null;

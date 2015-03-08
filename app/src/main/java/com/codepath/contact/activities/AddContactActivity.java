@@ -1,5 +1,6 @@
 package com.codepath.contact.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -8,8 +9,14 @@ import android.view.MenuItem;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.SearchUsernameFragment;
+import com.codepath.contact.models.Request;
 
-public class AddContactActivity extends ActionBarActivity{
+public class AddContactActivity extends ActionBarActivity implements SearchUsernameFragment.SearchUsernameFragmentListener{
+
+    public static final int SUCCESSFUL_REQUEST = 524;
+    public static final String SUCCESSFUL_REQUEST_ID_KEY = "requestId";
+
+    public static final int FAILED_REQUEST = 234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -17,7 +24,7 @@ public class AddContactActivity extends ActionBarActivity{
         setContentView(R.layout.activity_add_contact);
 
         // place username search fragment in activity first
-        SearchUsernameFragment searchUsernameFragment = SearchUsernameFragment.newInstance();
+        SearchUsernameFragment searchUsernameFragment = SearchUsernameFragment.newInstance(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flAddContactActivityFragmentFrame, searchUsernameFragment);
         transaction.commit();
@@ -44,5 +51,24 @@ public class AddContactActivity extends ActionBarActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void searchSuccess(Request request){
+        Intent i = new Intent();
+        i.putExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY, request.getObjectId());
+        setResult(AddContactActivity.SUCCESSFUL_REQUEST, i);
+        finish();
+    }
+
+    @Override
+    public void searchFailure(){
+        setResult(AddContactActivity.FAILED_REQUEST);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed(){
+        searchFailure();
     }
 }

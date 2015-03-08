@@ -24,9 +24,16 @@ public class SearchUsernameFragment extends Fragment{
 
     Button btnSearch;
     EditText etUsername;
+    SearchUsernameFragmentListener listener;
 
-    public static SearchUsernameFragment newInstance(){
+    public interface SearchUsernameFragmentListener{
+        public void searchSuccess(Request request);
+        public void searchFailure();
+    }
+
+    public static SearchUsernameFragment newInstance(SearchUsernameFragmentListener searchUsernameFragmentListener){
         SearchUsernameFragment fragment = new SearchUsernameFragment();
+        fragment.listener = searchUsernameFragmentListener;
 
         return fragment;
     }
@@ -83,13 +90,14 @@ public class SearchUsernameFragment extends Fragment{
             @Override
             public void onSuccess(ParseUser requestee, Request request){
                 Toast.makeText(getActivity(), "Request to " + requestee.getUsername() + " sent.", Toast.LENGTH_SHORT).show();
-                SearchUsernameFragment.this.getActivity().finish(); // TODO fragment interface should report a success and let activity handle this, including sending request back to be added to request list of landing activity
+                listener.searchSuccess(request);
             }
 
             @Override
             public void onFailure(ParseException e, int numberOfMatches){
                 Toast.makeText(getActivity(), "Request to " + username + " failed.", Toast.LENGTH_SHORT).show();
                 btnSearch.setEnabled(false); // make user change username to request again
+                listener.searchFailure();
             }
         });
     }
