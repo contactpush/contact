@@ -1,7 +1,6 @@
 package com.codepath.contact.fragments;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,7 +16,8 @@ import com.codepath.contact.models.AddressBookEntry;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO Turns out ContactsListFragment and RequestsListFragment are not
+// similar enough to make inheritance a good strategy. Need to refactor...
 public abstract class ListFragment extends Fragment {
     private static final String TAG = "ListFragment";
     final String userName = "contacttestusr"; //hardcoding for now. need to persist
@@ -28,7 +28,7 @@ public abstract class ListFragment extends Fragment {
     ProgressBar pb;
     SwipeRefreshLayout swipeContainer;
 
-    private OnFragmentInteractionListener mListener;
+    OnFragmentInteractionListener mListener;
 
 
     public ListFragment() {
@@ -79,8 +79,7 @@ public abstract class ListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onRequestClick(String name);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.codepath.contact.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,10 +16,10 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.RequestFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
@@ -118,8 +117,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        //TODO implement method
+    public void onRequestClick(String name) {
+        RequestFragment requestFragment = RequestFragment.newInstance(name);
+        requestFragment.show(getSupportFragmentManager(), "fragment_request");
     }
 
     @Override

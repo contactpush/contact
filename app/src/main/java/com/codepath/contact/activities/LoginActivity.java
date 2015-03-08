@@ -14,6 +14,7 @@ import com.codepath.contact.GoogleClient;
 import com.codepath.contact.R;
 import com.codepath.contact.models.AddressBook;
 import com.codepath.contact.tasks.GetAuthTokenTask;
+import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
@@ -23,7 +24,7 @@ import org.apache.http.Header;
 import org.json.JSONObject;
 
 
-public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask.OnAuthTokenResolvedListener {
+public class LoginActivity extends ActionBarActivity implements OnAuthTokenResolvedListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;

@@ -2,6 +2,10 @@ package com.codepath.contact.fragments;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.codepath.contact.models.AddressBookEntry;
@@ -29,6 +33,25 @@ public class RequestsListFragment extends ListFragment {
         Log.d(TAG, "creating requests...");
         populateList();
         //getMyContactInfo();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        setUpOnClickListener();
+        return v;
+    }
+
+    private void setUpOnClickListener(){
+        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AddressBookEntry abe = contactsAdapter.getItem(position);
+                String name = abe.getName();
+                mListener.onRequestClick(name);
+            }
+        });
     }
 
     private void populateList(){
