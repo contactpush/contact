@@ -59,24 +59,15 @@ public class GetAuthTokenTask extends AsyncTask<Object[], Void, String>  {
      */
     protected String fetchToken() throws IOException {
         try {
+            Log.d(TAG, "Getting Google Auth token with email: " + email);
             return GoogleAuthUtil.getToken(activity, email, scope);
         } catch (UserRecoverableAuthException userRecoverableException) {
             // GooglePlayServices.apk is either old, disabled, or not present
             // so we need to show the user some UI in the activity to recover.
             listener.handleAuthTokenException(userRecoverableException);
         } catch (GoogleAuthException fatalException) {
-            Log.e(TAG, fatalException.getMessage());
+            Log.e(TAG, "Fatal exception: " + fatalException.getMessage());
         }
         return null;
-    }
-
-    public static void clearToken(Activity activity, String token){
-        try {
-            GoogleAuthUtil.clearToken(activity, token);
-        } catch (GoogleAuthException e) {
-            Log.e(TAG, e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
     }
 }

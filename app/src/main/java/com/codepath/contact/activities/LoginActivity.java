@@ -38,6 +38,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        if (email != null) getAuthToken();
     }
 
     public void loginToRest(View view) {
@@ -118,12 +119,6 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, responseString);
                 Log.e(TAG, throwable.getMessage());
-                // allegedly, if you try again when you get 401, it will work...
-                //http://stackoverflow.com/questions/26969622/how-to-get-refreshtoken-when-using-googleauthutil
-                if (statusCode == 401) {
-                    GetAuthTokenTask.clearToken(LoginActivity.this, token);
-                    getAuthToken();
-                }
             }
         });
     }

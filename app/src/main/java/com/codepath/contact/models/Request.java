@@ -23,6 +23,13 @@ public class Request extends ParseObject {
     }
 
     /**
+     * @return If this user has approved the request for his or her contact info.
+     */
+    public boolean getApprovedStatus(){
+        return getBoolean("approved");
+    }
+
+    /**
      * @param userId This user's ID.
      */
     public void setUserId(String userId) {
@@ -36,4 +43,17 @@ public class Request extends ParseObject {
     public void setRequesterId(String requesterId) {
         put("requesterId", requesterId);
     }
+
+    public void setApprovedStatus(boolean approved){
+        put("approved", approved);
+    }
+
+    public String getRequesterName(){
+        return getString("requesterName");
+    }
+
+    public void setRequesterName(String name){
+        put("requesterName", name);
+    }
+
 }

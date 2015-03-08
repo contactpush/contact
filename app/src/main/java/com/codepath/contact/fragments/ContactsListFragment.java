@@ -17,9 +17,8 @@ import org.apache.http.Header;
 import org.json.JSONObject;
 
 public class ContactsListFragment extends ListFragment implements OnAuthTokenResolvedListener{
-    private static final String TAG = "ContactsFragment";
+    private static final String TAG = "ContactsListFragment";
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    String email = "contacttestusr@gmail.com"; //hardcoding for now. need to persist
 
     public static ContactsListFragment newInstance() {
         ContactsListFragment fragment = new ContactsListFragment();
@@ -48,8 +47,8 @@ public class ContactsListFragment extends ListFragment implements OnAuthTokenRes
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, responseString);
-                Log.e(TAG, throwable.getMessage());
+                Log.e(TAG, "Auth Token retrieval failed: " + responseString);
+                Log.e(TAG, "Auth Token retrieval failed: " + throwable.getMessage());
             }
         });
     }

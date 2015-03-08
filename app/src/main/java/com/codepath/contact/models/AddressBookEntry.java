@@ -12,8 +12,7 @@ public class AddressBookEntry {
     private String email;
     private String phone;
 
-    private AddressBookEntry(){
-
+    public AddressBookEntry(){
     }
 
     public static List<AddressBookEntry> getAddressBookEntries(JSONArray jsonArray){
@@ -48,5 +47,17 @@ public class AddressBookEntry {
 
     public String getPhone() {
         return phone;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

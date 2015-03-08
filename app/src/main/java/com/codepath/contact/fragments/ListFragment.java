@@ -20,6 +20,8 @@ import java.util.List;
 
 public abstract class ListFragment extends Fragment {
     private static final String TAG = "ListFragment";
+    final String userName = "contacttestusr"; //hardcoding for now. need to persist
+    final String email = "contacttestusr@gmail.com";
     ContactsAdapter contactsAdapter;
     List<AddressBookEntry> contacts = new ArrayList<>();
     ListView lvContacts;
