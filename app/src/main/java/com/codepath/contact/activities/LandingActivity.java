@@ -33,6 +33,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     private ContactPagerAdapter contactPagerAdapter;
     private ContactsListFragment contactsListFragment;
     private RequestsListFragment requestsListFragment;
+    private RequestsListFragment sentRequestsListFragment;
 
     private ProgressBar pb;
     private Toolbar toolbar;
@@ -93,7 +94,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
                     Request request;
                     try{
                         request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
-                        //requestsListFragment.addRequestToList(request); // TODO add to "sent requests" fragment
+                        sentRequestsListFragment.addRequestToList(request);
                     }catch(ParseException e){
                         e.printStackTrace();
                     }
@@ -133,7 +134,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
-        private final String[] tabTitles = {"Contacts", "Requests"};
+        private final String[] tabTitles = {"Contacts", "Inbox", "Sent"};
 
         public ContactPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -144,7 +145,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
             if (position == 0){
                 return LandingActivity.this.contactsListFragment =  ContactsListFragment.newInstance(); // frag 1
             } else if (position == 1) {
-                return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(); // frag 2
+                return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(true); // frag 2
+            } else if(position == 2){
+                return LandingActivity.this.sentRequestsListFragment = RequestsListFragment.newInstance(false);
             }
             Log.e(TAG, "frag index not found");
             return null;
