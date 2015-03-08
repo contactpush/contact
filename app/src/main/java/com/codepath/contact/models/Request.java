@@ -68,6 +68,12 @@ public class Request extends ParseObject {
     }
 
     public static void makeRequestForUsername(final String username, final requestAttemptHandler handler){
+        if(username.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())){
+            Log.e(TAG, "Can't request yourself.");
+            handler.onFailure(null, -1);
+            return;
+        }
+
         ParseQuery<ParseUser> query = ParseUser.getQuery().whereMatches("username", username);
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(final List<ParseUser> resultList, ParseException e) {
@@ -75,9 +81,9 @@ public class Request extends ParseObject {
                     Log.d(TAG, "Requested user exists.");
 
                     final Request request = new Request();
-                    request.setRequesterId("requester");// TODO get info on current user
+                    request.setRequesterId(ParseUser.getCurrentUser().getUsername());
                     request.setUserId(username);
-                    request.setRequesterName("Awesome requester");// TODO get info on current user
+                    //request.setRequesterName("requester name");// TODO get name of current user (necessary tho?)
 
                     request.saveInBackground(new SaveCallback(){
                         @Override

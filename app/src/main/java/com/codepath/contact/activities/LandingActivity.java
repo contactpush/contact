@@ -94,7 +94,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
                     Request request;
                     try{
                         request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
-                        requestsListFragment.addRequestToList(request);
+                        //requestsListFragment.addRequestToList(request); // TODO add to "sent requests" fragment
                     }catch(ParseException e){
                         e.printStackTrace();
                     }
