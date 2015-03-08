@@ -38,7 +38,11 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        if (email != null) getAuthToken();
+        if (email != null) {
+            startMainActivity();
+        } else {
+            getAuthToken();
+        }
     }
 
     public void loginToRest(View view) {
@@ -50,18 +54,10 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
      * and then begin the request for an auth token.
      */
     private void getAuthToken() {
-        if (email == null) {
-            String[] accountTypes = new String[]{"com.google"};
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                    accountTypes, false, null, null, null, null);
-            startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
-        } else {
-            //if (isDeviceOnline()) {
-            new GetAuthTokenTask(this, email, SCOPES).execute();
-            /*} else {
-                Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
-            }*/
-        }
+        String[] accountTypes = new String[]{"com.google"};
+        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                accountTypes, false, null, null, null, null);
+        startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
     }
 
     @Override
@@ -71,7 +67,11 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
             if (resultCode == RESULT_OK) {
                 email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                 // With the account name acquired, go get the auth token
-                getAuthToken();
+                //if (isDeviceOnline()) {
+                new GetAuthTokenTask(this, email, SCOPES).execute();
+                /*} else {
+                    Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
+                }*/
             } else if (resultCode == RESULT_CANCELED) {
                 // The account picker dialog closed without selecting an account.
                 // Notify users that they must pick an account to proceed.
@@ -108,8 +108,7 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
                 AddressBook ab = AddressBook.getAddressBook(jsonObject);
                 if (ab != null) {
                     Log.d(TAG, ab.toString());
-                    Intent i = new Intent(LoginActivity.this, LandingActivity.class);
-                    startActivity(i);
+                    startMainActivity();
                 } else {
                     Log.e(TAG, "Could not parse AddressBook");
                 }
@@ -150,5 +149,10 @@ public class LoginActivity extends ActionBarActivity implements GetAuthTokenTask
                 }
             }
         });
+    }
+
+    private void startMainActivity(){
+        Intent i = new Intent(LoginActivity.this, LandingActivity.class);
+        startActivity(i);
     }
 }
