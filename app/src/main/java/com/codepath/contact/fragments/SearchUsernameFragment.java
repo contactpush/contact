@@ -31,6 +31,7 @@ public class SearchUsernameFragment extends Fragment{
     }
 
     public static SearchUsernameFragment newInstance(SearchUsernameFragmentListener searchUsernameFragmentListener){
+        // TODO move this to onAttach
         SearchUsernameFragment fragment = new SearchUsernameFragment();
         fragment.listener = searchUsernameFragmentListener;
 
@@ -79,6 +80,7 @@ public class SearchUsernameFragment extends Fragment{
         return v;
     }
 
+    //TODO implement proper onAttach
     @Override
     public void onAttach(Activity activity){
         super.onAttach(activity);

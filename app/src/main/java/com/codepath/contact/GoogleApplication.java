@@ -18,6 +18,14 @@ public class GoogleApplication extends com.activeandroid.app.Application {
     private static Context context;
     private static final String TAG = "GoogleApplication";
 
+    public interface ParseLoginListener {
+        void onLoginResponse(boolean success);
+    }
+
+    public interface ParseAccountCreationListener {
+        void onAccountCreationResponse(boolean success);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,35 +51,36 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
-
-        Log.d(TAG, "creating user...");
-        signIntoParse();
     }
 
-    public void signIntoParse(){
-        ParseUser.logInInBackground("contacttestusr", "contacttestusr!", new LogInCallback() {
+    public static void signIntoParse(String userName, String password, final ParseLoginListener listener){
+        ParseUser.logInInBackground(userName, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     Log.d(TAG, "Login successful");
+                    listener.onLoginResponse(true);
                 } else {
                     Log.d(TAG, "Login failed: " + e.getMessage());
+                    listener.onLoginResponse(false);
                 }
             }
         });
     }
 
-    public void signUpWithParse(){
+    public static void signUpWithParse(String userName, String password,
+                                String email, final ParseAccountCreationListener listener){
         ParseUser user = new ParseUser();
-        user.setUsername("contacttestusr");
-        user.setPassword("contacttestusr!");
-        user.setEmail("contacttestusr@gmail.com");
+        user.setUsername(userName);
+        user.setPassword(password);
+        user.setEmail(email);
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "SignUp successful");
-                    //Log.d(TAG, "Logged in with: " + ParseUser.getCurrentUser().getObjectId());
+                    listener.onAccountCreationResponse(true);
                 } else {
                     Log.d(TAG, "SignUp failed: " + e.getMessage());
+                    listener.onAccountCreationResponse(false);
                 }
             }
         });

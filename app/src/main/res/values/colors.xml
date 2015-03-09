@@ -3,4 +3,9 @@
     <color name="toolbarColor">
         #8800ddbd
     </color>
+    <color name="simple_yellow">#ECD078</color>
+    <color name="primary_blue">#38AEEA</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#E5E4E2</color>
 </resources>
