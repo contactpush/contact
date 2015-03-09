@@ -1,6 +1,5 @@
 package com.codepath.contact.activities;
 
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -14,7 +13,6 @@ import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.LoginFragment;
 import com.codepath.contact.fragments.WelcomeFragment;
-import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -22,15 +20,8 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 
 public class LoginActivity extends ActionBarActivity implements OnAuthTokenResolvedListener,
         WelcomeFragment.InitialAppStartupListener, GoogleApplication.ParseAccountCreationListener {
-    private static final String TAG = LoginActivity.class.getSimpleName();
-    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
+    private static final String TAG = "LoginActivity";
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
-    String email;
-    // we may want to grab some of the data from the profile if the user is new
-    private static final String PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
-    private final static String FULL_CONTACTS_SCOPE = "https://www.google.com/m8/feeds";
-    public final static String SCOPES = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
     private LoginFragment loginFragment;
 
     @Override
@@ -44,41 +35,18 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         transaction.commit();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
-            // Receiving a result from the AccountPicker
-            if (resultCode == RESULT_OK) {
-                email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                // With the account name acquired, go get the auth token
-                //if (isDeviceOnline()) {
-                new GetAuthTokenTask(this, email, SCOPES).execute();
-                /*} else {
-                    Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
-                }*/
-            } else if (resultCode == RESULT_CANCELED) {
-                // The account picker dialog closed without selecting an account.
-                // Notify users that they must pick an account to proceed.
-                Toast.makeText(this, R.string.pick_account, Toast.LENGTH_SHORT).show();
-            }
-        } else if ((requestCode == REQUEST_CODE_RECOVER_FROM_AUTH_ERROR ||
-                requestCode == REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR)
-                && resultCode == RESULT_OK) {
-            // Receiving a result that follows a GoogleAuthException, try auth again
-            loginFragment.getAuthToken();
-        }
-    }
-
-    @Override
-    public void receiveAuthToken(String token) {
-        loginFragment.signUpUserWithParse(email);
-    }
-
     private void startMainActivity() {
         Intent i = new Intent(LoginActivity.this, LandingActivity.class);
         startActivity(i);
     }
 
+    /**
+     * This method is called when the Welcome page finishes loading.
+     * The Welcome page attempts to find the user's Parse credentials
+     * and log them in.  If it succeeds, then we take the user to the
+     * landing page.  If not, we start the login screen.
+     * @param success
+     */
     @Override
     public void onFinishedLoading(boolean success) {
         if (success){
@@ -92,6 +60,24 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         }
     }
 
+    /**
+     * This is called by the GetGoogleAuthTokenTask upon
+     * completion.  Next step is to sign the user up with
+     * Parse.
+     * @param token
+     */
+    @Override
+    public void receiveAuthToken(String token) {
+        loginFragment.signUpUserWithParse();
+    }
+
+    /**
+     * This method is called by the login screen after the user
+     * has attempted to create an account with parse.  May want to
+     * consider having the login screen go straight to the landing
+     * page.
+     * @param success
+     */
     @Override
     public void onAccountCreationResponse(boolean success) {
         if (success){
