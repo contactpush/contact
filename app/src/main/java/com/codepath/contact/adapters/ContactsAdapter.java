@@ -32,7 +32,8 @@ public class ContactsAdapter extends ArrayAdapter<AddressBookEntry> {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvName.setText(contact.getName().length() > 0 ? contact.getName() : contact.getEmail());
+        viewHolder.tvName.setText((contact.getName() != null && contact.getName().length() > 0)
+                    ? contact.getName() : contact.getEmail());
         return convertView;
     }
 

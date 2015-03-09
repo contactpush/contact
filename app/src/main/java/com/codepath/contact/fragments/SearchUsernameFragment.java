@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.codepath.contact.R;
 import com.codepath.contact.models.Request;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class SearchUsernameFragment extends Fragment{

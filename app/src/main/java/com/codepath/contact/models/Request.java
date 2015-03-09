@@ -22,15 +22,15 @@ public class Request extends ParseObject {
     /**
      * @return This user's ID.
      */
-    public String getUserId() {
-        return getString("userId");
+    public String getTo() {
+        return getString("to");
     }
 
     /**
      * @return The user ID requesting access to this user's contact info.
      */
-    public String getRequesterId() {
-        return getString("requesterId");
+    public String getFrom() {
+        return getString("from");
     }
 
     /**
@@ -41,30 +41,30 @@ public class Request extends ParseObject {
     }
 
     /**
-     * @param userId This user's ID.
+     * @param to This user's ID.
      */
-    public void setUserId(String userId) {
-        put("userId", userId);
+    public void setTo(String to) {
+        put("to", to);
     }
 
     /**
-     * @param requesterId The user ID of the person requesting to receive updates
+     * @param from The user ID of the person requesting to receive updates
      *                    to this user's contact info.
      */
-    public void setRequesterId(String requesterId) {
-        put("requesterId", requesterId);
+    public void setFrom(String from) {
+        put("from", from);
     }
 
     public void setApprovedStatus(boolean approved){
         put("approved", approved);
     }
 
-    public String getRequesterName(){
-        return getString("requesterName");
+    public String getFromName(){
+        return getString("fromName");
     }
 
-    public void setRequesterName(String name){
-        put("requesterName", name);
+    public void setFromName(String name){
+        put("fromName", name);
     }
 
     public static void makeRequestForUsername(final String username, final requestAttemptHandler handler){
@@ -81,14 +81,18 @@ public class Request extends ParseObject {
                     Log.d(TAG, "Requested user exists.");
 
                     final Request request = new Request();
-                    request.setRequesterId(ParseUser.getCurrentUser().getUsername());
-                    request.setUserId(username);
+                    request.setFrom(ParseUser.getCurrentUser().getUsername());
+                    request.setTo(username);
                     //request.setRequesterName("requester name");// TODO get name of current user (necessary tho?)
 
                     request.saveInBackground(new SaveCallback(){
                         @Override
                         public void done(ParseException e){
-                            handler.onSuccess(resultList.get(0), request);
+                            if (e == null) {
+                                handler.onSuccess(resultList.get(0), request);
+                            } else {
+                                Log.d(TAG, "request save failed: " + e.getMessage());
+                            }
                         }
                     });
 

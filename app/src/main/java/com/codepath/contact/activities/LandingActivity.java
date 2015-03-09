@@ -147,6 +147,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
             } else if (position == 1) {
                 return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(true); // frag 2
             } else if(position == 2){
+                // TODO When I try to add a user without scrolling to the "Sent" tab first, I get a NPE because this view
+                // hasn't been created yet.  Need to make sure sentRequestsListFragment is not null prior to using it
+                // in onActivityResult.
                 return LandingActivity.this.sentRequestsListFragment = RequestsListFragment.newInstance(false);
             }
             Log.e(TAG, "frag index not found");

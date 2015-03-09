@@ -33,7 +33,6 @@ public class RequestsListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "creating requests...");
         populateList();
         //getMyContactInfo();
     }
@@ -59,7 +58,7 @@ public class RequestsListFragment extends ListFragment {
 
     private void populateList(){
         final ParseQuery<ParseObject> request = ParseQuery.getQuery("Request");
-        request.whereEqualTo(isLookingForReceivedRequests ? "userId" : "requesterId", userName);
+        request.whereEqualTo(isLookingForReceivedRequests ? "to" : "from", userName);
         request.whereEqualTo("approved", false);
         request.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> requests, ParseException e) {
@@ -79,14 +78,15 @@ public class RequestsListFragment extends ListFragment {
 
     public void addRequestToList(Request request){
         AddressBookEntry a = new AddressBookEntry();
-        a.setName(request.getRequesterName());
+        a.setName(request.getFromName());
+        a.setEmail(request.getTo()); // isn't really email, but will do for now...
         contactsAdapter.add(a);
     }
 
     private void createRequest(ContactInfo contactInfo){
         Request r = new Request();
-        r.setUserId("contacttestusr");
-        r.setRequesterId("contacttestusr2");
+        r.setTo("contacttestusr");
+        r.setFrom("contacttestusr2");
         r.put("parent", contactInfo);
         r.saveInBackground(new SaveCallback() {
             @Override
@@ -102,7 +102,7 @@ public class RequestsListFragment extends ListFragment {
 
     private void getMyContactInfo(){
         ParseQuery<ParseObject> request = ParseQuery.getQuery("ContactInfo");
-        request.whereEqualTo("userId", userName);
+        request.whereEqualTo("to", userName);
         request.findInBackground(new FindCallback<ParseObject>(){
             public void done(List<ParseObject> requests, ParseException e){
                 if(e == null){
