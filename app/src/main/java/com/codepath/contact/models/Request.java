@@ -83,6 +83,7 @@ public class Request extends ParseObject {
                     final Request request = new Request();
                     request.setFrom(ParseUser.getCurrentUser().getUsername());
                     request.setTo(username);
+                    request.setApprovedStatus(false);
                     //request.setRequesterName("requester name");// TODO get name of current user (necessary tho?)
 
                     request.saveInBackground(new SaveCallback(){
