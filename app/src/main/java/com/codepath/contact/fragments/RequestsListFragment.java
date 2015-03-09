@@ -83,6 +83,7 @@ public class RequestsListFragment extends ListFragment {
         contactsAdapter.add(a);
     }
 
+    // I was just using this for testing...
     private void createRequest(ContactInfo contactInfo){
         Request r = new Request();
         r.setTo("contacttestusr");
@@ -100,6 +101,7 @@ public class RequestsListFragment extends ListFragment {
         });
     }
 
+    // I was just using this for testing...
     private void getMyContactInfo(){
         ParseQuery<ParseObject> request = ParseQuery.getQuery("ContactInfo");
         request.whereEqualTo("to", userName);

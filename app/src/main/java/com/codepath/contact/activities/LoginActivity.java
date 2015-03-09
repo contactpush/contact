@@ -40,13 +40,18 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         if (email != null) {
-            startMainActivity();
+           // startMainActivity();
         } else {
             getAuthToken();
         }
     }
 
     public void loginToRest(View view) {
+        getAuthToken();
+    }
+
+    public void createAccount(View view) {
+        Log.d(TAG, "create account method not implemented yet.");
         getAuthToken();
     }
 

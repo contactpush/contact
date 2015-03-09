@@ -93,6 +93,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
                     String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
                     Request request;
                     try{
+                        // TODO may want to make query use findInBackground
                         request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
                         sentRequestsListFragment.addRequestToList(request);
                     }catch(ParseException e){
