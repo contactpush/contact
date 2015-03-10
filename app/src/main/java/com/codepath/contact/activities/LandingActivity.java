@@ -94,19 +94,23 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
                 case AddContactActivity.SUCCESSFUL_REQUEST:
                     final String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
 
-                    ParseQuery.getQuery("Request").whereMatches("objectId", requestId).findInBackground(new FindCallback<ParseObject>(){
+                    ParseQuery.getQuery("Request").whereMatches("objectId", requestId)
+                            .findInBackground(new FindCallback<ParseObject>(){
                         @Override
                         public void done(List<ParseObject> parseObjects, ParseException e){
 
                             if(parseObjects != null && parseObjects.size() > 0){
                                 Request request = (Request) parseObjects.get(0);
-                                if(sentRequestsListFragment != null){
-                                    sentRequestsListFragment.addRequestToList(request);
-                                    return;
-                                }
+                                ((RequestsListFragment) pagerAdapter
+                                        .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
+                                return;
                             }
 
                             Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
+
+                            if (e != null){
+                                Log.e(TAG, e.getMessage());
+                            }
                         }
                     });
                     break;
