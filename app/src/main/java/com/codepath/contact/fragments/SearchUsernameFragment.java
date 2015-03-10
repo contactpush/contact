@@ -1,6 +1,5 @@
 package com.codepath.contact.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -106,8 +105,8 @@ public class SearchUsernameFragment extends Fragment{
             }
 
             @Override
-            public void onFailure(ParseException e, int numberOfMatches){
-                Toast.makeText(getActivity(), "Request to " + username + " failed.", Toast.LENGTH_SHORT).show();
+            public void onFailure(ParseException e, RequestFailureReason requestFailureReason){
+                Toast.makeText(getActivity(), "Request to " + username + " failed: " + requestFailureReason.toString(), Toast.LENGTH_SHORT).show();
                 btnSearch.setEnabled(false); // make user change username to request again
                 listener.searchFailure();
             }
