@@ -19,7 +19,7 @@ import com.codepath.contact.R;
 import com.codepath.contact.tasks.GetAuthTokenTask;
 import com.google.android.gms.common.AccountPicker;
 
-public class LoginFragment extends Fragment {
+public class CreateAccountFragment extends Fragment {
     private GoogleApplication.ParseAccountCreationListener listener;
     private static final String TAG = "LoginFragment";
     private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
@@ -38,8 +38,8 @@ public class LoginFragment extends Fragment {
     private String userName;
     private String password;
 
-    public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
+    public static CreateAccountFragment newInstance() {
+        CreateAccountFragment fragment = new CreateAccountFragment();
         return fragment;
     }
 

@@ -53,6 +53,4 @@ public class RequestFragment extends DialogFragment {
         tvName.setText(name);
         return v;
     }
-
-
 }
