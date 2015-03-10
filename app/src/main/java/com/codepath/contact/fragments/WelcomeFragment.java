@@ -22,6 +22,14 @@ public class WelcomeFragment extends Fragment {
     private InitialAppStartupListener listener;
 
     public interface InitialAppStartupListener{
+        /**
+         * A method to communicate to the LoginActivity whether
+         * this user exists (true), or doesn't (false).  If the
+         * user exists, the LoginActivity takes the user to the
+         * LandingActivity.  Otherwise it takes the user through
+         * the CreateAccount process.
+         * @param success true if the user exists, false if not.
+         */
         void onFinishedLoading(boolean success);
     }
 
@@ -47,7 +55,12 @@ public class WelcomeFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE);
         String userName = prefs.getString(USERNAME, null);
         String password = prefs.getString(PASSWORD, null);
-        if (userName == null || password == null) return;
+
+        if (userName == null || password == null) {
+            listener.onFinishedLoading(false);
+            return;
+        }
+
         GoogleApplication.signIntoParse(userName, password, new GoogleApplication.ParseLoginListener() {
             @Override
             public void onLoginResponse(boolean success) {

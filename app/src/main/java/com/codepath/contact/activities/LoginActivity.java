@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
-import com.codepath.contact.fragments.LoginFragment;
+import com.codepath.contact.fragments.CreateAccountFragment;
 import com.codepath.contact.fragments.WelcomeFragment;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
@@ -22,7 +22,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         WelcomeFragment.InitialAppStartupListener, GoogleApplication.ParseAccountCreationListener {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    private LoginFragment loginFragment;
+    private CreateAccountFragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
             startMainActivity();
             finish();
         } else {
-            loginFragment = LoginFragment.newInstance();
+            loginFragment = CreateAccountFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.flLogin, loginFragment);
             transaction.commit();
