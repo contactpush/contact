@@ -56,8 +56,9 @@ public class WelcomeFragment extends Fragment {
         String userName = prefs.getString(USERNAME, null);
         String password = prefs.getString(PASSWORD, null);
 
+        // if these don't exist, the the user must be new to our app
         if (userName == null || password == null) {
-            listener.onFinishedLoading(false);
+            listener.onFinishedLoading(false); // tell Activity to direct user to create account
             return;
         }
 
