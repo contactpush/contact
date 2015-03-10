@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,26 @@ public class SearchUsernameFragment extends Fragment{
         public void searchFailure();
     }
 
+    /**
+     * Constructor for the SearchUsernameFragmenr
+     * @param searchUsernameFragmentListener SearchUsernameFragmentListener object that will receive events about this fragment.
+     *                                       Set here and not in OnAttach(Activity) because the listener doesn't have to be an activity
+     * @return A new instance of the SearchUsernameFragment
+     */
     public static SearchUsernameFragment newInstance(SearchUsernameFragmentListener searchUsernameFragmentListener){
-        // TODO move this to onAttach
         SearchUsernameFragment fragment = new SearchUsernameFragment();
         fragment.listener = searchUsernameFragmentListener;
+
+        // avoid null pointer exceptions later by using a dumb listener if none are set
+        if(fragment.listener == null){
+            Log.w(TAG, "No listener set in SearchUserFragment.newInstance() call.");
+            fragment.listener = new SearchUsernameFragmentListener(){
+                @Override
+                public void searchSuccess(Request request){}
+                @Override
+                public void searchFailure(){}
+            };
+        }
 
         return fragment;
     }
@@ -78,12 +95,6 @@ public class SearchUsernameFragment extends Fragment{
         });
 
         return v;
-    }
-
-    //TODO implement proper onAttach
-    @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
     }
 
     private void searchForUsername(final String username){

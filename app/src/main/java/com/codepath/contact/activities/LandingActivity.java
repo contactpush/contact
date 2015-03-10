@@ -20,8 +20,12 @@ import com.codepath.contact.fragments.RequestFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import java.util.List;
 
 public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
         OnAuthTokenResolvedListener{
@@ -90,15 +94,23 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         if(requestCode == LandingActivity.ADD_USER){
             switch(resultCode){
                 case AddContactActivity.SUCCESSFUL_REQUEST:
-                    String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
-                    Request request;
-                    try{
-                        // TODO may want to make query use findInBackground
-                        request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
-                        sentRequestsListFragment.addRequestToList(request);
-                    }catch(ParseException e){
-                        e.printStackTrace();
-                    }
+                    final String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
+
+                    ParseQuery.getQuery("Request").whereMatches("objectId", requestId).findInBackground(new FindCallback<ParseObject>(){
+                        @Override
+                        public void done(List<ParseObject> parseObjects, ParseException e){
+
+                            if(parseObjects != null && parseObjects.size() > 0){
+                                Request request = (Request) parseObjects.get(0);
+                                if(sentRequestsListFragment != null){
+                                    sentRequestsListFragment.addRequestToList(request);
+                                    return;
+                                }
+                            }
+
+                            Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
+                        }
+                    });
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:
@@ -144,13 +156,10 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return LandingActivity.this.contactsListFragment =  ContactsListFragment.newInstance(); // frag 1
+                return LandingActivity.this.contactsListFragment = ContactsListFragment.newInstance(); // frag 1
             } else if (position == 1) {
                 return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(true); // frag 2
             } else if(position == 2){
-                // TODO When I try to add a user without scrolling to the "Sent" tab first, I get a NPE because this view
-                // hasn't been created yet.  Need to make sure sentRequestsListFragment is not null prior to using it
-                // in onActivityResult.
                 return LandingActivity.this.sentRequestsListFragment = RequestsListFragment.newInstance(false);
             }
             Log.e(TAG, "frag index not found");
