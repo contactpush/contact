@@ -30,10 +30,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     private static final int ADD_USER = 432;
 
     private ViewPager vpPager;
-    private ContactPagerAdapter contactPagerAdapter;
-    private ContactsListFragment contactsListFragment;
-    private RequestsListFragment requestsListFragment;
-    private RequestsListFragment sentRequestsListFragment;
+    private ContactPagerAdapter pagerAdapter;
 
     private ProgressBar pb;
     private Toolbar toolbar;
@@ -47,9 +44,10 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         setSupportActionBar(toolbar);
 
         pb = (ProgressBar) findViewById(R.id.pbLoading);
+
         vpPager = (ViewPager) findViewById(R.id.viewpager);
-        contactPagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(contactPagerAdapter);
+        pagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(pagerAdapter);
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
     }
@@ -95,7 +93,8 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
                     try{
                         // TODO may want to make query use findInBackground
                         request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
-                        sentRequestsListFragment.addRequestToList(request);
+                        ((RequestsListFragment) pagerAdapter
+                                .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
                     }catch(ParseException e){
                         e.printStackTrace();
                     }
@@ -126,15 +125,18 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
 
     @Override
     public void receiveAuthToken(String token) {
-        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).receiveAuthToken(token);
+        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).receiveAuthToken(token);
     }
 
     @Override
     public void handleAuthTokenException(Exception e) {
-        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).handleAuthTokenException(e);
+        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).handleAuthTokenException(e);
     }
 
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
+        final byte CONTACTS = 0;
+        final byte INBOX = 1;
+        final byte SENT = 2;
         private final String[] tabTitles = {"Contacts", "Inbox", "Sent"};
 
         public ContactPagerAdapter(FragmentManager fm) {
@@ -144,14 +146,11 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return LandingActivity.this.contactsListFragment =  ContactsListFragment.newInstance(); // frag 1
+                return ContactsListFragment.newInstance(); // CONTACTS
             } else if (position == 1) {
-                return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(true); // frag 2
+                return RequestsListFragment.newInstance(RequestsListFragment.Type.INBOX);
             } else if(position == 2){
-                // TODO When I try to add a user without scrolling to the "Sent" tab first, I get a NPE because this view
-                // hasn't been created yet.  Need to make sure sentRequestsListFragment is not null prior to using it
-                // in onActivityResult.
-                return LandingActivity.this.sentRequestsListFragment = RequestsListFragment.newInstance(false);
+                return RequestsListFragment.newInstance(RequestsListFragment.Type.SENT);
             }
             Log.e(TAG, "frag index not found");
             return null;

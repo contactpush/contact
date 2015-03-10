@@ -21,12 +21,20 @@ import java.util.List;
 
 public class RequestsListFragment extends ListFragment {
     private static final String TAG = "RequestsListFragment";
+    private Type type;
+    public enum Type {
+        INBOX ("to"),
+        SENT ("from");
+        final String direction;
 
-    private boolean isLookingForReceivedRequests = true;
+        Type(String direction){
+            this.direction = direction;
+        }
+    }
 
-    public static RequestsListFragment newInstance(boolean forReceivedRequests) {
+    public static RequestsListFragment newInstance(Type type) {
         RequestsListFragment fragment = new RequestsListFragment();
-        fragment.isLookingForReceivedRequests = forReceivedRequests;
+        fragment.type = type;
         return fragment;
     }
 
@@ -58,7 +66,7 @@ public class RequestsListFragment extends ListFragment {
 
     private void populateList(){
         final ParseQuery<ParseObject> request = ParseQuery.getQuery("Request");
-        request.whereEqualTo(isLookingForReceivedRequests ? "to" : "from", userName);
+        request.whereEqualTo(type.direction, userName); // direction "to" or "from"
         request.whereEqualTo("approved", false);
         request.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> requests, ParseException e) {
