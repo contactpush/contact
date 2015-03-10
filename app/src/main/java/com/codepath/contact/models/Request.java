@@ -70,7 +70,7 @@ public class Request extends ParseObject {
     public static void makeRequestForUsername(final String username, final requestAttemptHandler handler){
         if(username.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())){
             Log.e(TAG, "Can't request yourself.");
-            handler.onFailure(null, -1);
+            handler.onFailure(null, requestAttemptHandler.RequestFailureReason.SELF);
             return;
         }
 
@@ -93,6 +93,7 @@ public class Request extends ParseObject {
                                 handler.onSuccess(resultList.get(0), request);
                             } else {
                                 Log.d(TAG, "request save failed: " + e.getMessage());
+                                handler.onFailure(e, requestAttemptHandler.RequestFailureReason.BAD_SAVE_EXCEPTION);
                             }
                         }
                     });
@@ -100,11 +101,12 @@ public class Request extends ParseObject {
                 } else {
                     if(resultList.size() != 1){
                         Log.e(TAG, (resultList.size() + " username(s) match request"));
+                        handler.onFailure(e, resultList.size() > 1 ? requestAttemptHandler.RequestFailureReason.MULTIPLE_MATCHES : requestAttemptHandler.RequestFailureReason.NO_MATCHES);
                     }else{
                         Log.e(TAG, "Error: " + e.getMessage());
+                        handler.onFailure(e, requestAttemptHandler.RequestFailureReason.EXCEPTION);
                     }
 
-                    handler.onFailure(e, resultList.size());
                     return;
                 }
             }
@@ -113,7 +115,15 @@ public class Request extends ParseObject {
 
     public interface requestAttemptHandler{
         public void onSuccess(ParseUser requestee, Request request);
-        public void onFailure(ParseException e, int numberOfMatches);
+        public void onFailure(ParseException e, RequestFailureReason requestFailureReason);
+
+        public enum RequestFailureReason{
+            EXCEPTION,
+            NO_MATCHES,
+            MULTIPLE_MATCHES,
+            SELF,
+            BAD_SAVE_EXCEPTION,
+        }
     }
 
 }
