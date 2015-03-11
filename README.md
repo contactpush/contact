@@ -41,6 +41,6 @@ User stories:
 
 Walkthrough of all user stories:
 
-![Video Walkthrough](Contact.gif)
+![Video Walkthrough](img/demo_sprint1.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
