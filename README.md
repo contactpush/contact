@@ -43,4 +43,10 @@ Walkthrough of all user stories:
 
 ![Video Walkthrough](Contact.gif)
 
+Login walkthrough:
+![Video Walkthrough](Contact_login.gif)
+
+Video showing login piece:
+
+
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
