@@ -1,30 +1,35 @@
 # contact
 Let your contacts update their contact info in your address book so you don't have to.
 
-User stories:
- * Create an account
- * Create your profile(s) (basic, social, professional)
-   * Allow user to upload photo
-   * Allow user to enter name, multiple phone#, email, address, etc.
-   * Allow user to enter social media profiles, web sites, etc
+Required user stories for Sprint 1:
+ * [x] Create an account 
+ * [x] Create your profile
+   * Allow user to upload photo (optional)
+   * [x] Allow user to enter name, phone#, email, address, etc.
+   * [x] Allow user to enter social media profiles, web sites, etc
  * Display Contacts
-   * Allow user to filter contacts by group (based on profile type)
-   * Allow user to sort by frequently contacted or recently contacted
+   * [x] Display contacts in list view
+   * [x] Display invites to connect
+   * [x] Display list of people user has sent invites to
+   * Display detail view on click (optional)
+   * Allow user to filter contacts by group (based on profile type) (optional)
+   * Allow user to sort by frequently contacted or recently contacted (optional)
  * Contact management
-   * Accept/Decline an invite to share info
-   * Revoke or delete a connection
-   * Share your profile via email or text
-   * Share via QR code
-   * Build "business card" widget for easy sharing
-   * Propose connections based on users in native address book using Contact
+   * [x] Accept/Decline an invite to share info
+   * Revoke or delete a connection (optional)
+   * Share your profile via email or text (optional)
+   * Share via QR code (advanced)
+   * Build "business card" widget for easy sharing  (advanced)
+   * Propose connections based on users in native address book using Contact (advanced)
  * Data management
-   * Read contacts from native address book
-   * Push updates to Contact and native address book
- * Allow user to message other users
+   * [x] Read contacts from native address book
+   * [x] Store created profile in parse
+   * Push updates to Contact and native address book (via google contacts) (optional)
+ * Allow user to message other users (advanced)
  * User acquisition
-   * Invite friends via Facebook, Twitter or other social media
-   * Offer to send messages to all of the contacts in their address book
+   * Invite friends via Facebook, Twitter or other social media (optional)
+   * Offer to send messages to all of the contacts in their address book (optional)
  * Location Aware Phone redirecting
-   * Send your calls to a number based on where you are
+   * Send your calls to a number based on where you are (advanced)
    
 [Wireframes](http://contactpush.github.io./)
