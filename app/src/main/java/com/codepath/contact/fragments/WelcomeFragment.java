@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,11 @@ public class WelcomeFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE);
         String userName = prefs.getString(USERNAME, null);
         String password = prefs.getString(PASSWORD, null);
+
+        if (userName == null || password == null) {
+            listener.onFinishedLoading(false);
+            return;
+        }
 
         // if these don't exist, the the user must be new to our app
         if (userName == null || password == null) {
