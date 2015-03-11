@@ -30,7 +30,7 @@ import com.parse.ParseQuery;
 import java.util.List;
 
 public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
-        OnAuthTokenResolvedListener{
+        OnAuthTokenResolvedListener, RequestInteractionFragment.RequestInteractionFragmentListener{
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
@@ -140,15 +140,27 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     @Override
-    public void onReceivedRequestClick(String name) {
-        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(name);
+    public void onReceivedRequestClick(Request request) {
+        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(request);
         receivedRequestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
     }
 
     @Override
-    public void onSentRequestClick(String name) {
-        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(name);
+    public void onSentRequestClick(Request request) {
+        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(request);
         requestInteractionFragment.show(getSupportFragmentManager(), "fragment_sent_request");
+    }
+
+    @Override
+    public void shouldUpdateRequestList(RequestsListFragment.Type whichList){
+        switch(whichList){
+            case INBOX:
+                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.INBOX)).refreshList();
+                break;
+            case SENT:
+                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
+                break;
+        }
     }
 
     @Override
