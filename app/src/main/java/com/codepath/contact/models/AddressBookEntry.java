@@ -11,6 +11,7 @@ public class AddressBookEntry {
     private String name;
     private String email;
     private String phone;
+    private Request request; // this is here by necessity until requestlistfragment and contactlistfragment are separated...
 
     public AddressBookEntry(){
     }
@@ -59,5 +60,13 @@ public class AddressBookEntry {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Request getRequest(){
+        return request;
+    }
+
+    public void setRequest(Request request){
+        this.request = request;
     }
 }

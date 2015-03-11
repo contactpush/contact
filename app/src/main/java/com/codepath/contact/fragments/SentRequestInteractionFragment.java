@@ -1,6 +1,7 @@
 package com.codepath.contact.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +10,19 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.codepath.contact.R;
+import com.codepath.contact.models.Request;
+import com.parse.DeleteCallback;
+import com.parse.ParseException;
 
 /**
  * Created by mekilah on 3/10/15.
  */
 public class SentRequestInteractionFragment extends RequestInteractionFragment{
+    private static final String TAG = "SentRequestInteractionFragment";
 
-    public static SentRequestInteractionFragment newInstance(String name) {
+    public static SentRequestInteractionFragment newInstance(Request request) {
         SentRequestInteractionFragment fragment = new SentRequestInteractionFragment();
-        Bundle args = new Bundle();
-        args.putString(NAME, name);
-        fragment.setArguments(args);
+        fragment.request = request;
         return fragment;
     }
 
@@ -42,10 +45,20 @@ public class SentRequestInteractionFragment extends RequestInteractionFragment{
         btnRevoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                request.deleteInBackground(new DeleteCallback(){
+                    @Override
+                    public void done(ParseException e){
+                        if(e != null){
+                            Log.e(TAG, "Error with background delete revoke", e);
+                            return;
+                        }
+                        listener.shouldUpdateRequestList(RequestsListFragment.Type.SENT);
+                    }
+                });
                 dismiss();
             }
         });
-        tvName.setText(name);
+        tvName.setText(request.getTo());
         return v;
     }
 

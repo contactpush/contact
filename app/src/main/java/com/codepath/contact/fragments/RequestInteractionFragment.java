@@ -1,6 +1,7 @@
 package com.codepath.contact.fragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -11,16 +12,23 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.codepath.contact.R;
+import com.codepath.contact.models.Request;
 
 public abstract class RequestInteractionFragment extends DialogFragment {
-    protected static final String NAME = "name";
-    protected String name;
+    protected Request request;
+    protected RequestInteractionFragmentListener listener;
+
+    public interface RequestInteractionFragmentListener{
+        public void shouldUpdateRequestList(RequestsListFragment.Type whichList);
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            name = getArguments().getString(NAME);
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+
+        if (!(activity instanceof RequestInteractionFragmentListener)){
+            throw new ClassCastException("Activity must implement RequestInteractionFragmentListener");
         }
+        listener = (RequestInteractionFragmentListener)activity;
     }
 }
