@@ -10,6 +10,7 @@ import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
@@ -54,9 +55,6 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
-        Log.d(TAG, "creating user...");
-        signIntoParse();
-
         // register device for push notifications by subscribing to a particular channel
         ParsePush.subscribeInBackground("", new SaveCallback() {
             @Override
@@ -74,6 +72,10 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         ParseUser.logInInBackground(userName, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("username", user.getUsername());
+                    installation.saveInBackground();
+
                     Log.d(TAG, "Login successful");
                     listener.onLoginResponse(true);
                 } else {
@@ -93,6 +95,10 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("username", ParseUser.getCurrentUser().getUsername());
+                    installation.saveInBackground();
+
                     Log.d(TAG, "SignUp successful");
                     listener.onAccountCreationResponse(true);
                 } else {
