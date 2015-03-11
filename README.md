@@ -44,6 +44,7 @@ Walkthrough of all user stories:
 ![Video Walkthrough](img/demo_sprint1.gif)
 
 Login walkthrough:
+
 ![Video Walkthrough](img/Contact_login.gif)
 
 
