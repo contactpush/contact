@@ -61,7 +61,7 @@ public class RequestsListFragment extends ListFragment {
                 String name = abe.getName();
 
                 if(RequestsListFragment.this.type == Type.INBOX){
-                    mListener.onRequestClick(name);
+                    mListener.onReceivedRequestClick(name);
                 }
 
                 if(RequestsListFragment.this.type == Type.SENT){

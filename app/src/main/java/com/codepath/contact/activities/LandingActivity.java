@@ -16,6 +16,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
 import com.codepath.contact.fragments.RequestInteractionFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
 import com.codepath.contact.fragments.SentRequestInteractionFragment;
@@ -139,9 +140,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     @Override
-    public void onRequestClick(String name) {
-        RequestInteractionFragment requestInteractionFragment = RequestInteractionFragment.newInstance(name);
-        requestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
+    public void onReceivedRequestClick(String name) {
+        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(name);
+        receivedRequestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
     }
 
     @Override
