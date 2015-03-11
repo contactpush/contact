@@ -16,8 +16,10 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
-import com.codepath.contact.fragments.RequestFragment;
+import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
+import com.codepath.contact.fragments.RequestInteractionFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
+import com.codepath.contact.fragments.SentRequestInteractionFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.parse.FindCallback;
@@ -101,23 +103,23 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
 
                     ParseQuery.getQuery("Request").whereMatches("objectId", requestId)
                             .findInBackground(new FindCallback<ParseObject>(){
-                        @Override
-                        public void done(List<ParseObject> parseObjects, ParseException e){
+                                @Override
+                                public void done(List<ParseObject> parseObjects, ParseException e){
 
-                            if(parseObjects != null && parseObjects.size() > 0){
-                                Request request = (Request) parseObjects.get(0);
-                                ((RequestsListFragment) pagerAdapter
-                                        .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
-                                return;
-                            }
+                                    if(parseObjects != null && parseObjects.size() > 0){
+                                        Request request = (Request) parseObjects.get(0);
+                                        ((RequestsListFragment) pagerAdapter
+                                                .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
+                                        return;
+                                    }
 
-                            Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
+                                    Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
 
-                            if (e != null){
-                                Log.e(TAG, e.getMessage());
-                            }
-                        }
-                    });
+                                    if(e != null){
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                }
+                            });
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:
@@ -138,9 +140,15 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     @Override
-    public void onRequestClick(String name) {
-        RequestFragment requestFragment = RequestFragment.newInstance(name);
-        requestFragment.show(getSupportFragmentManager(), "fragment_request");
+    public void onReceivedRequestClick(String name) {
+        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(name);
+        receivedRequestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
+    }
+
+    @Override
+    public void onSentRequestClick(String name) {
+        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(name);
+        requestInteractionFragment.show(getSupportFragmentManager(), "fragment_sent_request");
     }
 
     @Override

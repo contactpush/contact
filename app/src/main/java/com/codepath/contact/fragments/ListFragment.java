@@ -79,7 +79,8 @@ public abstract class ListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRequestClick(String name);
+        void onReceivedRequestClick(String name);
+        void onSentRequestClick(String name);
     }
 
 }
