@@ -3,6 +3,11 @@ Let your contacts update their contact info in your address book so you don't ha
 
 Required user stories for Sprint 1:
  * [x] Create an account 
+	* [x] Allow user to create user name and password
+	* [x] Display AccountPicker
+	* [x] Request permissions to read/write user's Google Contacts
+	* [x] Create Parse account for user
+	* [x] Store Parse login info in shared preferences for future logins
  * [x] Create your profile
    * Allow user to upload photo (optional)
    * [x] Allow user to enter name, phone#, email, address, etc.
@@ -33,3 +38,9 @@ Required user stories for Sprint 1:
    * Send your calls to a number based on where you are (advanced)
    
 [Wireframes](http://contactpush.github.io./)
+
+Walkthrough of all user stories:
+
+![Video Walkthrough](Contact.gif)
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
