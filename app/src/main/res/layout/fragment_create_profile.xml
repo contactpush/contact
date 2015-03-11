@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codepath.contact.fragments.CreateProfileFragment">
+
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:src="@android:drawable/alert_dark_frame"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:id="@+id/btDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/etFirstName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/btDone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/first_name"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/etMiddleName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/etFirstName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/middle_name"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/etLastName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/etMiddleName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/last_name"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/etCompany"
+        android:layout_below="@+id/etLastName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/company"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/spPhoneType"
+        android:layout_below="@+id/etCompany"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/contact_types"/>
+
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_toRightOf="@+id/spPhoneType"
+        android:layout_below="@+id/etCompany"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:hint="@string/phone"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/spEmailType"
+        android:layout_below="@+id/etPhone"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/contact_types"/>
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_toRightOf="@+id/spEmailType"
+        android:layout_below="@+id/etPhone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/spAddressType"
+        android:layout_below="@+id/etEmail"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/contact_types"/>
+
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_toRightOf="@+id/spAddressType"
+        android:layout_below="@+id/etEmail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
+        android:hint="@string/postal_address"
+        android:layout_margin="5dp"/>
+
+    <Spinner
+        android:id="@+id/spSocialProfileType"
+        android:layout_below="@+id/etAddress"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/contact_types"/>
+
+    <EditText
+        android:id="@+id/etSocialProfile"
+        android:layout_toRightOf="@+id/spSocialProfileType"
+        android:layout_below="@+id/etAddress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/social_profile"
+        android:layout_margin="5dp"/>
+</RelativeLayout>

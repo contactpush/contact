@@ -127,7 +127,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_create_profile) {
             return true;
         }
         return super.onOptionsItemSelected(item);

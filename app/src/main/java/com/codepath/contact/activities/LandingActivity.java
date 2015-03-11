@@ -75,7 +75,8 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
             return true;
         }
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_create_profile) {
+            createProfileButtonPressed();
             return true;
         }
 
@@ -85,6 +86,10 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     public void addContactButtonPressed(){
         //go to AddContactActivity
         startActivityForResult(new Intent(this, AddContactActivity.class), LandingActivity.ADD_USER);
+    }
+
+    public void createProfileButtonPressed(){
+        startActivity(new Intent(this, ProfileActivity.class));
     }
 
     @Override
@@ -149,9 +154,9 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
-        final byte CONTACTS = 0;
-        final byte INBOX = 1;
-        final byte SENT = 2;
+        final int CONTACTS = 0;
+        final int INBOX = 1;
+        final int SENT = 2;
         private final String[] tabTitles = {"Contacts", "Inbox", "Sent"};
 
         public ContactPagerAdapter(FragmentManager fm) {
