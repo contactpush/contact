@@ -23,6 +23,14 @@ public class WelcomeFragment extends Fragment {
     private InitialAppStartupListener listener;
 
     public interface InitialAppStartupListener{
+        /**
+         * A method to communicate to the LoginActivity whether
+         * this user exists (true), or doesn't (false).  If the
+         * user exists, the LoginActivity takes the user to the
+         * LandingActivity.  Otherwise it takes the user through
+         * the CreateAccount process.
+         * @param success true if the user exists, false if not.
+         */
         void onFinishedLoading(boolean success);
     }
 
@@ -51,6 +59,12 @@ public class WelcomeFragment extends Fragment {
 
         if (userName == null || password == null) {
             listener.onFinishedLoading(false);
+            return;
+        }
+
+        // if these don't exist, the the user must be new to our app
+        if (userName == null || password == null) {
+            listener.onFinishedLoading(false); // tell Activity to direct user to create account
             return;
         }
 

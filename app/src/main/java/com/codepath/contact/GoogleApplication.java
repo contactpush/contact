@@ -53,6 +53,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         ParseACL defaultACL = new ParseACL();
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);
+        defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
         // register device for push notifications by subscribing to a particular channel
@@ -69,6 +70,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
     }
 
     public static void signIntoParse(String userName, String password, final ParseLoginListener listener){
+        Log.w(TAG, "trying to sign into parse");
         ParseUser.logInInBackground(userName, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {

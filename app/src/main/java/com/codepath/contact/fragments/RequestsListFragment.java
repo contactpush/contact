@@ -21,12 +21,20 @@ import java.util.List;
 
 public class RequestsListFragment extends ListFragment {
     private static final String TAG = "RequestsListFragment";
+    private Type type;
+    public enum Type {
+        INBOX ("to"),
+        SENT ("from");
+        final String direction;
 
-    private boolean isLookingForReceivedRequests = true;
+        Type(String direction){
+            this.direction = direction;
+        }
+    }
 
-    public static RequestsListFragment newInstance(boolean forReceivedRequests) {
+    public static RequestsListFragment newInstance(Type type) {
         RequestsListFragment fragment = new RequestsListFragment();
-        fragment.isLookingForReceivedRequests = forReceivedRequests;
+        fragment.type = type;
         return fragment;
     }
 
@@ -46,19 +54,35 @@ public class RequestsListFragment extends ListFragment {
     }
 
     private void setUpOnClickListener(){
-        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 AddressBookEntry abe = contactsAdapter.getItem(position);
                 String name = abe.getName();
-                mListener.onRequestClick(name);
+                if(abe.getRequest() == null){
+                    Log.e(TAG, "No request object in address book entry - can't interact with it!");
+                    return;
+                }
+
+                if(RequestsListFragment.this.type == Type.INBOX){
+                    mListener.onReceivedRequestClick(abe.getRequest());
+                }
+
+                if(RequestsListFragment.this.type == Type.SENT){
+                    mListener.onSentRequestClick(abe.getRequest());
+                }
             }
         });
     }
 
+    public void refreshList(){
+        this.contactsAdapter.clear();
+        this.populateList();
+    }
+
     private void populateList(){
         final ParseQuery<ParseObject> request = ParseQuery.getQuery("Request");
-        request.whereEqualTo(isLookingForReceivedRequests ? "to" : "from", userName);
+        request.whereEqualTo(type.direction, userName); // direction "to" or "from"
         request.whereEqualTo("approved", false);
         request.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> requests, ParseException e) {
@@ -80,6 +104,7 @@ public class RequestsListFragment extends ListFragment {
         AddressBookEntry a = new AddressBookEntry();
         a.setName(request.getFromName());
         a.setEmail(request.getTo()); // isn't really email, but will do for now...
+        a.setRequest(request); // shouldn't be stored in the address book entry, but necessary to be able to accept/reject/delete it for now until the requestlist isn't the same as the contactslist
         contactsAdapter.add(a);
     }
 

@@ -1,14 +1,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codepath.contact.fragments.RequestFragment">
+    tools:context="com.codepath.contact.fragments.RequestInteractionFragment">
+
+    <TextView android:id="@+id/tvRequestFragmentTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="26dp"
+        android:text="contact request"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:paddingBottom="6dp"
+        android:paddingTop="4dp"
+        android:background="#ff976efa"
+        android:textColor="#000000"
+        />
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
-        android:layout_centerHorizontal="true"/>
+        tools:text="Name text view"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvRequestFragmentTitle"
+        />
 
     <LinearLayout
         android:id="@+id/llButtons"
@@ -19,19 +35,19 @@
         android:layout_centerHorizontal="true">
 
         <Button
-            android:id="@+id/btAccept"
-            android:layout_width="150dp"
-            android:layout_height="60dp"
-            android:layout_margin="10dp"
-            android:text="@string/accept"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/btDecline"
+            android:id="@+id/btnLeft"
             android:layout_width="150dp"
             android:layout_height="60dp"
             android:layout_margin="10dp"
             android:text="@string/decline"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btnRight"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:text="@string/accept"
             android:layout_weight="1"/>
 
         </LinearLayout>

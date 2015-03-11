@@ -23,5 +23,20 @@
     <string name="lower_username">username</string>
     <string name="password">Password</string>
     <string name="lower_password">password</string>
+    <string name="title_activity_create_profile">CreateProfileActivity</string>
+    <string name="done">Done</string>
+    <string name="first_name">First Name</string>
+    <string name="middle_name">Middle Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="company">Company</string>
+    <string name="create_profile">Create Profile</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="postal_address">Address</string>
+    <string name="social_profile">Social Profile</string>
+    <string name="close">Close</string>
+    <string name="revoke">Revoke</string>
+    <string name="edit_profile">edit profile</string>
+    <string name="EditProfile">Edit Profile</string>
 
 </resources>

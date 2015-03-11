@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.ContactsAdapter;
 import com.codepath.contact.models.AddressBookEntry;
+import com.codepath.contact.models.Request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,8 @@ public abstract class ListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRequestClick(String name);
+        void onReceivedRequestClick(Request request);
+        void onSentRequestClick(Request request);
     }
 
 }

@@ -16,24 +16,27 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
 import com.codepath.contact.fragments.ContactsListFragment;
-import com.codepath.contact.fragments.RequestFragment;
+import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
+import com.codepath.contact.fragments.RequestInteractionFragment;
 import com.codepath.contact.fragments.RequestsListFragment;
+import com.codepath.contact.fragments.SentRequestInteractionFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.List;
+
 public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
-        OnAuthTokenResolvedListener{
+        OnAuthTokenResolvedListener, RequestInteractionFragment.RequestInteractionFragmentListener{
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
 
     private ViewPager vpPager;
-    private ContactPagerAdapter contactPagerAdapter;
-    private ContactsListFragment contactsListFragment;
-    private RequestsListFragment requestsListFragment;
-    private RequestsListFragment sentRequestsListFragment;
+    private ContactPagerAdapter pagerAdapter;
 
     private ProgressBar pb;
     private Toolbar toolbar;
@@ -47,9 +50,10 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         setSupportActionBar(toolbar);
 
         pb = (ProgressBar) findViewById(R.id.pbLoading);
+
         vpPager = (ViewPager) findViewById(R.id.viewpager);
-        contactPagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(contactPagerAdapter);
+        pagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(pagerAdapter);
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
     }
@@ -73,7 +77,8 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
             return true;
         }
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_create_profile) {
+            createProfileButtonPressed();
             return true;
         }
 
@@ -85,20 +90,36 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         startActivityForResult(new Intent(this, AddContactActivity.class), LandingActivity.ADD_USER);
     }
 
+    public void createProfileButtonPressed(){
+        startActivity(new Intent(this, ProfileActivity.class));
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == LandingActivity.ADD_USER){
             switch(resultCode){
                 case AddContactActivity.SUCCESSFUL_REQUEST:
-                    String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
-                    Request request;
-                    try{
-                        // TODO may want to make query use findInBackground
-                        request = (Request) ParseQuery.getQuery("Request").whereMatches("objectId", requestId).find().get(0);
-                        sentRequestsListFragment.addRequestToList(request);
-                    }catch(ParseException e){
-                        e.printStackTrace();
-                    }
+                    final String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
+
+                    ParseQuery.getQuery("Request").whereMatches("objectId", requestId)
+                            .findInBackground(new FindCallback<ParseObject>(){
+                                @Override
+                                public void done(List<ParseObject> parseObjects, ParseException e){
+
+                                    if(parseObjects != null && parseObjects.size() > 0){
+                                        Request request = (Request) parseObjects.get(0);
+                                        ((RequestsListFragment) pagerAdapter
+                                                .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
+                                        return;
+                                    }
+
+                                    Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
+
+                                    if(e != null){
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                }
+                            });
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:
@@ -119,22 +140,43 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
     }
 
     @Override
-    public void onRequestClick(String name) {
-        RequestFragment requestFragment = RequestFragment.newInstance(name);
-        requestFragment.show(getSupportFragmentManager(), "fragment_request");
+    public void onReceivedRequestClick(Request request) {
+        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(request);
+        receivedRequestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
+    }
+
+    @Override
+    public void onSentRequestClick(Request request) {
+        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(request);
+        requestInteractionFragment.show(getSupportFragmentManager(), "fragment_sent_request");
+    }
+
+    @Override
+    public void shouldUpdateRequestList(RequestsListFragment.Type whichList){
+        switch(whichList){
+            case INBOX:
+                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.INBOX)).refreshList();
+                break;
+            case SENT:
+                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
+                break;
+        }
     }
 
     @Override
     public void receiveAuthToken(String token) {
-        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).receiveAuthToken(token);
+        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).receiveAuthToken(token);
     }
 
     @Override
     public void handleAuthTokenException(Exception e) {
-        ((OnAuthTokenResolvedListener) contactPagerAdapter.getRegisteredFragment(0)).handleAuthTokenException(e);
+        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).handleAuthTokenException(e);
     }
 
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
+        final int CONTACTS = 0;
+        final int INBOX = 1;
+        final int SENT = 2;
         private final String[] tabTitles = {"Contacts", "Inbox", "Sent"};
 
         public ContactPagerAdapter(FragmentManager fm) {
@@ -144,14 +186,11 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return LandingActivity.this.contactsListFragment =  ContactsListFragment.newInstance(); // frag 1
+                return ContactsListFragment.newInstance(); // CONTACTS
             } else if (position == 1) {
-                return LandingActivity.this.requestsListFragment = RequestsListFragment.newInstance(true); // frag 2
+                return RequestsListFragment.newInstance(RequestsListFragment.Type.INBOX);
             } else if(position == 2){
-                // TODO When I try to add a user without scrolling to the "Sent" tab first, I get a NPE because this view
-                // hasn't been created yet.  Need to make sure sentRequestsListFragment is not null prior to using it
-                // in onActivityResult.
-                return LandingActivity.this.sentRequestsListFragment = RequestsListFragment.newInstance(false);
+                return RequestsListFragment.newInstance(RequestsListFragment.Type.SENT);
             }
             Log.e(TAG, "frag index not found");
             return null;
