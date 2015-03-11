@@ -1,11 +1,11 @@
 # contact
 Let your contacts update their contact info in your address book so you don't have to.
 
-Required user stories for Sprint 1:
+User stories:
  * [x] Create an account 
 	* [x] Allow user to create user name and password
 	* [x] Display AccountPicker
-	* [x] Request permissions to read/write user's Google Contacts
+	* [x] Request permissions to read/write user's Google Contacts and aquire Google OAuth token
 	* [x] Create Parse account for user
 	* [x] Store Parse login info in shared preferences for future logins
  * [x] Create your profile
