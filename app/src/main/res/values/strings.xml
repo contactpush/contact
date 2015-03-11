@@ -34,5 +34,7 @@
     <string name="email">Email</string>
     <string name="postal_address">Address</string>
     <string name="social_profile">Social Profile</string>
+    <string name="close">Close</string>
+    <string name="revoke">Revoke</string>
 
 </resources>

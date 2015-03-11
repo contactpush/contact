@@ -80,6 +80,7 @@ public abstract class ListFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onRequestClick(String name);
+        void onSentRequestClick(String name);
     }
 
 }

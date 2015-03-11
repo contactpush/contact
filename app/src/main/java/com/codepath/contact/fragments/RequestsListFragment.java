@@ -54,12 +54,19 @@ public class RequestsListFragment extends ListFragment {
     }
 
     private void setUpOnClickListener(){
-        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 AddressBookEntry abe = contactsAdapter.getItem(position);
                 String name = abe.getName();
-                mListener.onRequestClick(name);
+
+                if(RequestsListFragment.this.type == Type.INBOX){
+                    mListener.onRequestClick(name);
+                }
+
+                if(RequestsListFragment.this.type == Type.SENT){
+                    mListener.onSentRequestClick(name);
+                }
             }
         });
     }
