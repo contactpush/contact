@@ -56,11 +56,12 @@ public class WelcomeFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE);
         String userName = prefs.getString(USERNAME, null);
         String password = prefs.getString(PASSWORD, null);
+        Log.d(TAG, "Found user/pw from shared prefs. usr: " + userName + ", pw: " + password);
 
-        if (userName == null || password == null) {
-            listener.onFinishedLoading(false);
-            return;
-        }
+        //testing...
+        //deleteExistingAccount();
+        //userName = null;
+        //password = null;
 
         // if these don't exist, the the user must be new to our app
         if (userName == null || password == null) {
@@ -75,6 +76,15 @@ public class WelcomeFragment extends Fragment {
                 listener.onFinishedLoading(success);
             }
         });
+    }
+
+    // using this for testing
+    private void deleteExistingAccount(){
+        SharedPreferences.Editor editor =
+                getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+        editor.remove(USERNAME);
+        editor.remove(PASSWORD);
+        editor.commit();
     }
 
     @Override

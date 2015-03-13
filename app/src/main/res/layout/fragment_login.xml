@@ -61,13 +61,27 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
 
-    <Button
-        android:id="@+id/btCreateAccount"
+    <LinearLayout
         android:layout_below="@+id/etPassword"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/create_account"
-        android:layout_margin="10dp" />
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btLogin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/login_label"
+            android:layout_margin="10dp" />
+
+        <Button
+            android:id="@+id/btCreateAccount"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/create_account"
+            android:layout_margin="10dp" />
+        </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pbLoading"

@@ -20,11 +20,11 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
+<!--
     <permission android:protectionLevel="signature"
         android:name="com.codepath.contact.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.codepath.contact.permission.C2D_MESSAGE" />
-
+-->
     <application
         android:name=".GoogleApplication"
         android:allowBackup="true"
@@ -87,7 +87,7 @@
             android:name=".activities.AddContactActivity"
             android:label="@string/title_activity_add_contact" >
         </activity>
-
+<!--
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
@@ -112,6 +112,8 @@
             </intent-filter>
         </receiver>
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/ic_push_icon"/>
+        -->
+
         <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_create_profile" >

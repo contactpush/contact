@@ -21,7 +21,7 @@ User stories:
    * Allow user to sort by frequently contacted or recently contacted (optional)
  * Contact management
    * [x] Accept/Decline an invite to share info
-   * Revoke or delete a connection (optional)
+   * [x] Revoke or delete a connection (optional)
    * Share your profile via email or text (optional)
    * Share via QR code (advanced)
    * Build "business card" widget for easy sharing  (advanced)

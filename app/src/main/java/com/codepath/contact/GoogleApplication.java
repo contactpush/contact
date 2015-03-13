@@ -12,9 +12,7 @@ import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 public class GoogleApplication extends com.activeandroid.app.Application {
@@ -47,7 +45,6 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         // Add your initialization code here
         Parse.initialize(this, "uXNe2kO8BuPKGuhLNF4zhMH1VD2YyIVPfjn5h9ZM", "plrTKpseHWkO1eLnn0OzMrV1lnhdv6DRRY8brqlS");
 
-
         //ParseUser.enableAutomaticUser();
         //ParseUser.getCurrentUser().saveInBackground();
         ParseACL defaultACL = new ParseACL();
@@ -55,9 +52,11 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+    }
 
+    private static void subscribeToPush(){
         // register device for push notifications by subscribing to a particular channel
-        ParsePush.subscribeInBackground("", new SaveCallback() {
+       /* ParsePush.subscribeInBackground("", new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
@@ -66,17 +65,24 @@ public class GoogleApplication extends com.activeandroid.app.Application {
                     Log.e("com.parse.push", "failed to subscribe for push", e);
                 }
             }
-        });
+        });*/
     }
 
     public static void signIntoParse(String userName, String password, final ParseLoginListener listener){
-        Log.w(TAG, "trying to sign into parse");
+        Log.d(TAG, "trying to sign into parse with username: " + userName + " and password: " + password);
         ParseUser.logInInBackground(userName, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
-                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    /*ParseInstallation installation = ParseInstallation.getCurrentInstallation();
                     installation.put("username", user.getUsername());
-                    installation.saveInBackground();
+                    installation.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            Log.d(TAG, "done saving installation");
+                            subscribeToPush();
+                            Log.d(TAG, "done subscribing");
+                        }
+                    }); */
 
                     Log.d(TAG, "Login successful");
                     listener.onLoginResponse(true);
@@ -90,6 +96,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
 
     public static void signUpWithParse(String userName, String password,
                                 String email, final ParseAccountCreationListener listener){
+        Log.d(TAG, "trying to sign up with parse, username: " + userName + " and password: " + password);
         ParseUser user = new ParseUser();
         user.setUsername(userName);
         user.setPassword(password);

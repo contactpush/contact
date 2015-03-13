@@ -21,7 +21,7 @@ import com.google.android.gms.common.AccountPicker;
 
 public class CreateAccountFragment extends Fragment {
     private GoogleApplication.ParseAccountCreationListener listener;
-    private static final String TAG = "LoginFragment";
+    private static final String TAG = "CreateAccountFragment";
     private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
     private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
@@ -60,6 +60,15 @@ public class CreateAccountFragment extends Fragment {
             public void onClick(View v) {
                 if (validateCredentials()) {
                     getUserAccount();
+                }
+            }
+        });
+        Button btLogin = (Button) v.findViewById(R.id.btLogin);
+        btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateCredentials()) {
+                    signIntoParse();
                 }
             }
         });
@@ -107,8 +116,29 @@ public class CreateAccountFragment extends Fragment {
                             editor.putString(USERNAME, userName);
                             editor.putString(PASSWORD, password);
                             editor.commit();
-                            listener.onAccountCreationResponse(success);
                             Log.d(TAG, "done signing up user with parse...");
+                            listener.onAccountCreationResponse(success);
+                        } else {
+                            listener.onAccountCreationResponse(success);
+                        }
+                    }
+                });
+    }
+
+    public void signIntoParse(){
+        GoogleApplication.signIntoParse(userName, password,
+                new GoogleApplication.ParseLoginListener() {
+                    @Override
+                    public void onLoginResponse(boolean success) {
+                        if (success) {
+                            // production version should use a more secure storage space for password
+                            SharedPreferences.Editor editor =
+                                    getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+                            editor.putString(USERNAME, userName);
+                            editor.putString(PASSWORD, password);
+                            editor.commit();
+                            Log.d(TAG, "done signing up user with parse...");
+                            listener.onAccountCreationResponse(success);
                         } else {
                             listener.onAccountCreationResponse(success);
                         }
@@ -138,6 +168,7 @@ public class CreateAccountFragment extends Fragment {
                 requestCode == REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR)
                 && resultCode == getActivity().RESULT_OK) {
             // Receiving a result that follows a GoogleAuthException, try auth again
+            Log.e(TAG, "Received recoverable error code from Google auth.");
             getUserAccount();
         }
     }

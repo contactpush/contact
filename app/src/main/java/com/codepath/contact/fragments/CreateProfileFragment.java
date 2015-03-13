@@ -94,6 +94,7 @@ public class CreateProfileFragment extends Fragment {
 
         // TODO figure out how to save spinner's position
         //c.setPhoneType(spPhoneType.get);
+        spPhoneType.getSelectedItem().toString();
         c.setPhone(etPhone.getText().toString());
         c.setEmail(etEmail.getText().toString());
         c.setAddress(etAddress.getText().toString());

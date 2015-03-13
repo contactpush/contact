@@ -1,6 +1,7 @@
 package com.codepath.contact.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,6 +41,10 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
 
     private ProgressBar pb;
     private Toolbar toolbar;
+
+    private static final String CONTACT_PREFERENCES = "ContactPreferences";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,22 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
             return true;
         }
 
+        if (id == R.id.action_log_out) {
+            Log.d(TAG, "log out button pressed.");
+            logOut();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logOut(){
+        SharedPreferences.Editor editor =
+                getSharedPreferences(CONTACT_PREFERENCES, MODE_PRIVATE).edit();
+        editor.remove(USERNAME);
+        editor.remove(PASSWORD);
+        editor.commit();
+        finish();
     }
 
     public void addContactButtonPressed(){

@@ -22,7 +22,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         WelcomeFragment.InitialAppStartupListener, GoogleApplication.ParseAccountCreationListener {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    private CreateAccountFragment loginFragment;
+    private CreateAccountFragment createAccountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +53,9 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
             startMainActivity();
             finish();
         } else {
-            loginFragment = CreateAccountFragment.newInstance();
+            createAccountFragment = CreateAccountFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flLogin, loginFragment);
+            transaction.replace(R.id.flLogin, createAccountFragment);
             transaction.commit();
         }
     }
@@ -68,7 +68,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
      */
     @Override
     public void receiveAuthToken(String token) {
-        loginFragment.signUpUserWithParse();
+        createAccountFragment.signUpUserWithParse();
     }
 
     /**
@@ -84,7 +84,9 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
             startMainActivity();
             finish();
         } else {
-            Toast.makeText(LoginActivity.this, "Parse Account Creation failed.", Toast.LENGTH_LONG).show();
+            String errorMessage = "Parse Account Creation failed.";
+            Log.e(TAG, errorMessage);
+            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
         }
     }
 

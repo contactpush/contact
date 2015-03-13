@@ -38,5 +38,6 @@
     <string name="revoke">Revoke</string>
     <string name="edit_profile">edit profile</string>
     <string name="EditProfile">Edit Profile</string>
+    <string name="log_out">Log Out</string>
 
 </resources>
