@@ -118,9 +118,11 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
                     Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
                         @Override
                         public void receiveRequest(Request request) {
+                            //int currentPosition = vpPager.getCurrentItem();
                             vpPager.setCurrentItem(pagerAdapter.SENT);
                             ((SentListFragment) pagerAdapter
                                     .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
+                            //vpPager.setCurrentItem(currentPosition);
                         }
                     });
                     break;
@@ -162,7 +164,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
 
     @Override
     public void updateSent(){
-        ((InboxListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
+        ((SentListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
     }
 
     @Override

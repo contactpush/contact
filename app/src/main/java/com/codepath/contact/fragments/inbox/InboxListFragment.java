@@ -39,12 +39,7 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
         });
     }
 
-    public void refreshList(){
-        this.requestsAdapter.clear();
-        this.populateList();
-    }
-
-    private void populateList(){
+    protected void populateList(){
         Request.getRequestsInBackground(ParseUser.getCurrentUser().getUsername(), new Request.OnRequestsReturnedListener() {
             @Override
             public void receiveRequests(List<Request> requests) {

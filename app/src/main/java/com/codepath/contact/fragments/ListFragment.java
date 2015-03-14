@@ -41,5 +41,12 @@ public abstract class ListFragment extends Fragment {
         else Log.d(TAG, "guess what, requestsAdapter is null...");
     }
 
+    public void refreshList(){
+        this.requestsAdapter.clear();
+        this.populateList();
+    }
+
     protected abstract void setUpOnClickListener();
+
+    protected abstract void populateList();
 }

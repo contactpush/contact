@@ -23,7 +23,7 @@ public class SentListFragment extends ListFragment {
         populateList();
     }
 
-    private void populateList() {
+    protected void populateList() {
         Request.getSentRequestsInBackground(ParseUser.getCurrentUser().getUsername(), new Request.OnRequestsReturnedListener() {
             @Override
             public void receiveRequests(List<Request> requests) {
