@@ -9,19 +9,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.contact.R;
-import com.codepath.contact.models.AddressBookEntry;
+import com.codepath.contact.models.ContactInfo;
 
 import java.util.List;
 
-public class ContactsAdapter extends ArrayAdapter<AddressBookEntry> {
+public class ContactsAdapter extends ArrayAdapter<ContactInfo> {
 
-    public ContactsAdapter(Context context, List<AddressBookEntry> objects) {
+    public ContactsAdapter(Context context, List<ContactInfo> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final AddressBookEntry contact = getItem(position);
+        final ContactInfo contact = getItem(position);
         ViewHolder viewHolder;
         if (null == convertView) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_contact, parent, false);
@@ -32,8 +32,7 @@ public class ContactsAdapter extends ArrayAdapter<AddressBookEntry> {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvName.setText((contact.getName() != null && contact.getName().length() > 0)
-                    ? contact.getName() : contact.getEmail());
+        viewHolder.tvName.setText(contact.getName());
         return convertView;
     }
 

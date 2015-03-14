@@ -57,7 +57,7 @@ public class RequestsListFragment extends ListFragment {
         lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                AddressBookEntry abe = contactsAdapter.getItem(position);
+                AddressBookEntry abe =  null;//contactsAdapter.getItem(position);
                 String name = abe.getName();
                 if(abe.getRequest() == null){
                     Log.e(TAG, "No request object in address book entry - can't interact with it!");
@@ -101,11 +101,11 @@ public class RequestsListFragment extends ListFragment {
     }
 
     public void addRequestToList(Request request){
-        AddressBookEntry a = new AddressBookEntry();
+       /* AddressBookEntry a = new AddressBookEntry();
         a.setName(request.getFromName());
         a.setEmail(request.getTo()); // isn't really email, but will do for now...
         a.setRequest(request); // shouldn't be stored in the address book entry, but necessary to be able to accept/reject/delete it for now until the requestlist isn't the same as the contactslist
-        contactsAdapter.add(a);
+        contactsAdapter.add(a);*/
     }
 
     // I was just using this for testing...

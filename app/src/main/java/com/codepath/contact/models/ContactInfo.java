@@ -1,22 +1,85 @@
 package com.codepath.contact.models;
 
+import android.util.Log;
+
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * Models the contact info we have for this user in parse.
  */
 @ParseClassName("ContactInfo")
 public class ContactInfo extends ParseObject {
-    public static final String CONTACT_INFO_TABLE_NAME = "contact_info";
+    private static final String TAG = "ContactInfo";
+    public static final String CONTACT_INFO_TABLE_NAME = "contactInfo";
+
+    public interface OnContactsReturnedListener{
+        void receiveContacts(List<ContactInfo> contactInfos);
+    }
+
+    public static void getContacts(final OnContactsReturnedListener listener){
+        ParseRelation<ContactInfo> contactsQuery = ParseUser.getCurrentUser().getRelation("contacts");
+        contactsQuery.getQuery().findInBackground(new FindCallback<ContactInfo>() {
+            @Override
+            public void done(List<ContactInfo> contactInfos, ParseException e) {
+                if (e == null){
+                    Log.d(TAG, "found " + contactInfos.size() + " contacts");
+                    listener.receiveContacts(contactInfos);
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+
+/*
+
+        ParseQuery<ParseObject> request = ParseQuery.getQuery(TAG);
+        final ParseUser user = ParseUser.getCurrentUser();
+        final ParseRelation<ParseObject> relation = user.getRelation("contacts");
+        request.getInBackground("sex7eA37Eo", new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                Log.d(TAG, "Taylor, done with requests");
+                if(e == null){
+                    if(parseObject != null){
+                        ContactInfo c = (ContactInfo) parseObject;
+                        Log.d(TAG, "Name: " + c.getName());
+                        relation.add(c);
+                        user.saveInBackground();
+                    }
+                }else{
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
+       /* request.findInBackground(new FindCallback<ParseObject>(){
+            public void done(List<ParseObject> requests, ParseException e){
+                if(e == null){
+                    Log.d(TAG, "Taylor, Retrieved " + requests.size() + " requests");
+                    if(requests.size() > 0){
+                        ContactInfo c = (ContactInfo) requests.get(0);
+                        Log.d(TAG, "Name: " + c.getName());
+                    }
+                }else{
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });*/
+    }
+
 
     public String getUserId() {
         return getString("userId");
     }
 
-    // TODO refactor to concat first, middle, last
     public String getName() {
-        return getString("name");
+        return getFirstName() + " " + getLastName();
     }
 
     public String getFirstName() {

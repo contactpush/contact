@@ -39,8 +39,7 @@ public abstract class ListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
-        contactsAdapter = new ContactsAdapter(getActivity(), contacts);
+        //contactsAdapter = new ContactsAdapter(getActivity(), contacts);
     }
 
     @Override
@@ -49,6 +48,7 @@ public abstract class ListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         lvContacts = (ListView) v.findViewById(R.id.lvContacts);
         lvContacts.setAdapter(contactsAdapter);
+        pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
         return v;
     }
 

@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
+import com.codepath.contact.fragments.Contacts;
 import com.codepath.contact.fragments.ContactsListFragment;
 import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
 import com.codepath.contact.fragments.RequestInteractionFragment;
@@ -206,7 +207,7 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return ContactsListFragment.newInstance(); // CONTACTS
+                return Contacts.newInstance(); // CONTACTS
             } else if (position == 1) {
                 return RequestsListFragment.newInstance(RequestsListFragment.Type.INBOX);
             } else if(position == 2){

@@ -126,7 +126,7 @@ public class ContactsListFragment extends ListFragment implements OnAuthTokenRes
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
                 AddressBook ab = AddressBook.getAddressBook(jsonObject);
-                contactsAdapter.addAll(ab.getAddressBook());
+                //contactsAdapter.addAll(ab.getAddressBook());
                 if (ab != null) {
                     Log.d(TAG, ab.toString());
                 } else {

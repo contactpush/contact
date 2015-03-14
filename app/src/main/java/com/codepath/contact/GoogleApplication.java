@@ -10,7 +10,6 @@ import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -104,9 +103,9 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    /*ParseInstallation installation = ParseInstallation.getCurrentInstallation();
                     installation.put("username", ParseUser.getCurrentUser().getUsername());
-                    installation.saveInBackground();
+                    installation.saveInBackground();*/
 
                     Log.d(TAG, "SignUp successful");
                     listener.onAccountCreationResponse(true);
