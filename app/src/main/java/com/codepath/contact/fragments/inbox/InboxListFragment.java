@@ -1,4 +1,4 @@
-package com.codepath.contact.fragments;
+package com.codepath.contact.fragments.inbox;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,13 +6,14 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.codepath.contact.adapters.InboxAdapter;
+import com.codepath.contact.fragments.ListFragment;
 import com.codepath.contact.models.Request;
 import com.parse.ParseUser;
 
 import java.util.List;
 
 public class InboxListFragment extends ListFragment implements Request.OnRequestsReturnedListener {
-    private static final String TAG = "RequestsListFragment";
+    private static final String TAG = "InboxListFragment";
     private OnRequestListFragListener listener;
 
     @Override
@@ -28,7 +29,7 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
     }
 
     @Override
-    void setUpOnClickListener(){
+    public void setUpOnClickListener(){
         lvRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -50,10 +51,6 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
                 requestsAdapter.addAll(requests);
             }
         });
-    }
-
-    public void addRequestToList(Request request){
-        requestsAdapter.add(request);
     }
 
     @Override

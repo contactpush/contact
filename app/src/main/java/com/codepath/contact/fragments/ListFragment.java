@@ -3,6 +3,7 @@ package com.codepath.contact.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ListFragment extends Fragment {
-    ListView lvRequests;
-    ProgressBar pb;
-    SwipeRefreshLayout swipeContainer;
-    RequestsAdapter requestsAdapter;
-    List<Request> requests = new ArrayList<>();
+    private static final String TAG = "ListFragment";
+    protected ListView lvRequests;
+    protected ProgressBar pb;
+    protected SwipeRefreshLayout swipeContainer;
+    protected RequestsAdapter requestsAdapter;
+    protected List<Request> requests = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,5 +36,10 @@ public abstract class ListFragment extends Fragment {
         return v;
     }
 
-    abstract void setUpOnClickListener();
+    public void addRequestToList(Request request){
+        if (requestsAdapter != null) requestsAdapter.add(request);
+        else Log.d(TAG, "guess what, requestsAdapter is null...");
+    }
+
+    protected abstract void setUpOnClickListener();
 }

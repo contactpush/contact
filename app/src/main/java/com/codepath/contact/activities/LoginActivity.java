@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
-import com.codepath.contact.fragments.CreateAccountFragment;
-import com.codepath.contact.fragments.WelcomeFragment;
+import com.codepath.contact.fragments.login.CreateAccountFragment;
+import com.codepath.contact.fragments.login.WelcomeFragment;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;

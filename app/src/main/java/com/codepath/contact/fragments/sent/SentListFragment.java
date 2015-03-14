@@ -1,4 +1,4 @@
-package com.codepath.contact.fragments;
+package com.codepath.contact.fragments.sent;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.codepath.contact.adapters.SentAdapter;
+import com.codepath.contact.fragments.ListFragment;
 import com.codepath.contact.models.Request;
 import com.parse.ParseUser;
 
@@ -32,7 +33,7 @@ public class SentListFragment extends ListFragment {
     }
 
     @Override
-    void setUpOnClickListener() {
+    protected void setUpOnClickListener() {
         lvRequests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -42,10 +42,11 @@ public class Request extends ParseObject {
                                                final OnRequestsReturnedListener listener){
         Log.d(TAG, String.format("select * from %s where %s = %s and approved = false",
                 REQUESTS_TABLE_NAME, direction, userName));
-        final ParseQuery<Request> request = ParseQuery.getQuery(REQUESTS_TABLE_NAME);
-        request.whereEqualTo(direction, userName); // direction "to" or "from"
-        request.whereEqualTo("approved", false);
-        request.findInBackground(new FindCallback<Request>() {
+        final ParseQuery<Request> requestQuery = ParseQuery.getQuery(REQUESTS_TABLE_NAME);
+        requestQuery.include("fromUser");
+        requestQuery.whereEqualTo(direction, userName); // direction "to" or "from"
+        requestQuery.whereEqualTo("approved", false);
+        requestQuery.findInBackground(new FindCallback<Request>() {
             public void done(List<Request> requests, ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "Retrieved " + requests.size() + " requests");
@@ -61,10 +62,11 @@ public class Request extends ParseObject {
         Log.d(TAG, String.format("select * from %s where objectId = %s",
                 REQUESTS_TABLE_NAME, objectId));
         ParseQuery<Request> requestQuery = ParseQuery.getQuery(REQUESTS_TABLE_NAME);
+        requestQuery.include("fromUser");
         requestQuery.getInBackground(objectId, new GetCallback<Request>() {
             @Override
             public void done(Request request, ParseException e) {
-                if (e == null) {
+                if (e == null && request != null) {
                     listener.receiveRequest(request);
                 } else {
                     Log.e(TAG, "Error getting request", e);
@@ -154,7 +156,6 @@ public class Request extends ParseObject {
                     final Request request = new Request();
                     ParseUser currentUser = ParseUser.getCurrentUser();
                     request.setFrom(currentUser.getUsername());
-
                     ContactInfo fromUser = (ContactInfo) currentUser.getParseObject(ContactInfo.CONTACT_INFO_TABLE_NAME);
                     if (fromUser != null){
                         request.setFromUser(fromUser);

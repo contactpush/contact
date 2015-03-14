@@ -1,4 +1,4 @@
-package com.codepath.contact.fragments;
+package com.codepath.contact.fragments.sent;
 
 import android.app.Activity;
 import android.os.Bundle;

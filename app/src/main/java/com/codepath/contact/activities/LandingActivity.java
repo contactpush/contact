@@ -16,11 +16,11 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
-import com.codepath.contact.fragments.ContactsListFragment;
-import com.codepath.contact.fragments.InboxListFragment;
-import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
-import com.codepath.contact.fragments.SentListFragment;
-import com.codepath.contact.fragments.SentRequestInteractionFragment;
+import com.codepath.contact.fragments.contacts.ContactsListFragment;
+import com.codepath.contact.fragments.inbox.InboxListFragment;
+import com.codepath.contact.fragments.inbox.ReceivedRequestInteractionFragment;
+import com.codepath.contact.fragments.sent.SentListFragment;
+import com.codepath.contact.fragments.sent.SentRequestInteractionFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 
@@ -84,7 +84,6 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         }
 
         if (id == R.id.action_log_out) {
-            Log.d(TAG, "log out button pressed.");
             logOut();
             return true;
         }
@@ -119,7 +118,8 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
                     Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
                         @Override
                         public void receiveRequest(Request request) {
-                            ((InboxListFragment) pagerAdapter
+                            vpPager.setCurrentItem(pagerAdapter.SENT);
+                            ((SentListFragment) pagerAdapter
                                     .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
                         }
                     });
