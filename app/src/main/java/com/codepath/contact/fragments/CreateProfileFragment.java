@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class CreateProfileFragment extends Fragment {
@@ -38,6 +40,8 @@ public class CreateProfileFragment extends Fragment {
 
     private Spinner spSocialProfileType;
     private EditText etSocialProfile;
+
+    private ContactInfo currentUser;
 
 
     public static CreateProfileFragment newInstance() {
@@ -83,23 +87,43 @@ public class CreateProfileFragment extends Fragment {
 
         spSocialProfileType = (Spinner) v.findViewById(R.id.spSocialProfileType);
         etSocialProfile = (EditText) v.findViewById(R.id.etSocialProfile);
+        setCurrentValues();
     }
 
     private void save(){
-        ContactInfo c = new ContactInfo();
-        c.setFirstName(etFirstName.getText().toString());
-        c.setMiddleName(etMiddleName.getText().toString());
-        c.setLastName(etLastName.getText().toString());
-        c.setCompany(etCompany.getText().toString());
+        currentUser.setFirstName(etFirstName.getText().toString());
+        currentUser.setMiddleName(etMiddleName.getText().toString());
+        currentUser.setLastName(etLastName.getText().toString());
+        currentUser.setCompany(etCompany.getText().toString());
 
-        // TODO figure out how to save spinner's position
-        //c.setPhoneType(spPhoneType.get);
-        spPhoneType.getSelectedItem().toString();
-        c.setPhone(etPhone.getText().toString());
-        c.setEmail(etEmail.getText().toString());
-        c.setAddress(etAddress.getText().toString());
-        c.setSocialProfile(etSocialProfile.getText().toString());
-        c.saveInBackground(new SaveCallback() {
+        if (etPhone.getText().toString() != null
+                && etPhone.getText().toString().trim().length() > 0){
+            currentUser.setPhoneType(spPhoneType.getSelectedItem().toString());
+            currentUser.setPhone(etPhone.getText().toString());
+        }
+
+        if (etEmail.getText().toString() != null
+                && etEmail.getText().toString().trim().length() > 0){
+            currentUser.setEmailType(spEmailType.getSelectedItem().toString());
+            currentUser.setEmail(etEmail.getText().toString());
+        }
+
+        if (etAddress.getText().toString() != null
+                && etAddress.getText().toString().trim().length() > 0){
+            currentUser.setAddressType(spAddressType.getSelectedItem().toString());
+            currentUser.setAddress(etAddress.getText().toString());
+        }
+
+        if (etSocialProfile.getText().toString() != null
+                && etSocialProfile.getText().toString().trim().length() > 0){
+            currentUser.setSocialProfileType(spSocialProfileType.getSelectedItem().toString());
+            currentUser.setSocialProfile(etSocialProfile.getText().toString());
+        }
+
+        ParseUser user = ParseUser.getCurrentUser();
+        user.put(ContactInfo.CONTACT_INFO_TABLE_NAME, currentUser);
+
+        user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null){
@@ -113,6 +137,44 @@ public class CreateProfileFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void setCurrentValues(){
+        ParseUser user = ParseUser.getCurrentUser();
+        currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
+        if (currentUser == null){
+            currentUser = new ContactInfo();
+        }
+        // TODO set ivProfileImage...
+        etFirstName.setText(currentUser.getFirstName());
+        etMiddleName.setText(currentUser.getMiddleName());
+        etLastName.setText(currentUser.getLastName());
+        etCompany.setText(currentUser.getCompany());
+
+        if (currentUser.getPhone() != null
+                && currentUser.getPhone().trim().length() > 0){
+            spPhoneType.setSelection(((ArrayAdapter)spPhoneType.getAdapter()).getPosition(currentUser.getPhoneType()));
+            etPhone.setText(currentUser.getPhone());
+        }
+
+        if (currentUser.getEmail() != null
+                && currentUser.getEmail().trim().length() > 0){
+            spEmailType.setSelection(((ArrayAdapter)spEmailType.getAdapter()).getPosition(currentUser.getEmailType()));
+            etEmail.setText(currentUser.getEmail());
+        }
+
+        if (currentUser.getAddress() != null
+                && currentUser.getAddress().trim().length() > 0){
+            spAddressType.setSelection(((ArrayAdapter)spAddressType.getAdapter()).getPosition(currentUser.getAddress()));
+            etAddress.setText(currentUser.getAddress());
+        }
+
+        if (currentUser.getSocialProfile() != null
+                && currentUser.getSocialProfile().trim().length() > 0){
+            spSocialProfileType.setSelection(((ArrayAdapter)spSocialProfileType.getAdapter())
+                    .getPosition(currentUser.getSocialProfile()));
+            etSocialProfile.setText(currentUser.getSocialProfile());
+        }
     }
 
    /* @Override

@@ -8,6 +8,7 @@ import com.parse.ParseObject;
  */
 @ParseClassName("ContactInfo")
 public class ContactInfo extends ParseObject {
+    public static final String CONTACT_INFO_TABLE_NAME = "contact_info";
 
     public String getUserId() {
         return getString("userId");
