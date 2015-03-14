@@ -32,6 +32,7 @@
     <string name="create_profile">Create Profile</string>
     <string name="phone">Phone</string>
     <string name="email">Email</string>
+    <string name="email_lower">email</string>
     <string name="postal_address">Address</string>
     <string name="social_profile">Social Profile</string>
     <string name="close">Close</string>

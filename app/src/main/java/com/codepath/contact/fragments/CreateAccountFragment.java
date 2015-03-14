@@ -1,8 +1,6 @@
 package com.codepath.contact.fragments;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,12 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
-import com.codepath.contact.tasks.GetAuthTokenTask;
-import com.google.android.gms.common.AccountPicker;
 
 public class CreateAccountFragment extends Fragment {
     private GoogleApplication.ParseAccountCreationListener listener;
@@ -31,12 +26,13 @@ public class CreateAccountFragment extends Fragment {
     public final static String SCOPES = "oauth2:" + PROFILE_SCOPE + " " + FULL_CONTACTS_SCOPE;
     private EditText etUserName;
     private EditText etPassword;
-    private String email;
+    private EditText etEmail;
     private static final String CONTACT_PREFERENCES = "ContactPreferences";
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private String userName;
     private String password;
+    private String email;
 
     public static CreateAccountFragment newInstance() {
         CreateAccountFragment fragment = new CreateAccountFragment();
@@ -54,12 +50,13 @@ public class CreateAccountFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
         etUserName = (EditText) v.findViewById(R.id.etUserName);
         etPassword = (EditText) v.findViewById(R.id.etPassword);
+        etEmail = (EditText) v.findViewById(R.id.etEmail);
         Button btCreateAccount = (Button) v.findViewById(R.id.btCreateAccount);
         btCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateCredentials()) {
-                    getUserAccount();
+                    signUpUserWithParse();
                 }
             }
         });
@@ -79,6 +76,11 @@ public class CreateAccountFragment extends Fragment {
     private boolean validateCredentials() {
         userName = etUserName.getText().toString().trim();
         password = etPassword.getText().toString().trim();
+        email = etEmail.getText().toString().trim();
+        if (email == null || email.length() < 2) {
+            etEmail.setError("Invalid email");
+            return false;
+        }
         if (userName == null || userName.length() < 2) {
             etUserName.setError("Invalid username");
             return false;
@@ -95,13 +97,13 @@ public class CreateAccountFragment extends Fragment {
      * This method will prompt the user to select an account
      * and then begin the request for an auth token.
      */
-    public void getUserAccount() {
+   /* public void getUserAccount() {
         Log.d(TAG, "getting auth token...");
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                 accountTypes, false, null, null, null, null);
         startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
-    }
+    }*/
 
     public void signUpUserWithParse(){
         Log.d(TAG, "signing up user with parse...");
@@ -146,7 +148,7 @@ public class CreateAccountFragment extends Fragment {
                 });
     }
 
-    @Override
+  /* @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "resultCode: " + resultCode + ", requestCode: " + requestCode);
         if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
@@ -158,7 +160,7 @@ public class CreateAccountFragment extends Fragment {
                 new GetAuthTokenTask(getActivity(), email, SCOPES).execute();
                 /*} else {
                     Toast.makeText(this, R.string.not_online, Toast.LENGTH_LONG).show();
-                }*/
+                }/
             } else if (resultCode == getActivity().RESULT_CANCELED) {
                 // The account picker dialog closed without selecting an account.
                 // Notify users that they must pick an account to proceed.
@@ -169,9 +171,9 @@ public class CreateAccountFragment extends Fragment {
                 && resultCode == getActivity().RESULT_OK) {
             // Receiving a result that follows a GoogleAuthException, try auth again
             Log.e(TAG, "Received recoverable error code from Google auth.");
-            getUserAccount();
+            //getUserAccount();
         }
-    }
+    } */
 
     @Override
     public void onAttach(Activity activity) {

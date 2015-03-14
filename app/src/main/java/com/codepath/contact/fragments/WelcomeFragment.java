@@ -78,15 +78,6 @@ public class WelcomeFragment extends Fragment {
         });
     }
 
-    // using this for testing
-    private void deleteExistingAccount(){
-        SharedPreferences.Editor editor =
-                getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
-        editor.remove(USERNAME);
-        editor.remove(PASSWORD);
-        editor.commit();
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

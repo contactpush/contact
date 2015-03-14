@@ -16,8 +16,31 @@
         android:layout_marginRight="20dp"/>
 
     <TextView
-        android:id="@+id/tvUserName"
+        android:id="@+id/tvEmail"
         android:layout_below="@+id/tvAppName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="@string/email"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_below="@+id/tvEmail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_lower"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_below="@+id/etEmail"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="22sp"
@@ -33,7 +56,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/lower_username"
-
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
