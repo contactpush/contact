@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -87,7 +89,7 @@ public class CreateProfileFragment extends Fragment {
 
         spSocialProfileType = (Spinner) v.findViewById(R.id.spSocialProfileType);
         etSocialProfile = (EditText) v.findViewById(R.id.etSocialProfile);
-        setCurrentValues();
+        fetchCurrentUser();
     }
 
     private void save(){
@@ -139,12 +141,23 @@ public class CreateProfileFragment extends Fragment {
         });
     }
 
-    private void setCurrentValues(){
+    private void fetchCurrentUser(){
         ParseUser user = ParseUser.getCurrentUser();
         currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
-        if (currentUser == null){
-            currentUser = new ContactInfo();
-        }
+        currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (e == null){
+                    setCurrentValues();
+                } else {
+                    Log.e(TAG, e.getMessage());
+                    currentUser = new ContactInfo();
+                }
+            }
+        });
+    }
+
+    private void setCurrentValues(){
         // TODO set ivProfileImage...
         etFirstName.setText(currentUser.getFirstName());
         etMiddleName.setText(currentUser.getMiddleName());
