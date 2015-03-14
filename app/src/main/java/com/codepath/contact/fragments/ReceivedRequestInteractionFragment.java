@@ -1,6 +1,8 @@
 package com.codepath.contact.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +10,22 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.contact.R;
+import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.Request;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
-/**
- * Created by mekilah on 3/10/15.
- */
-public class ReceivedRequestInteractionFragment extends RequestInteractionFragment{
-    private static final String TAG = "ReceivedRequestInteractionFragment";
+public class ReceivedRequestInteractionFragment extends DialogFragment {
+    private static final String TAG = "ReceivedReqIntFrag";
+    protected Request request;
+    protected RequestInteractionFragmentListener listener;
+
+    public interface RequestInteractionFragmentListener{
+        public void updateInbox();
+    }
 
     public static ReceivedRequestInteractionFragment newInstance(Request request) {
         ReceivedRequestInteractionFragment fragment = new ReceivedRequestInteractionFragment();
@@ -47,7 +52,7 @@ public class ReceivedRequestInteractionFragment extends RequestInteractionFragme
                             Log.e(TAG, "Error with background save accept", e);
                             return;
                         }
-                        listener.shouldUpdateRequestList(RequestsListFragment.Type.INBOX);
+                        listener.updateInbox();
                     }
                 });
                 dismiss();
@@ -63,13 +68,24 @@ public class ReceivedRequestInteractionFragment extends RequestInteractionFragme
                             Log.e(TAG, "Error with background delete deny", e);
                             return;
                         }
-                        listener.shouldUpdateRequestList(RequestsListFragment.Type.INBOX);
+                        listener.updateInbox();
                     }
                 });
                 dismiss();
             }
         });
-        tvName.setText(request.getFromName());
+        ContactInfo fromUser = request.getFromUser();
+        tvName.setText(fromUser.getName());
         return v;
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+
+        if (!(activity instanceof RequestInteractionFragmentListener)){
+            throw new ClassCastException("Activity must implement RequestInteractionFragmentListener");
+        }
+        listener = (RequestInteractionFragmentListener)activity;
     }
 }

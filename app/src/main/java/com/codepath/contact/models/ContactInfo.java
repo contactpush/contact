@@ -17,7 +17,7 @@ import java.util.List;
 @ParseClassName("ContactInfo")
 public class ContactInfo extends ParseObject {
     private static final String TAG = "ContactInfo";
-    public static final String CONTACT_INFO_TABLE_NAME = "contactInfo";
+    public static final String CONTACT_INFO_TABLE_NAME = "ContactInfo";
 
     public interface OnContactsReturnedListener{
         void receiveContacts(List<ContactInfo> contactInfos);

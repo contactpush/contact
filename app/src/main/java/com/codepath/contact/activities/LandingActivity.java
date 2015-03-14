@@ -16,23 +16,18 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
-import com.codepath.contact.fragments.Contacts;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.InboxListFragment;
 import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
-import com.codepath.contact.fragments.RequestInteractionFragment;
-import com.codepath.contact.fragments.RequestsListFragment;
+import com.codepath.contact.fragments.SentListFragment;
 import com.codepath.contact.fragments.SentRequestInteractionFragment;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
-import java.util.List;
-
-public class LandingActivity extends ActionBarActivity implements ContactsListFragment.OnFragmentInteractionListener,
-        OnAuthTokenResolvedListener, RequestInteractionFragment.RequestInteractionFragmentListener{
+public class LandingActivity extends ActionBarActivity implements InboxListFragment.OnRequestListFragListener,
+        OnAuthTokenResolvedListener, ReceivedRequestInteractionFragment.RequestInteractionFragmentListener,
+        SentRequestInteractionFragment.SentRequestInteractionFragmentListener,
+        SentListFragment.OnSentListFragListener {
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
@@ -120,27 +115,14 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         if(requestCode == LandingActivity.ADD_USER){
             switch(resultCode){
                 case AddContactActivity.SUCCESSFUL_REQUEST:
-                    final String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
-
-                    ParseQuery.getQuery("Request").whereMatches("objectId", requestId)
-                            .findInBackground(new FindCallback<ParseObject>(){
-                                @Override
-                                public void done(List<ParseObject> parseObjects, ParseException e){
-
-                                    if(parseObjects != null && parseObjects.size() > 0){
-                                        Request request = (Request) parseObjects.get(0);
-                                        ((RequestsListFragment) pagerAdapter
-                                                .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
-                                        return;
-                                    }
-
-                                    Log.e(TAG, "No matching objects found in Parse for Request with objectId=" + requestId);
-
-                                    if(e != null){
-                                        Log.e(TAG, e.getMessage());
-                                    }
-                                }
-                            });
+                    String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
+                    Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
+                        @Override
+                        public void receiveRequest(Request request) {
+                            ((InboxListFragment) pagerAdapter
+                                    .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
+                        }
+                    });
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:
@@ -172,16 +154,15 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         requestInteractionFragment.show(getSupportFragmentManager(), "fragment_sent_request");
     }
 
+
     @Override
-    public void shouldUpdateRequestList(RequestsListFragment.Type whichList){
-        switch(whichList){
-            case INBOX:
-                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.INBOX)).refreshList();
-                break;
-            case SENT:
-                ((RequestsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
-                break;
-        }
+    public void updateInbox(){
+        ((InboxListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.INBOX)).refreshList();
+    }
+
+    @Override
+    public void updateSent(){
+        ((InboxListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
     }
 
     @Override
@@ -207,11 +188,11 @@ public class LandingActivity extends ActionBarActivity implements ContactsListFr
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return Contacts.newInstance(); // CONTACTS
+                return new ContactsListFragment();
             } else if (position == 1) {
-                return RequestsListFragment.newInstance(RequestsListFragment.Type.INBOX);
+                return new InboxListFragment();
             } else if(position == 2){
-                return RequestsListFragment.newInstance(RequestsListFragment.Type.SENT);
+                return new SentListFragment();
             }
             Log.e(TAG, "frag index not found");
             return null;

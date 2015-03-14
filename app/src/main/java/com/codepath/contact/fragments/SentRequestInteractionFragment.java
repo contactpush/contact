@@ -1,6 +1,8 @@
 package com.codepath.contact.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +16,15 @@ import com.codepath.contact.models.Request;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 
-/**
- * Created by mekilah on 3/10/15.
- */
-public class SentRequestInteractionFragment extends RequestInteractionFragment{
+
+public class SentRequestInteractionFragment extends DialogFragment{
     private static final String TAG = "SentRequestInteractionFragment";
+    protected Request request;
+    protected SentRequestInteractionFragmentListener listener;
+
+    public interface SentRequestInteractionFragmentListener{
+        public void updateSent();
+    }
 
     public static SentRequestInteractionFragment newInstance(Request request) {
         SentRequestInteractionFragment fragment = new SentRequestInteractionFragment();
@@ -52,7 +58,7 @@ public class SentRequestInteractionFragment extends RequestInteractionFragment{
                             Log.e(TAG, "Error with background delete revoke", e);
                             return;
                         }
-                        listener.shouldUpdateRequestList(RequestsListFragment.Type.SENT);
+                        listener.updateSent();
                     }
                 });
                 dismiss();
@@ -62,4 +68,13 @@ public class SentRequestInteractionFragment extends RequestInteractionFragment{
         return v;
     }
 
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+
+        if (!(activity instanceof SentRequestInteractionFragmentListener)){
+            throw new ClassCastException("Activity must implement SentRequestInteractionFragmentListener");
+        }
+        listener = (SentRequestInteractionFragmentListener)activity;
+    }
 }

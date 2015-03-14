@@ -3,6 +3,7 @@ package com.codepath.contact.models;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -18,6 +19,83 @@ import java.util.List;
 @ParseClassName("Request")
 public class Request extends ParseObject {
     private static final String TAG = "REQUEST";
+    public static final String REQUESTS_TABLE_NAME = "Request";
+
+    public interface OnRequestsReturnedListener{
+        void receiveRequests(List<Request> requests);
+    }
+
+    public interface OnRequestReturnedListener{
+        void receiveRequest(Request request);
+    }
+
+    public static void getSentRequestsInBackground(String userName, OnRequestsReturnedListener listener){
+        getRequestsInBackground("from", userName, listener);
+    }
+
+    public static void getRequestsInBackground(String userName, OnRequestsReturnedListener listener){
+        getRequestsInBackground("to", userName, listener);
+    }
+
+    private static void getRequestsInBackground(String direction,
+                                               String userName,
+                                               final OnRequestsReturnedListener listener){
+        Log.d(TAG, String.format("select * from %s where %s = %s and approved = false",
+                REQUESTS_TABLE_NAME, direction, userName));
+        final ParseQuery<Request> request = ParseQuery.getQuery(REQUESTS_TABLE_NAME);
+        request.whereEqualTo(direction, userName); // direction "to" or "from"
+        request.whereEqualTo("approved", false);
+        request.findInBackground(new FindCallback<Request>() {
+            public void done(List<Request> requests, ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Retrieved " + requests.size() + " requests");
+                    listener.receiveRequests(requests);
+                } else {
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public static void getRequestForObjectId(final String objectId, final OnRequestReturnedListener listener){
+        Log.d(TAG, String.format("select * from %s where objectId = %s",
+                REQUESTS_TABLE_NAME, objectId));
+        ParseQuery<Request> requestQuery = ParseQuery.getQuery(REQUESTS_TABLE_NAME);
+        requestQuery.getInBackground(objectId, new GetCallback<Request>() {
+            @Override
+            public void done(Request request, ParseException e) {
+                if (e == null) {
+                    listener.receiveRequest(request);
+                } else {
+                    Log.e(TAG, "Error getting request", e);
+                }
+            }
+        });
+    }
+
+    private static void createRequestInBackground(){
+        // TODO fix this methods so that it actually creates requests correctly...
+        ParseQuery<ContactInfo> request = ParseQuery.getQuery(ContactInfo.CONTACT_INFO_TABLE_NAME);
+        request.getInBackground("QQtOPZrCsa", new GetCallback<ContactInfo>() {
+            @Override
+            public void done(ContactInfo contactInfo, ParseException e) {
+                Log.d(TAG, "Taylor, done with requests");
+                if(e == null){
+                    if(contactInfo != null){
+                        ContactInfo c =  contactInfo;
+                        Log.d(TAG, "Name: " + c.getName());
+                        Request r = new Request();
+                        r.setTo(ParseUser.getCurrentUser().getUsername());
+                        r.setFromUser(c);
+                        r.setApprovedStatus(false);
+                        r.saveInBackground();
+                    }
+                }else{
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
 
     /**
      * @return This user's ID.
@@ -26,10 +104,11 @@ public class Request extends ParseObject {
         return getString("to");
     }
 
-    /**
-     * @return The user ID requesting access to this user's contact info.
-     */
-    public String getFrom() {
+    public ContactInfo getFromUser() {
+        return (ContactInfo) getParseObject("fromUser");
+    }
+
+    public String getFrom(){
         return getString("from");
     }
 
@@ -47,24 +126,16 @@ public class Request extends ParseObject {
         put("to", to);
     }
 
-    /**
-     * @param from The user ID of the person requesting to receive updates
-     *                    to this user's contact info.
-     */
-    public void setFrom(String from) {
+    public void setFromUser(ContactInfo from) {
+        put("fromUser", from);
+    }
+
+    public void setFrom(String from){
         put("from", from);
     }
 
     public void setApprovedStatus(boolean approved){
         put("approved", approved);
-    }
-
-    public String getFromName(){
-        return getString("fromName");
-    }
-
-    public void setFromName(String name){
-        put("fromName", name);
     }
 
     public static void makeRequestForUsername(final String username, final requestAttemptHandler handler){
@@ -74,17 +145,22 @@ public class Request extends ParseObject {
             return;
         }
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery().whereMatches("username", username);
+        ParseQuery<ParseUser> query = ParseUser.getQuery().whereEqualTo("username", username);
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(final List<ParseUser> resultList, ParseException e) {
                 if (e == null && resultList.size() == 1) {
                     Log.d(TAG, "Requested user exists.");
 
                     final Request request = new Request();
-                    request.setFrom(ParseUser.getCurrentUser().getUsername());
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    request.setFrom(currentUser.getUsername());
+
+                    ContactInfo fromUser = (ContactInfo) currentUser.getParseObject(ContactInfo.CONTACT_INFO_TABLE_NAME);
+                    if (fromUser != null){
+                        request.setFromUser(fromUser);
+                    }
                     request.setTo(username);
                     request.setApprovedStatus(false);
-                    //request.setRequesterName("requester name");// TODO get name of current user (necessary tho?)
 
                     request.saveInBackground(new SaveCallback(){
                         @Override
