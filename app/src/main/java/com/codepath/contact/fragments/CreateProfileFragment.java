@@ -4,14 +4,14 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,15 +25,14 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
+import com.codepath.contact.tasks.PhotoReader;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,6 +141,13 @@ public class CreateProfileFragment extends Fragment {
             currentUser.setSocialProfile(etSocialProfile.getText().toString());
         }
 
+        if (!currentUser.isDirty()){
+            // TODO this doesn't actually work, but it would be cool if it did
+            Log.d(TAG, "None of the user's data has changed, so nothing is being saved to Parse.");
+            getActivity().finish();
+            return;
+        }
+
         ParseUser user = ParseUser.getCurrentUser();
         user.put(ContactInfo.CONTACT_INFO_TABLE_NAME, currentUser);
 
@@ -187,6 +193,12 @@ public class CreateProfileFragment extends Fragment {
                 openImageIntent();
             }
         });
+        byte[] photo = currentUser.getProfileImage();
+        if (photo != null){
+            setProfileImage(photo);
+        } else {
+            Log.d(TAG, "user's photo is null");
+        }
         etFirstName.setText(currentUser.getFirstName());
         etMiddleName.setText(currentUser.getMiddleName());
         etLastName.setText(currentUser.getLastName());
@@ -278,45 +290,22 @@ public class CreateProfileFragment extends Fragment {
                     selectedImageUri = data == null ? null : data.getData();
                 }
                 if (selectedImageUri != null){
-                    //Picasso.with(getActivity()).load(selectedImageUri).into(ivProfileImage);
-                    byte[] photo = getPhotoBytes(selectedImageUri);
-                    //Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
-                    Log.d(TAG, "photo is this many bytes: " + photo.length);
-                    //ivProfileImage.setImageBitmap(bitmap);
-
+                    PhotoReader reader = new PhotoReader(new PhotoReader.PhotoReadCompletionListener() {
+                        @Override
+                        public void onPhotoReadCompletion(byte[] photoBytes) {
+                            setProfileImage(photoBytes);
+                            currentUser.setProfileImage(photoBytes);
+                        }
+                    });
+                    reader.execute(selectedImageUri);
                 }
-                Log.d(TAG, "imageUri: " + selectedImageUri);
             }
         }
     }
 
-    private byte[] getPhotoBytes(Uri photoUri){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        FileInputStream fis;
-        // /com.android.providers.media.documents/document/image%3A56
-        try {
-            fis = new FileInputStream(new File(getPath(photoUri)));
-            byte[] buf = new byte[1024];
-            int n;
-            while (-1 != (n = fis.read(buf)))
-                baos.write(buf, 0, n);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        byte[] photo = baos.toByteArray();
-        return photo;
-        //ParseFile file = new ParseFile("resume.txt", photo);
-    }
-
-    private String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        //Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
-        //getActivity().startManagingCursor(cursor);
-        CursorLoader loader = new CursorLoader(getActivity(), uri, projection, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    private void setProfileImage(byte[] photo){
+        Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+        ivProfileImage.setImageBitmap(bitmap);
     }
 
    /* @Override

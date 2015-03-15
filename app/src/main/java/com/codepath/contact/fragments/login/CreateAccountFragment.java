@@ -86,11 +86,6 @@ public class CreateAccountFragment extends Fragment {
             etPassword.setError("Invalid password");
             return false;
         }
-        if (email == null || email.length() < 2) {
-            etEmail.requestFocus();
-            etEmail.setError("Invalid email");
-            return false;
-        }
         return true;
     }
 

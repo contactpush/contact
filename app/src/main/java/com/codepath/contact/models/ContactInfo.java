@@ -5,10 +5,12 @@ import android.util.Log;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +35,7 @@ public class ContactInfo extends ParseObject {
                     listener.receiveContacts(contactInfos);
                 } else {
                     Log.e(TAG, e.getMessage());
+                    listener.receiveContacts(new ArrayList<ContactInfo>());
                 }
             }
         });
@@ -126,8 +129,15 @@ public class ContactInfo extends ParseObject {
         return getString("phone");
     }
 
-    public String getProfileImage(){
-        return getString("profileImage");
+    public byte[] getProfileImage(){
+        ParseFile file = getParseFile("profileImage");
+        byte[] photo = null;
+        try {
+            photo = file.getData();
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return photo;
     }
 
     public String getCompany(){
@@ -186,8 +196,9 @@ public class ContactInfo extends ParseObject {
         put("socialProfileType", socialProfileType);
     }
 
-    public void setProfileImage(String profileImage) {
-        put("profileImage", profileImage);
+    public void setProfileImage(byte[] profileImage) {
+        ParseFile file = new ParseFile("profileImage.png", profileImage);
+        put("profileImage", file);
     }
 
     public void setCompany(String company){
