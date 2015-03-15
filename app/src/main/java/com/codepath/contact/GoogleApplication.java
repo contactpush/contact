@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.Request;
+import com.codepath.contact.models.UserData;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseACL;
@@ -40,6 +41,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         // register classes extending ParseObject.
         ParseObject.registerSubclass(Request.class);
         ParseObject.registerSubclass(ContactInfo.class);
+        ParseObject.registerSubclass(UserData.class);
 
         // Add your initialization code here
         Parse.initialize(this, "uXNe2kO8BuPKGuhLNF4zhMH1VD2YyIVPfjn5h9ZM", "plrTKpseHWkO1eLnn0OzMrV1lnhdv6DRRY8brqlS");

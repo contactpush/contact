@@ -26,10 +26,13 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
+import com.codepath.contact.models.UserData;
 import com.codepath.contact.tasks.PhotoReader;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -85,6 +88,7 @@ public class CreateProfileFragment extends Fragment {
     private TextView tvSocialProfile;
     private EditText etSocialProfile;
 
+    private ParseUser user;
     private ContactInfo currentUser;
 
     private Uri outputFileUri;
@@ -298,6 +302,14 @@ public class CreateProfileFragment extends Fragment {
         currentUser.setLastName(etLastName.getText().toString());
         currentUser.setCompany(etCompany.getText().toString());
 
+        ArrayList<UserData> newUserData = new ArrayList<>();
+        newUserData.add(new UserData(user, "first_name", "", etFirstName.getText().toString()));
+        newUserData.add(new UserData(user, "middle_name", "", etMiddleName.getText().toString()));
+        newUserData.add(new UserData(user, "last_name", "", etLastName.getText().toString()));
+        // UserData company
+
+        ParseObject.saveAllInBackground(newUserData);
+
         if (etPhone.getText().toString() != null
                 && etPhone.getText().toString().trim().length() > 0){
             currentUser.setPhoneType(spPhoneType.getSelectedItem().toString());
@@ -349,8 +361,24 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void fetchUser(){
+        user = ParseUser.getCurrentUser();
         if (objectId == null){
-            fetchCurrentUser();
+            currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
+            if (currentUser == null){
+                currentUser = new ContactInfo();
+                return;
+            }
+            currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e == null) {
+                        //setCurrentValues();
+                        queryUserData();
+                    } else {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            });
         } else {
             setUpEmailAndPhoneOnClick();
             ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
@@ -359,29 +387,48 @@ public class CreateProfileFragment extends Fragment {
                     btDone.setVisibility(View.INVISIBLE);
                     btEdit.setVisibility(View.INVISIBLE);
                     currentUser = contactInfo;
-                    setCurrentValues();
+                    //setCurrentValues();
+                    queryUserData();
                 }
             });
         }
     }
 
-    private void fetchCurrentUser(){
-        ParseUser user = ParseUser.getCurrentUser();
-        currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
-        if (currentUser == null){
-            currentUser = new ContactInfo();
-            return;
-        }
-        currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null){
-                    setCurrentValues();
+    private void queryUserData() {
+        // Define the class we would like to query
+        ParseQuery<UserData> query = ParseQuery.getQuery(UserData.class);
+        // Define our query conditions
+        query.whereEqualTo("user", user);
+        // Execute the find asynchronously
+        query.findInBackground(new FindCallback<UserData>() {
+            public void done(List<UserData> userData, ParseException e) {
+                if (e == null) {
+                    // Access the array of results here
+                    setCurrentValues(userData);
                 } else {
-                    Log.e(TAG, e.getMessage());
+                    Log.d("item", "Error: " + e.getMessage());
                 }
             }
         });
+    }
+
+    private void setCurrentValues(List<UserData> userData) {
+        for (UserData aData : userData) {
+            switch (aData.getDataType()) {
+                case "first_name":
+                    tvFirstName.setText(currentUser.getFirstName());
+                    etFirstName.setText(currentUser.getFirstName());
+                    break;
+                case "middle_name":
+                    tvMiddleName.setText(currentUser.getMiddleName());
+                    etMiddleName.setText(currentUser.getMiddleName());
+                    break;
+                case "last_name":
+                    tvLastName.setText(currentUser.getLastName());
+                    etLastName.setText(currentUser.getLastName());
+                    break;
+            }
+        }
     }
 
     private void setCurrentValues(){
