@@ -41,7 +41,6 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkForExistingAccount();
     }
 
     @Override
@@ -49,6 +48,7 @@ public class WelcomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_welcome, container, false);
         pbPloading = (ProgressBar) v.findViewById(R.id.pbLoading);
         pbPloading.setVisibility(ProgressBar.VISIBLE);
+        checkForExistingAccount();
         return v;
     }
 
@@ -58,13 +58,9 @@ public class WelcomeFragment extends Fragment {
         String password = prefs.getString(PASSWORD, null);
         Log.d(TAG, "Found user/pw from shared prefs. usr: " + userName + ", pw: " + password);
 
-        //testing...
-        //deleteExistingAccount();
-        //userName = null;
-        //password = null;
-
         // if these don't exist, the the user must be new to our app
         if (userName == null || password == null) {
+            pbPloading.setVisibility(ProgressBar.INVISIBLE);
             listener.onFinishedLoading(false); // tell Activity to direct user to create account
             return;
         }

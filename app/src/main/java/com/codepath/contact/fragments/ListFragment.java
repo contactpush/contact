@@ -3,7 +3,6 @@ package com.codepath.contact.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +36,7 @@ public abstract class ListFragment extends Fragment {
     }
 
     public void addRequestToList(Request request){
-        if (requestsAdapter != null) requestsAdapter.add(request);
-        else Log.d(TAG, "guess what, requestsAdapter is null...");
+        requestsAdapter.add(request);
     }
 
     public void refreshList(){

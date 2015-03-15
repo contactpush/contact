@@ -37,6 +37,7 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
                 listener.onReceivedRequestClick(request);
             }
         });
+        pb.setVisibility(View.INVISIBLE);
     }
 
     protected void populateList(){
