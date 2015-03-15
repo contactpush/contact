@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.contact.R;
@@ -42,22 +43,44 @@ public class CreateProfileFragment extends Fragment {
     private static final int SELECT_PICTURE_REQUEST_CODE = 3237;
     //private OnFragmentInteractionListener mListener;
     private Button btDone;
+    private Button btEdit;
+
     private ImageView ivProfileImage;
+
+    private TextView tvFirstName;
     private EditText etFirstName;
+
+    private TextView tvMiddleName;
     private EditText etMiddleName;
+
+    private TextView tvLastName;
     private EditText etLastName;
+
+    private TextView tvCompany;
     private EditText etCompany;
 
+    private TextView tvPhoneType;
     private Spinner spPhoneType;
+
+    private TextView tvPhone;
     private EditText etPhone;
 
+    private TextView tvEmailType;
     private Spinner spEmailType;
+
+    private TextView tvEmail;
     private EditText etEmail;
 
+    private TextView tvAddressType;
     private Spinner spAddressType;
+
+    private TextView tvAddress;
     private EditText etAddress;
 
+    private TextView tvSocialProfileType;
     private Spinner spSocialProfileType;
+
+    private TextView tvSocialProfile;
     private EditText etSocialProfile;
 
     private ContactInfo currentUser;
@@ -80,35 +103,155 @@ public class CreateProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
         setUpViews(v);
-        btDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                save();
-            }
-        });
         return v;
     }
 
     private void setUpViews(View v){
-        btDone = (Button) v.findViewById(R.id.btDone);
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
+
+        btDone = (Button) v.findViewById(R.id.btDone);
+        btEdit = (Button) v.findViewById(R.id.btEdit);
+
+        tvFirstName = (TextView) v.findViewById(R.id.tvFirstName);
         etFirstName = (EditText) v.findViewById(R.id.etFirstName);
+
+        tvMiddleName = (TextView) v.findViewById(R.id.tvMiddleName);
         etMiddleName = (EditText) v.findViewById(R.id.etMiddleName);
+
+        tvLastName = (TextView) v.findViewById(R.id.tvLastName);
         etLastName = (EditText) v.findViewById(R.id.etLastName);
+
+        tvCompany = (TextView) v.findViewById(R.id.tvCompany);
         etCompany = (EditText) v.findViewById(R.id.etCompany);
 
+        tvPhoneType = (TextView) v.findViewById(R.id.tvPhoneType);
         spPhoneType = (Spinner) v.findViewById(R.id.spPhoneType);
+
+        tvPhone = (TextView) v.findViewById(R.id.tvPhone);
         etPhone = (EditText) v.findViewById(R.id.etPhone);
 
+        tvEmailType = (TextView) v.findViewById(R.id.tvEmailType);
         spEmailType = (Spinner) v.findViewById(R.id.spEmailType);
+
+        tvEmail = (TextView) v.findViewById(R.id.tvEmail);
         etEmail = (EditText) v.findViewById(R.id.etEmail);
 
+        tvAddressType = (TextView) v.findViewById(R.id.tvAddressType);
         spAddressType = (Spinner) v.findViewById(R.id.spAddressType);
+
+        tvAddress = (TextView) v.findViewById(R.id.tvAddress);
         etAddress = (EditText) v.findViewById(R.id.etAddress);
 
+        tvSocialProfileType = (TextView) v.findViewById(R.id.tvSocialProfileType);
         spSocialProfileType = (Spinner) v.findViewById(R.id.spSocialProfileType);
+
+        tvSocialProfile = (TextView) v.findViewById(R.id.tvSocialProfile);
         etSocialProfile = (EditText) v.findViewById(R.id.etSocialProfile);
+
+        btDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save();
+                showTextViews();
+            }
+        });
+
+        btEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEditTexts();
+            }
+        });
+        showTextViews();
         fetchCurrentUser();
+    }
+
+    private void showEditTexts(){
+        btEdit.setVisibility(View.INVISIBLE);
+        btDone.setVisibility(View.VISIBLE);
+
+        etFirstName.setVisibility(View.VISIBLE);
+        tvFirstName.setVisibility(View.INVISIBLE);
+
+        tvMiddleName.setVisibility(View.INVISIBLE);
+        etMiddleName.setVisibility(View.VISIBLE);
+
+        tvLastName.setVisibility(View.INVISIBLE);
+        etLastName.setVisibility(View.VISIBLE);
+
+        tvCompany.setVisibility(View.INVISIBLE);
+        etCompany.setVisibility(View.VISIBLE);
+
+        tvPhoneType.setVisibility(View.INVISIBLE);
+        spPhoneType.setVisibility(View.VISIBLE);
+
+        tvPhone.setVisibility(View.INVISIBLE);
+        etPhone.setVisibility(View.VISIBLE);
+
+        tvEmailType.setVisibility(View.INVISIBLE);
+        spEmailType.setVisibility(View.VISIBLE);
+
+        tvEmail.setVisibility(View.INVISIBLE);
+        etEmail.setVisibility(View.VISIBLE);
+
+        tvEmail.setVisibility(View.INVISIBLE);
+        etEmail.setVisibility(View.VISIBLE);
+
+        tvAddressType.setVisibility(View.INVISIBLE);
+        spAddressType.setVisibility(View.VISIBLE);
+
+        tvAddress.setVisibility(View.INVISIBLE);
+        etAddress.setVisibility(View.VISIBLE);
+
+        tvSocialProfileType.setVisibility(View.INVISIBLE);
+        spSocialProfileType.setVisibility(View.VISIBLE);
+
+        tvSocialProfile.setVisibility(View.INVISIBLE);
+        etSocialProfile.setVisibility(View.VISIBLE);
+    }
+
+    private void showTextViews(){
+        btEdit.setVisibility(View.VISIBLE);
+        btDone.setVisibility(View.INVISIBLE);
+
+        etFirstName.setVisibility(View.INVISIBLE);
+        tvFirstName.setVisibility(View.VISIBLE);
+
+        tvMiddleName.setVisibility(View.VISIBLE);
+        etMiddleName.setVisibility(View.INVISIBLE);
+
+        tvLastName.setVisibility(View.VISIBLE);
+        etLastName.setVisibility(View.INVISIBLE);
+
+        tvCompany.setVisibility(View.VISIBLE);
+        etCompany.setVisibility(View.INVISIBLE);
+
+        tvPhoneType.setVisibility(View.VISIBLE);
+        spPhoneType.setVisibility(View.INVISIBLE);
+
+        tvPhone.setVisibility(View.VISIBLE);
+        etPhone.setVisibility(View.INVISIBLE);
+
+        tvEmailType.setVisibility(View.VISIBLE);
+        spEmailType.setVisibility(View.INVISIBLE);
+
+        tvEmail.setVisibility(View.VISIBLE);
+        etEmail.setVisibility(View.INVISIBLE);
+
+        tvEmail.setVisibility(View.VISIBLE);
+        etEmail.setVisibility(View.INVISIBLE);
+
+        tvAddressType.setVisibility(View.VISIBLE);
+        spAddressType.setVisibility(View.INVISIBLE);
+
+        tvAddress.setVisibility(View.VISIBLE);
+        etAddress.setVisibility(View.INVISIBLE);
+
+        tvSocialProfileType.setVisibility(View.VISIBLE);
+        spSocialProfileType.setVisibility(View.INVISIBLE);
+
+        tvSocialProfile.setVisibility(View.VISIBLE);
+        etSocialProfile.setVisibility(View.INVISIBLE);
     }
 
     private void save(){
@@ -157,11 +300,11 @@ public class CreateProfileFragment extends Fragment {
                 if (e == null){
                     Toast.makeText(getActivity(), "Save successful", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Save successful!");
-                    getActivity().finish();
+                    setCurrentValues();
                 } else {
                     Log.e(TAG, "Save failed! " + e.getMessage());
                     Toast.makeText(getActivity(), "Save failed", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
+                    setCurrentValues();
                 }
             }
         });
@@ -199,33 +342,53 @@ public class CreateProfileFragment extends Fragment {
         } else {
             Log.d(TAG, "user's photo is null");
         }
+
+        tvFirstName.setText(currentUser.getFirstName());
         etFirstName.setText(currentUser.getFirstName());
+
+        tvMiddleName.setText(currentUser.getMiddleName());
         etMiddleName.setText(currentUser.getMiddleName());
+
+        tvLastName.setText(currentUser.getLastName());
         etLastName.setText(currentUser.getLastName());
+
+        tvCompany.setText(currentUser.getCompany());
         etCompany.setText(currentUser.getCompany());
 
         if (currentUser.getPhone() != null
                 && currentUser.getPhone().trim().length() > 0){
+            tvPhoneType.setText(currentUser.getPhoneType());
             spPhoneType.setSelection(((ArrayAdapter)spPhoneType.getAdapter()).getPosition(currentUser.getPhoneType()));
+
+            tvPhone.setText(currentUser.getPhone());
             etPhone.setText(currentUser.getPhone());
         }
 
         if (currentUser.getEmail() != null
                 && currentUser.getEmail().trim().length() > 0){
+            tvEmailType.setText(currentUser.getEmailType());
             spEmailType.setSelection(((ArrayAdapter)spEmailType.getAdapter()).getPosition(currentUser.getEmailType()));
+
+            tvEmail.setText(currentUser.getEmail());
             etEmail.setText(currentUser.getEmail());
         }
 
         if (currentUser.getAddress() != null
                 && currentUser.getAddress().trim().length() > 0){
-            spAddressType.setSelection(((ArrayAdapter)spAddressType.getAdapter()).getPosition(currentUser.getAddress()));
+            tvAddressType.setText(currentUser.getAddressType());
+            spAddressType.setSelection(((ArrayAdapter)spAddressType.getAdapter()).getPosition(currentUser.getAddressType()));
+
+            tvAddress.setText(currentUser.getAddress());
             etAddress.setText(currentUser.getAddress());
         }
 
         if (currentUser.getSocialProfile() != null
                 && currentUser.getSocialProfile().trim().length() > 0){
+            tvSocialProfileType.setText(currentUser.getSocialProfileType());
             spSocialProfileType.setSelection(((ArrayAdapter)spSocialProfileType.getAdapter())
-                    .getPosition(currentUser.getSocialProfile()));
+                    .getPosition(currentUser.getSocialProfileType()));
+
+            tvSocialProfile.setText(currentUser.getSocialProfile());
             etSocialProfile.setText(currentUser.getSocialProfile());
         }
     }

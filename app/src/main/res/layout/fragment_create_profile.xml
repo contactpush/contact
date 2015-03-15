@@ -19,6 +19,23 @@
         android:layout_alignParentRight="true"
         android:layout_margin="5dp"/>
 
+    <Button
+        android:id="@+id/btEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:id="@+id/tvFirstName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/btDone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" />
+
     <EditText
         android:id="@+id/etFirstName"
         android:layout_toRightOf="@+id/ivProfileImage"
@@ -26,6 +43,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/first_name"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:id="@+id/tvMiddleName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/etFirstName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"/>
 
     <EditText
@@ -37,6 +62,14 @@
         android:hint="@string/middle_name"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/tvLastName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_below="@+id/etMiddleName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
     <EditText
         android:id="@+id/etLastName"
         android:layout_toRightOf="@+id/ivProfileImage"
@@ -44,6 +77,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/last_name"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:id="@+id/tvCompany"
+        android:layout_below="@+id/etLastName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"/>
 
     <EditText
@@ -54,12 +94,26 @@
         android:hint="@string/company"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/tvPhoneType"
+        android:layout_below="@+id/etCompany"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
     <Spinner
         android:id="@+id/spPhoneType"
         android:layout_below="@+id/etCompany"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:entries="@array/contact_types"/>
+
+    <TextView
+        android:id="@+id/tvPhone"
+        android:layout_toRightOf="@+id/spPhoneType"
+        android:layout_below="@+id/etCompany"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
 
     <EditText
         android:id="@+id/etPhone"
@@ -71,12 +125,26 @@
         android:hint="@string/phone"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/tvEmailType"
+        android:layout_below="@+id/etPhone"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
     <Spinner
         android:id="@+id/spEmailType"
         android:layout_below="@+id/etPhone"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:entries="@array/contact_types"/>
+
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_toRightOf="@+id/spEmailType"
+        android:layout_below="@+id/etPhone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
 
     <EditText
         android:id="@+id/etEmail"
@@ -88,12 +156,26 @@
         android:hint="@string/email"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/tvAddressType"
+        android:layout_below="@+id/etEmail"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
     <Spinner
         android:id="@+id/spAddressType"
         android:layout_below="@+id/etEmail"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:entries="@array/contact_types"/>
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_toRightOf="@+id/spAddressType"
+        android:layout_below="@+id/etEmail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
 
     <EditText
         android:id="@+id/etAddress"
@@ -105,12 +187,26 @@
         android:hint="@string/postal_address"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/tvSocialProfileType"
+        android:layout_below="@+id/etAddress"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
     <Spinner
         android:id="@+id/spSocialProfileType"
         android:layout_below="@+id/etAddress"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:entries="@array/contact_types"/>
+
+    <TextView
+        android:id="@+id/tvSocialProfile"
+        android:layout_toRightOf="@+id/spSocialProfileType"
+        android:layout_below="@+id/etAddress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
 
     <EditText
         android:id="@+id/etSocialProfile"
