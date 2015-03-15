@@ -53,6 +53,13 @@ public class CreateProfileFragment extends Fragment {
     private Button btDone;
     private Button btEdit;
 
+    enum ProfileMode{
+        EDIT,
+        VIEW
+    }
+
+    private ProfileMode profileMode;
+
     private ImageView ivProfileImage;
 
     private TextView tvFirstName;
@@ -215,6 +222,8 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void showEditTexts(){
+        this.profileMode = ProfileMode.EDIT;
+
         btEdit.setVisibility(View.INVISIBLE);
         btDone.setVisibility(View.VISIBLE);
 
@@ -259,6 +268,8 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void showTextViews(){
+        this.profileMode = ProfileMode.VIEW;
+
         btEdit.setVisibility(View.VISIBLE);
         btDone.setVisibility(View.INVISIBLE);
 
@@ -376,7 +387,6 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void fetchCurrentUser(){
-
         ParseUser user = ParseUser.getCurrentUser();
         currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
         if (currentUser == null){
@@ -404,7 +414,9 @@ public class CreateProfileFragment extends Fragment {
         ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageIntent();
+                if(CreateProfileFragment.this.profileMode == ProfileMode.EDIT){
+                    openImageIntent();
+                }
             }
         });
         byte[] photo = currentUser.getProfileImage();
