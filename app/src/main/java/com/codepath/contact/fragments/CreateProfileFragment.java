@@ -89,6 +89,7 @@ public class CreateProfileFragment extends Fragment {
     private EditText etSocialProfile;
 
     private ParseUser user;
+    private ArrayList<UserData> userData;
     private ContactInfo currentUser;
 
     private Uri outputFileUri;
@@ -372,8 +373,8 @@ public class CreateProfileFragment extends Fragment {
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     if (e == null) {
-                        //setCurrentValues();
-                        queryUserData();
+                        setCurrentValues();
+                        //queryUserData();
                     } else {
                         Log.e(TAG, e.getMessage());
                     }
@@ -387,8 +388,8 @@ public class CreateProfileFragment extends Fragment {
                     btDone.setVisibility(View.INVISIBLE);
                     btEdit.setVisibility(View.INVISIBLE);
                     currentUser = contactInfo;
-                    //setCurrentValues();
-                    queryUserData();
+                    setCurrentValues();
+                    //queryUserData();
                 }
             });
         }
@@ -401,10 +402,11 @@ public class CreateProfileFragment extends Fragment {
         query.whereEqualTo("user", user);
         // Execute the find asynchronously
         query.findInBackground(new FindCallback<UserData>() {
-            public void done(List<UserData> userData, ParseException e) {
+            public void done(List<UserData> queryUserData, ParseException e) {
                 if (e == null) {
                     // Access the array of results here
-                    setCurrentValues(userData);
+                    userData = (ArrayList<UserData>) queryUserData;
+                    setCurrentValues(queryUserData);
                 } else {
                     Log.d("item", "Error: " + e.getMessage());
                 }
@@ -412,8 +414,8 @@ public class CreateProfileFragment extends Fragment {
         });
     }
 
-    private void setCurrentValues(List<UserData> userData) {
-        for (UserData aData : userData) {
+    private void setCurrentValues(List<UserData> currentUserData) {
+        for (UserData aData : currentUserData) {
             switch (aData.getDataType()) {
                 case "first_name":
                     tvFirstName.setText(currentUser.getFirstName());
