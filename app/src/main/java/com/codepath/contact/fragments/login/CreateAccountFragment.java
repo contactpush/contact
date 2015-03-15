@@ -76,6 +76,7 @@ public class CreateAccountFragment extends Fragment {
     private boolean validateCredentials() {
         userName = etUserName.getText().toString().trim();
         password = etPassword.getText().toString().trim();
+        email = etEmail.getText().toString().trim();
         if (userName == null || userName.length() < 2) {
             etUserName.setError("Invalid username");
             return false;
@@ -83,6 +84,11 @@ public class CreateAccountFragment extends Fragment {
         if (password == null || password.length() < 2) {
             etPassword.requestFocus();
             etPassword.setError("Invalid password");
+            return false;
+        }
+        if (email == null || email.length() < 2) {
+            etEmail.requestFocus();
+            etEmail.setError("Invalid email");
             return false;
         }
         return true;
