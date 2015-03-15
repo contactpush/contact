@@ -27,7 +27,7 @@ import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 public class LandingActivity extends ActionBarActivity implements InboxListFragment.OnRequestListFragListener,
         OnAuthTokenResolvedListener, ReceivedRequestInteractionFragment.RequestInteractionFragmentListener,
         SentRequestInteractionFragment.SentRequestInteractionFragmentListener,
-        SentListFragment.OnSentListFragListener {
+        SentListFragment.OnSentListFragListener, ContactsListFragment.ContactClickListener {
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
@@ -79,7 +79,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         }
 
         if (id == R.id.action_create_profile) {
-            createProfileButtonPressed();
+            createProfileButtonPressed(null);
             return true;
         }
 
@@ -105,8 +105,10 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         startActivityForResult(new Intent(this, AddContactActivity.class), LandingActivity.ADD_USER);
     }
 
-    public void createProfileButtonPressed(){
-        startActivity(new Intent(this, ProfileActivity.class));
+    public void createProfileButtonPressed(String objectId){
+        Intent i = new Intent(this, ProfileActivity.class);
+        i.putExtra("objectId", objectId);
+        startActivity(i);
     }
 
     @Override
@@ -175,6 +177,11 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
     @Override
     public void handleAuthTokenException(Exception e) {
         ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).handleAuthTokenException(e);
+    }
+
+    @Override
+    public void onContactClicked(String objectId) {
+        createProfileButtonPressed(objectId);
     }
 
     public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {

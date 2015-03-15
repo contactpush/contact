@@ -41,6 +41,8 @@ public class CreateProfileFragment extends Fragment {
     private static final String TAG = "CreateProfileFragment";
 
     private static final int SELECT_PICTURE_REQUEST_CODE = 3237;
+
+    public static final String OBJECT_ID = "objectId";
     //private OnFragmentInteractionListener mListener;
     private Button btDone;
     private Button btEdit;
@@ -87,15 +89,21 @@ public class CreateProfileFragment extends Fragment {
 
     private Uri outputFileUri;
 
+    private String objectId;
 
-    public static CreateProfileFragment newInstance() {
+
+    public static CreateProfileFragment newInstance(String objectId) {
         CreateProfileFragment fragment = new CreateProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(OBJECT_ID, objectId);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        objectId = getArguments().getString(OBJECT_ID);
     }
 
     @Override
@@ -163,7 +171,7 @@ public class CreateProfileFragment extends Fragment {
             }
         });
         showTextViews();
-        fetchCurrentUser();
+        fetchUser();
     }
 
     private void showEditTexts(){
@@ -308,6 +316,22 @@ public class CreateProfileFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void fetchUser(){
+        if (objectId == null){
+            fetchCurrentUser();
+        } else {
+            ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
+                @Override
+                public void receiveContact(ContactInfo contactInfo) {
+                    btDone.setVisibility(View.INVISIBLE);
+                    btEdit.setVisibility(View.INVISIBLE);
+                    currentUser = contactInfo;
+                    setCurrentValues();
+                }
+            });
+        }
     }
 
     private void fetchCurrentUser(){

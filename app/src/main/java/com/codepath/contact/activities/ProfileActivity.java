@@ -15,13 +15,13 @@ public class ProfileActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        String objectId = getIntent().getExtras().getString(CreateProfileFragment.OBJECT_ID);
 
-        CreateProfileFragment createProfileFragment = CreateProfileFragment.newInstance();
+        CreateProfileFragment createProfileFragment = CreateProfileFragment.newInstance(objectId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flCreateProfile, createProfileFragment);
         transaction.commit();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

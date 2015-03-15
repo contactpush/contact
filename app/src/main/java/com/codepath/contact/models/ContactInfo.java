@@ -3,10 +3,12 @@ package com.codepath.contact.models;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
@@ -25,6 +27,10 @@ public class ContactInfo extends ParseObject {
         void receiveContacts(List<ContactInfo> contactInfos);
     }
 
+    public interface OnContactReturnedListener{
+        void receiveContact(ContactInfo contactInfo);
+    }
+
     public static void getContacts(final OnContactsReturnedListener listener){
         ParseRelation<ContactInfo> contactsQuery = ParseUser.getCurrentUser().getRelation("contacts");
         contactsQuery.getQuery().findInBackground(new FindCallback<ContactInfo>() {
@@ -39,41 +45,20 @@ public class ContactInfo extends ParseObject {
                 }
             }
         });
+    }
 
-/*
-
-        ParseQuery<ParseObject> request = ParseQuery.getQuery(TAG);
-        final ParseUser user = ParseUser.getCurrentUser();
-        final ParseRelation<ParseObject> relation = user.getRelation("contacts");
-        request.getInBackground("sex7eA37Eo", new GetCallback<ParseObject>() {
+    public static void getContactInfo(String objectId, final OnContactReturnedListener listener){
+        ParseQuery<ContactInfo> contactQuery = new ParseQuery<>(CONTACT_INFO_TABLE_NAME);
+        contactQuery.getInBackground(objectId, new GetCallback<ContactInfo>() {
             @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                Log.d(TAG, "Taylor, done with requests");
-                if(e == null){
-                    if(parseObject != null){
-                        ContactInfo c = (ContactInfo) parseObject;
-                        Log.d(TAG, "Name: " + c.getName());
-                        relation.add(c);
-                        user.saveInBackground();
-                    }
-                }else{
-                    Log.d(TAG, "Error: " + e.getMessage());
+            public void done(ContactInfo contactInfo, ParseException e) {
+                if (e == null){
+                    listener.receiveContact(contactInfo);
+                } else {
+                    Log.e(TAG, e.getMessage());
                 }
             }
         });
-       /* request.findInBackground(new FindCallback<ParseObject>(){
-            public void done(List<ParseObject> requests, ParseException e){
-                if(e == null){
-                    Log.d(TAG, "Taylor, Retrieved " + requests.size() + " requests");
-                    if(requests.size() > 0){
-                        ContactInfo c = (ContactInfo) requests.get(0);
-                        Log.d(TAG, "Name: " + c.getName());
-                    }
-                }else{
-                    Log.d(TAG, "Error: " + e.getMessage());
-                }
-            }
-        });*/
     }
 
 
@@ -131,6 +116,9 @@ public class ContactInfo extends ParseObject {
 
     public byte[] getProfileImage(){
         ParseFile file = getParseFile("profileImage");
+        if (file == null){
+            return null;
+        }
         byte[] photo = null;
         try {
             photo = file.getData();
