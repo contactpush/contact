@@ -95,7 +95,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
 
     public static void signUpWithParse(String userName, String password,
                                 String email, final ParseAccountCreationListener listener){
-        Log.d(TAG, "trying to sign up with parse, username: " + userName + " and password: " + password);
+        Log.d(TAG, "trying to sign up with parse, username: " + userName + " and password: " + password + " and email: " + email);
         ParseUser user = new ParseUser();
         user.setUsername(userName);
         user.setPassword(password);
