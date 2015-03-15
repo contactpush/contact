@@ -170,8 +170,38 @@ public class CreateProfileFragment extends Fragment {
                 showEditTexts();
             }
         });
+
         showTextViews();
         fetchUser();
+    }
+
+    private void setUpEmailAndPhoneOnClick(){
+        tvPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String phoneNumber = tvPhone.getText().toString().trim();
+                if (phoneNumber != null && phoneNumber.length() > 0){
+                    phoneNumber = "tel:" + phoneNumber;
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse(phoneNumber));
+                    startActivity(intent);
+                }
+            }
+        });
+
+        tvEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = etEmail.getText().toString().trim();
+                if (email != null && email.length() > 0){
+                    String[] emails = new String[]{email};
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/html");
+                    intent.putExtra(Intent.EXTRA_EMAIL, emails);
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                }
+            }
+        });
     }
 
     private void showEditTexts(){
@@ -322,6 +352,7 @@ public class CreateProfileFragment extends Fragment {
         if (objectId == null){
             fetchCurrentUser();
         } else {
+            setUpEmailAndPhoneOnClick();
             ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
                 @Override
                 public void receiveContact(ContactInfo contactInfo) {
