@@ -4,12 +4,14 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +30,10 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,6 +164,10 @@ public class CreateProfileFragment extends Fragment {
     private void fetchCurrentUser(){
         ParseUser user = ParseUser.getCurrentUser();
         currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
+        if (currentUser == null){
+            currentUser = new ContactInfo();
+            return;
+        }
         currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
@@ -168,7 +175,6 @@ public class CreateProfileFragment extends Fragment {
                     setCurrentValues();
                 } else {
                     Log.e(TAG, e.getMessage());
-                    currentUser = new ContactInfo();
                 }
             }
         });
@@ -272,11 +278,45 @@ public class CreateProfileFragment extends Fragment {
                     selectedImageUri = data == null ? null : data.getData();
                 }
                 if (selectedImageUri != null){
-                    Picasso.with(getActivity()).load(selectedImageUri).into(ivProfileImage);
+                    //Picasso.with(getActivity()).load(selectedImageUri).into(ivProfileImage);
+                    byte[] photo = getPhotoBytes(selectedImageUri);
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+                    Log.d(TAG, "photo is this many bytes: " + photo.length);
+                    //ivProfileImage.setImageBitmap(bitmap);
+
                 }
                 Log.d(TAG, "imageUri: " + selectedImageUri);
             }
         }
+    }
+
+    private byte[] getPhotoBytes(Uri photoUri){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FileInputStream fis;
+        // /com.android.providers.media.documents/document/image%3A56
+        try {
+            fis = new FileInputStream(new File(getPath(photoUri)));
+            byte[] buf = new byte[1024];
+            int n;
+            while (-1 != (n = fis.read(buf)))
+                baos.write(buf, 0, n);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        byte[] photo = baos.toByteArray();
+        return photo;
+        //ParseFile file = new ParseFile("resume.txt", photo);
+    }
+
+    private String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        //Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
+        //getActivity().startManagingCursor(cursor);
+        CursorLoader loader = new CursorLoader(getActivity(), uri, projection, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
    /* @Override
