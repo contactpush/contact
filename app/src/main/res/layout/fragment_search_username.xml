@@ -26,4 +26,13 @@
         android:text="@string/search"
         />
 
+    <Button
+        android:id="@+id/btnAddByQR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_by_qr"
+        android:layout_below="@+id/btnSearchContactButton"
+        android:layout_alignRight="@+id/btnSearchContactButton"
+        android:layout_alignEnd="@+id/btnSearchContactButton" />
+
 </RelativeLayout>

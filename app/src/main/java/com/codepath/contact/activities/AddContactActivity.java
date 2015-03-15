@@ -4,14 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.SearchUsernameFragment;
+import com.codepath.contact.fragments.SearchUsernameFragment.SearchUsernameFragmentListener;
 import com.codepath.contact.models.Request;
+import com.google.zxing.integration.android.IntentIntegrator;
 
-public class AddContactActivity extends ActionBarActivity implements SearchUsernameFragment.SearchUsernameFragmentListener{
+public class AddContactActivity extends ActionBarActivity implements SearchUsernameFragmentListener{
 
     public static final int SUCCESSFUL_REQUEST = 524;
     public static final String SUCCESSFUL_REQUEST_ID_KEY = "requestId";
@@ -65,6 +68,18 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
     public void searchFailure(){
         setResult(AddContactActivity.FAILED_REQUEST);
         finish();
+    }
+
+    @Override
+    public void launchQRScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.addExtra("SCAN_WIDTH", 640);
+        integrator.addExtra("SCAN_HEIGHT", 480);
+        integrator.addExtra("SCAN_MODE", "QR_CODE_MODE,PRODUCT_MODE");
+
+        //customize the prompt message before scanning
+        integrator.addExtra("PROMPT_MESSAGE", "Scanner Start!");
+        integrator.initiateScan(IntentIntegrator.PRODUCT_CODE_TYPES);
     }
 
     @Override

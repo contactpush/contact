@@ -1,5 +1,6 @@
 package com.codepath.contact.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.Request;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -28,6 +30,7 @@ public class SearchUsernameFragment extends Fragment{
     public interface SearchUsernameFragmentListener{
         public void searchSuccess(Request request);
         public void searchFailure();
+        public void launchQRScanner();
     }
 
     /**
@@ -48,6 +51,8 @@ public class SearchUsernameFragment extends Fragment{
                 public void searchSuccess(Request request){}
                 @Override
                 public void searchFailure(){}
+                @Override
+                public void launchQRScanner() {}
             };
         }
 
@@ -90,6 +95,14 @@ public class SearchUsernameFragment extends Fragment{
                     return;
                 }
                 SearchUsernameFragment.this.searchForUsername(etUsername.getText().toString());
+            }
+        });
+
+        Button btnQR = (Button) v.findViewById(R.id.btnAddByQR);
+        btnQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.launchQRScanner();
             }
         });
 
