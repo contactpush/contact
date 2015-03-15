@@ -17,9 +17,9 @@ import com.codepath.contact.R;
 public class CreateAccountFragment extends Fragment {
     private GoogleApplication.ParseAccountCreationListener listener;
     private static final String TAG = "CreateAccountFragment";
-    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
-    private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
+//    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
+//    private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
+//    private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 1002;
     // we may want to grab some of the data from the profile if the user is new
     private static final String PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile";
     private final static String FULL_CONTACTS_SCOPE = "https://www.google.com/m8/feeds";
@@ -108,17 +108,11 @@ public class CreateAccountFragment extends Fragment {
                     @Override
                     public void onAccountCreationResponse(boolean success) {
                         if (success) {
-                            // production version should use a more secure storage space for password
-                            SharedPreferences.Editor editor =
-                                    getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
-                            editor.putString(USERNAME, userName);
-                            editor.putString(PASSWORD, password);
-                            editor.commit();
+                            CreateAccountFragment.this.saveUsernameAndPasswordLocally(userName, password);
                             Log.d(TAG, "done signing up user with parse...");
-                            listener.onAccountCreationResponse(success);
-                        } else {
-                            listener.onAccountCreationResponse(success);
                         }
+
+                        listener.onAccountCreationResponse(success);
                     }
                 });
     }
@@ -129,19 +123,21 @@ public class CreateAccountFragment extends Fragment {
                     @Override
                     public void onLoginResponse(boolean success) {
                         if (success) {
-                            // production version should use a more secure storage space for password
-                            SharedPreferences.Editor editor =
-                                    getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
-                            editor.putString(USERNAME, userName);
-                            editor.putString(PASSWORD, password);
-                            editor.commit();
+                            CreateAccountFragment.this.saveUsernameAndPasswordLocally(userName, password);
                             Log.d(TAG, "done signing up user with parse...");
-                            listener.onAccountCreationResponse(success);
-                        } else {
-                            listener.onAccountCreationResponse(success);
                         }
+
+                        listener.onAccountCreationResponse(success);
                     }
                 });
+    }
+
+    private void saveUsernameAndPasswordLocally(String userName, String password){
+        // production version should use a more secure storage space for password
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences(CONTACT_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+        editor.putString(USERNAME, userName);
+        editor.putString(PASSWORD, password);
+        editor.commit();
     }
 
   /* @Override

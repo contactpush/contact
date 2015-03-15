@@ -31,7 +31,7 @@ public class WelcomeFragment extends Fragment {
          * the CreateAccount process.
          * @param success true if the user exists, false if not.
          */
-        void onFinishedLoading(boolean success);
+        void onWelcomeFragmentFinishedLoading(boolean success);
     }
 
     public static WelcomeFragment newInstance(){
@@ -61,7 +61,7 @@ public class WelcomeFragment extends Fragment {
         // if these don't exist, the the user must be new to our app
         if (userName == null || password == null) {
             pbPloading.setVisibility(ProgressBar.INVISIBLE);
-            listener.onFinishedLoading(false); // tell Activity to direct user to create account
+            listener.onWelcomeFragmentFinishedLoading(false); // tell Activity to direct user to create account
             return;
         }
 
@@ -69,7 +69,11 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onLoginResponse(boolean success) {
                 pbPloading.setVisibility(ProgressBar.INVISIBLE);
-                listener.onFinishedLoading(success);
+                if(listener != null){
+                    listener.onWelcomeFragmentFinishedLoading(success);
+                }else{
+                    Log.e(TAG, "WelcomeFragment - checkForExistingAccount has a null activity listener w/ success="+success);
+                }
             }
         });
     }
@@ -88,4 +92,6 @@ public class WelcomeFragment extends Fragment {
         super.onDetach();
         listener = null;
     }
+
+
 }

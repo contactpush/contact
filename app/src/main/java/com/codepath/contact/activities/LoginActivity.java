@@ -22,6 +22,11 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         WelcomeFragment.InitialAppStartupListener, GoogleApplication.ParseAccountCreationListener {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
+    private static final int REQUEST_CODE_SHOW_LANDING_ACTIVITY = 3245;
+
+    private static final String LOGIN_CREATE_FRAGMENT_TAG = "login_or_create_fragment";
+    private static final String WELCOME_FRAGMENT_TAG = "wecome_fragment";
+
     private CreateAccountFragment createAccountFragment;
 
     @Override
@@ -29,15 +34,12 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.flLogin, welcomeFragment);
-        transaction.commit();
+        this.showWelcomeFragment();
     }
 
     private void startMainActivity() {
         Intent i = new Intent(LoginActivity.this, LandingActivity.class);
-        startActivity(i);
+        startActivityForResult(i, REQUEST_CODE_SHOW_LANDING_ACTIVITY);
     }
 
     /**
@@ -48,16 +50,26 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
      * @param success
      */
     @Override
-    public void onFinishedLoading(boolean success) {
+    public void onWelcomeFragmentFinishedLoading(boolean success) {
         if (success){
             startMainActivity();
-            finish();
         } else {
-            createAccountFragment = CreateAccountFragment.newInstance();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flLogin, createAccountFragment);
-            transaction.commit();
+            showCreateAccountFragment();
         }
+    }
+
+    private void showCreateAccountFragment(){
+        createAccountFragment = CreateAccountFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.flLogin, createAccountFragment, LoginActivity.LOGIN_CREATE_FRAGMENT_TAG);
+        transaction.commitAllowingStateLoss();
+    }
+
+    private void showWelcomeFragment(){
+        WelcomeFragment welcomeFragment = WelcomeFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.flLogin, welcomeFragment, LoginActivity.WELCOME_FRAGMENT_TAG);
+        transaction.commitAllowingStateLoss();
     }
 
     /**
@@ -82,7 +94,6 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
     public void onAccountCreationResponse(boolean success) {
         if (success){
             startMainActivity();
-            finish();
         } else {
             String errorMessage = "Parse Account Creation failed.";
             Log.e(TAG, errorMessage);
@@ -133,5 +144,17 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == REQUEST_CODE_SHOW_LANDING_ACTIVITY){
+            //show login screen
+            CreateAccountFragment fragment = (CreateAccountFragment) getSupportFragmentManager().findFragmentByTag(LOGIN_CREATE_FRAGMENT_TAG);
+            if(fragment == null){
+                Log.d(TAG, "Creating CREATE ACCOUNT FRAGMENT in activity result handler b/c it wasn't there already");
+                showCreateAccountFragment();
+            }
+        }
     }
 }
