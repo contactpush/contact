@@ -371,7 +371,26 @@ public class CreateProfileFragment extends Fragment {
 
     private void fetchUser(){
         if (objectId == null){
-            fetchCurrentUser();
+            ParseUser user = ParseUser.getCurrentUser();
+            currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
+            if (currentUser == null){
+                currentUser = new ContactInfo();
+                return;
+            }
+            currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e == null) {
+                        long start = System.currentTimeMillis();
+                        setCurrentValues();
+                        long end = System.currentTimeMillis();
+                        long elapsed = end - start;
+                        Log.d(TAG, "setCurrentValues took: " + elapsed);
+                    } else {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            });
         } else {
             setUpEmailAndPhoneOnClick();
             ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
@@ -384,30 +403,6 @@ public class CreateProfileFragment extends Fragment {
                 }
             });
         }
-    }
-
-    private void fetchCurrentUser(){
-        ParseUser user = ParseUser.getCurrentUser();
-        currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
-        if (currentUser == null){
-            currentUser = new ContactInfo();
-            return;
-        }
-        currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null) {
-                    long start = System.currentTimeMillis();
-                    setCurrentValues();
-                    long end = System.currentTimeMillis();
-                    long elapsed = end - start;
-                    Log.d(TAG, "setCurrentValues took: " + elapsed);
-                } else {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        });
-
     }
 
     private void setCurrentValues(){
