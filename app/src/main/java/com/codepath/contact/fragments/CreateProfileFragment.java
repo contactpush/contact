@@ -37,12 +37,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -657,8 +655,20 @@ public class CreateProfileFragment extends Fragment {
             PhotoReader reader = new PhotoReader(getActivity(), new PhotoReader.PhotoReadCompletionListener() {
                 @Override
                 public void onPhotoReadCompletion(byte[] photo) {
-                    currentUser.setProfileImage(photo);
-                    setProfileImage(photo);
+                    if (photo != null && photo.length > 0){
+                        currentUser.setProfileImage(photo);
+                    } else {
+                        Log.e(TAG, "Photo is null or zero size. Cannot save to Parse.");
+                    }
+                }
+
+                @Override
+                public void onPhotoReadCompletion(Bitmap photo) {
+                    if (photo != null && photo.getByteCount() > 0){
+                        ivProfileImage.setImageBitmap(photo);
+                    } else {
+                        Log.e(TAG, "Photo is null or zero size. Cannot set profile image.");
+                    }
                 }
             });
             reader.execute(photoUri);
@@ -666,13 +676,13 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void setProfileImage(byte[] photo){
-        if (photo == null){
+        if (photo == null && photo.length > 0){
             Log.e(TAG, "Photo is null. Cannot set profile image.");
             return;
         }
         Log.d(TAG, "photo is " + photo.length + " bytes");
         Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
         ivProfileImage.setImageBitmap(bitmap);
-        currentUser.setProfileImage(photo);
+        //currentUser.setProfileImage(photo);
     }
 }

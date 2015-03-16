@@ -17,13 +17,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class PhotoReader extends AsyncTask<Uri, Void, byte[]>{
+public class PhotoReader extends AsyncTask<Uri, Void, Bitmap>{
     private static final String TAG = "PhotoReader";
     private PhotoReadCompletionListener listener;
     private Activity activity;
 
     public interface PhotoReadCompletionListener{
-        void onPhotoReadCompletion(byte[] photoBytes);
+        void onPhotoReadCompletion(byte[] photo);
+        void onPhotoReadCompletion(Bitmap photo);
     }
 
     public PhotoReader(Activity activity, PhotoReadCompletionListener listener){
@@ -32,7 +33,7 @@ public class PhotoReader extends AsyncTask<Uri, Void, byte[]>{
     }
 
     @Override
-    protected byte[] doInBackground(Uri... params) {
+    protected Bitmap doInBackground(Uri... params) {
         if (params == null || params.length == 0){
             throw new IllegalArgumentException("You must past the uri of the file.");
         }
@@ -41,11 +42,11 @@ public class PhotoReader extends AsyncTask<Uri, Void, byte[]>{
     }
 
     @Override
-    protected void onPostExecute(byte[] photoBytes){
-        listener.onPhotoReadCompletion(photoBytes);
+    protected void onPostExecute(Bitmap bitmap){
+        listener.onPhotoReadCompletion(bitmap);
     }
 
-    private byte[] getPhotoBytes(Uri uri){
+    private Bitmap getPhotoBytes(Uri uri){
         File photo = new File(uri.getPath());
         if (!photo.exists()){
             return alternatePhotoByteGetter(uri);
@@ -53,11 +54,16 @@ public class PhotoReader extends AsyncTask<Uri, Void, byte[]>{
         rotateBitmapOrientation(uri.getPath());
         int size = (int) photo.length();
         byte[] bytes = new byte[size];
+        Bitmap compressedBitmap = null;
         try {
             BufferedInputStream buf = new BufferedInputStream(new FileInputStream(photo));
             buf.read(bytes, 0, bytes.length);
             buf.close();
             bytes = compress(bytes);
+            // send listener bytes to write to parse
+            listener.onPhotoReadCompletion(bytes);
+            // convert to bitmap for loading into image view
+            compressedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         } catch (FileNotFoundException e) {
             Log.e(TAG, e.getMessage());
             return alternatePhotoByteGetter(uri);
@@ -65,28 +71,33 @@ public class PhotoReader extends AsyncTask<Uri, Void, byte[]>{
             Log.e(TAG, e.getMessage());
             return alternatePhotoByteGetter(uri);
         }
-        return bytes;
+        return compressedBitmap;
     }
 
     // some files can't be found by the method above.  This seems to work as an alternative.
     // http://guides.codepath.com/android/Accessing-the-Camera-and-Stored-Media
-    private byte[] alternatePhotoByteGetter(Uri uri){
+    private Bitmap alternatePhotoByteGetter(Uri uri){
         Log.d(TAG, "using alternatePhotoByteGetter");
         Bitmap selectedImage = null;
         byte[] bytes = null;
+        Bitmap compressedBitmap = null;
         try {
             selectedImage = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uri);
             if (selectedImage != null){
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 bytes = compress(stream.toByteArray());
+                // send listener bytes to write to parse
+                listener.onPhotoReadCompletion(bytes);
+                // convert to bitmap for loading into image view
+                compressedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             } else {
                 Log.e(TAG, "Could not find selected image.");
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-        return bytes;
+        return compressedBitmap;
     }
 
     private byte[] compress(byte[] bytes){
