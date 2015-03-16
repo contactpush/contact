@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="120dp"
+    android:updatePeriodMillis="0"
+    android:minHeight="120dp"
+    android:initialLayout="@layout/widget_qr_code">
+    <!--android:previewImage="@drawable/widget"-->
+</appwidget-provider>

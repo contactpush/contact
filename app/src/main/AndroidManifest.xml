@@ -118,6 +118,16 @@
             android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_create_profile" >
         </activity>
+
+        <receiver android:name=".QRCodeWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/qr_code_widget_provider" />
+        </receiver>
     </application>
 
 </manifest>
