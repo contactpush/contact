@@ -3,13 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.codepath.contact.activities.LandingActivity">
 
+    <item android:id="@+id/action_update_location"
+          android:title="@string/update_location"
+          android:orderInCategory="80"
+          app:showAsAction="ifRoom"
+          android:icon="@android:drawable/ic_menu_compass"
+
+        />
+
     <item android:id="@+id/action_add_contact"
           android:title="@string/add_contact"
           android:orderInCategory="90"
           app:showAsAction="ifRoom"
           android:icon="@android:drawable/ic_menu_add"
 
-          />
+        />
     <item android:id="@+id/action_create_profile"
           android:title="@string/EditProfile"
           android:orderInCategory="100"
@@ -19,7 +27,7 @@
           />
     <item android:id="@+id/action_log_out"
         android:title="@string/log_out"
-        android:orderInCategory="100"
+        android:orderInCategory="110"
         app:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_lock_power_off" />
 </menu>

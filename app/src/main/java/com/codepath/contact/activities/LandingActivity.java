@@ -2,6 +2,7 @@ package com.codepath.contact.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
@@ -21,13 +23,19 @@ import com.codepath.contact.fragments.inbox.InboxListFragment;
 import com.codepath.contact.fragments.inbox.ReceivedRequestInteractionFragment;
 import com.codepath.contact.fragments.sent.SentListFragment;
 import com.codepath.contact.fragments.sent.SentRequestInteractionFragment;
+import com.codepath.contact.helpers.LocationHelper;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class LandingActivity extends ActionBarActivity implements InboxListFragment.OnRequestListFragListener,
         OnAuthTokenResolvedListener, ReceivedRequestInteractionFragment.RequestInteractionFragmentListener,
         SentRequestInteractionFragment.SentRequestInteractionFragmentListener,
-        SentListFragment.OnSentListFragListener, ContactsListFragment.ContactClickListener {
+        SentListFragment.OnSentListFragListener, ContactsListFragment.ContactClickListener, LocationHelper.LocationHelperListener{
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
@@ -37,6 +45,8 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
 
     private ProgressBar pb;
     private Toolbar toolbar;
+
+    private LocationHelper locationHelper;
 
     private static final String CONTACT_PREFERENCES = "ContactPreferences";
     private static final String USERNAME = "username";
@@ -57,6 +67,8 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         vpPager.setAdapter(pagerAdapter);
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
+
+        locationHelper = new LocationHelper();
     }
 
     @Override
@@ -88,7 +100,15 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
             return true;
         }
 
+        if(id == R.id.action_update_location){
+            this.updateCurrentLocation();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateCurrentLocation(){
+        this.locationHelper.getRecentLocation(this, this);
     }
 
     private void logOut(){
@@ -216,5 +236,16 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         public CharSequence getPageTitle(int position) {
             return tabTitles[position];
         }
+    }
+
+    @Override
+    public void onLocationUpdated(Location location){
+        ParseUser.getCurrentUser().put("lastLocation", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
+            @Override
+            public void done(ParseException e){
+                Toast.makeText(LandingActivity.this, "Saved location!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

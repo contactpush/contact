@@ -41,5 +41,6 @@
     <string name="EditProfile">Edit Profile</string>
     <string name="log_out">Log Out</string>
     <string name="edit">Edit</string>
+    <string name="update_location">Update Location</string>
 
 </resources>

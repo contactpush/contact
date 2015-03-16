@@ -28,9 +28,16 @@ import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.UserData;
 import com.codepath.contact.tasks.PhotoReader;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -96,12 +103,18 @@ public class CreateProfileFragment extends Fragment {
     private TextView tvSocialProfile;
     private EditText etSocialProfile;
 
+    private SupportMapFragment mapFragment;
+    private TextView tvMapTitle;
+
     private ParseUser user;
     private ArrayList<UserData> userData;
     private ContactInfo currentUser;
 
     private Uri outputFileUri;
 
+    /**
+     * id for the parse User object for the user whose profile is being shown
+     */
     private String objectId;
 
 
@@ -124,6 +137,7 @@ public class CreateProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
         setUpViews(v);
+        setUpMapIfNeeded();
         return v;
     }
 
@@ -183,6 +197,8 @@ public class CreateProfileFragment extends Fragment {
                 showEditTexts();
             }
         });
+
+        tvMapTitle = (TextView) v.findViewById(R.id.tvMapTitle);
 
         showTextViews();
         fetchUser();
@@ -374,8 +390,8 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void fetchUser(){
-        user = ParseUser.getCurrentUser();
         if (objectId == null){
+            user = ParseUser.getCurrentUser();
             currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
             if (currentUser == null){
                 currentUser = new ContactInfo();
@@ -393,6 +409,13 @@ public class CreateProfileFragment extends Fragment {
                 }
             });
         } else {
+            try{
+                user = ParseUser.getQuery().whereEqualTo("objectId", objectId).getFirst();
+            }catch(ParseException e){
+                Log.e(TAG, "Couldn't find user with objectId=" + objectId, e);
+                e.printStackTrace();
+                return;
+            }
             setUpEmailAndPhoneOnClick();
             ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
                 @Override
@@ -587,6 +610,56 @@ public class CreateProfileFragment extends Fragment {
     private void setProfileImage(byte[] photo){
         Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
         ivProfileImage.setImageBitmap(bitmap);
+    }
+
+    protected void setUpMapIfNeeded() {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mapFragment == null) {
+            mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)); //  getActivity().getSupportFragmentManager().findFragmentById(R.id.map));
+            // Check if we were successful in obtaining the map.
+            if (mapFragment != null) {
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap map) {
+                        loadMap(map);
+                    }
+                });
+            }
+        }
+    }
+
+    // The Map is verified. It is now safe to manipulate the map.
+    protected void loadMap(GoogleMap googleMap) {
+        if (googleMap != null) {
+            if(user != null){
+                ParseGeoPoint geoPoint = user.getParseGeoPoint("lastLocation");
+                if(geoPoint != null){
+                    LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+                    googleMap.animateCamera(cameraUpdate);
+                    shouldShowMap(true);
+                    Log.w("TAG", "found lat/long and updated map.");
+                    return;
+                }else{
+                    Log.e("TAG", "could not find lat/long to update map.");
+                }
+            }else{
+                Log.e("TAG", "could not find user to update map.");
+            }
+        }else{
+            Log.e("TAG", "could not find map to update map.");
+        }
+        shouldShowMap(false);
+    }
+
+    private void shouldShowMap(boolean shouldShow){
+        if(shouldShow){
+            this.tvMapTitle.setVisibility(View.VISIBLE);
+            this.mapFragment.getView().setVisibility(View.VISIBLE);
+        }else{
+            this.tvMapTitle.setVisibility(View.GONE);
+            this.mapFragment.getView().setVisibility(View.GONE);
+        }
     }
 
    /* @Override
