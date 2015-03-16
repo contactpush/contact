@@ -33,10 +33,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -131,6 +133,7 @@ public class CreateProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         objectId = getArguments().getString(OBJECT_ID);
+        Log.d(TAG, "onCreate received objectId=" + (objectId == null ? "NULL" : objectId));
     }
 
     @Override
@@ -139,7 +142,6 @@ public class CreateProfileFragment extends Fragment {
         long start = System.currentTimeMillis();
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
         setUpViews(v);
-        setUpMapIfNeeded();
         long end = System.currentTimeMillis();
         long elapsed = end - start;
         Log.d(TAG, "onCreateView took: " + elapsed);
@@ -206,6 +208,12 @@ public class CreateProfileFragment extends Fragment {
         tvMapTitle = (TextView) v.findViewById(R.id.tvMapTitle);
 
         showTextViews();
+
+        if(objectId != null){
+            //not viewing our own profile, disable edit functionality
+            btEdit.setVisibility(View.GONE);
+        }
+
         long start = System.currentTimeMillis();
         fetchUser();
         long elapsed = System.currentTimeMillis() - start;
@@ -363,6 +371,9 @@ public class CreateProfileFragment extends Fragment {
             currentUser.setSocialProfile(etSocialProfile.getText().toString());
         }
 
+        //currentUser.put("userId", ParseUser.getCurrentUser().getObjectId());
+        currentUser.setParseUser(ParseUser.getCurrentUser());
+
         if (!currentUser.isDirty()){
             // TODO this doesn't actually work, but it would be cool if it did
             Log.d(TAG, "None of the user's data has changed, so nothing is being saved to Parse.");
@@ -370,17 +381,18 @@ public class CreateProfileFragment extends Fragment {
             return;
         }
 
-        ParseUser user = ParseUser.getCurrentUser();
-        user.put(ContactInfo.CONTACT_INFO_TABLE_NAME, currentUser);
+        ParseUser currentParseUser = ParseUser.getCurrentUser();
 
-        user.saveInBackground(new SaveCallback() {
+        currentParseUser.put(ContactInfo.CONTACT_INFO_TABLE_NAME, currentUser);
+
+        currentParseUser.saveInBackground(new SaveCallback(){
             @Override
-            public void done(ParseException e) {
-                if (e == null){
+            public void done(ParseException e){
+                if(e == null){
                     Toast.makeText(getActivity(), "Save successful", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Save successful!");
                     setCurrentValues();
-                } else {
+                }else{
                     Log.e(TAG, "Save failed! " + e.getMessage());
                     Toast.makeText(getActivity(), "Save failed", Toast.LENGTH_SHORT).show();
                     setCurrentValues();
@@ -392,6 +404,7 @@ public class CreateProfileFragment extends Fragment {
     private void fetchUser(){
         if (objectId == null){
             user = ParseUser.getCurrentUser();
+            setUpMapIfNeeded();
             currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
             if (currentUser == null){
                 currentUser = new ContactInfo();
@@ -412,21 +425,14 @@ public class CreateProfileFragment extends Fragment {
                 }
             });
         } else {
-            try{
-                user = ParseUser.getQuery().whereEqualTo("objectId", objectId).getFirst();
-            }catch(ParseException e){
-                Log.e(TAG, "Couldn't find user with objectId=" + objectId, e);
-                e.printStackTrace();
-                return;
-            }
-            setUpEmailAndPhoneOnClick();
             ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
                 @Override
                 public void receiveContact(ContactInfo contactInfo) {
-                    btDone.setVisibility(View.INVISIBLE);
-                    btEdit.setVisibility(View.INVISIBLE);
+                    user = (ParseUser) contactInfo.get("User");
                     currentUser = contactInfo;
                     setCurrentValues();
+                    setUpEmailAndPhoneOnClick();
+                    setUpMapIfNeeded();
                 }
             });
         }
@@ -569,35 +575,50 @@ public class CreateProfileFragment extends Fragment {
 
     protected void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
-        if (mapFragment == null) {
+        if (mapFragment == null){
             mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)); //  getActivity().getSupportFragmentManager().findFragmentById(R.id.map));
-            // Check if we were successful in obtaining the map.
-            if (mapFragment != null) {
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap map) {
-                        loadMap(map);
-                    }
-                });
-            }
+        }
+
+        // Check if we were successful in obtaining the map.
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    loadMap(map);
+                }
+            });
         }
     }
 
     // The Map is verified. It is now safe to manipulate the map.
-    protected void loadMap(GoogleMap googleMap) {
+    protected void loadMap(final GoogleMap googleMap) {
         if (googleMap != null) {
             if(user != null){
-                ParseGeoPoint geoPoint = user.getParseGeoPoint("lastLocation");
-                if(geoPoint != null){
-                    LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-                    googleMap.animateCamera(cameraUpdate);
-                    shouldShowMap(true);
-                    Log.w(TAG, "found lat/long and updated map.");
-                    return;
-                }else{
-                    Log.e(TAG, "could not find lat/long to update map.");
-                }
+                user.fetchIfNeededInBackground(new GetCallback<ParseObject>(){
+                    @Override
+                    public void done(ParseObject parseObject, ParseException e){
+                        if(e == null){
+                            ParseGeoPoint geoPoint = user.getParseGeoPoint("lastLocation");
+                            if(geoPoint != null){
+                                LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+                                googleMap.animateCamera(cameraUpdate);
+                                shouldShowMap(true);
+                                Log.w("TAG", "found lat/long and updated map.");
+                                return;
+                            }else{
+                                Log.e("TAG", "could not find lat/long to update map.");
+                                shouldShowMap(false);
+                            }
+                        }else{
+                            Log.e("TAG", "error fetching user data.", e);
+                            shouldShowMap(false);
+                        }
+                    }
+                });
+
+                return;
+
             }else{
                 Log.e(TAG, "could not find user to update map.");
             }
