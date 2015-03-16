@@ -53,7 +53,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
-       // subscribeToPush();
+        subscribeToPush();
     }
 
     private static void subscribeToPush(){
