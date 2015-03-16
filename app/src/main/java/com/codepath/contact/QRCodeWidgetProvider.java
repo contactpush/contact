@@ -12,6 +12,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.parse.Parse;
 import com.parse.ParseUser;
 
 public class QRCodeWidgetProvider extends AppWidgetProvider{
@@ -23,10 +24,11 @@ public class QRCodeWidgetProvider extends AppWidgetProvider{
         for (int i=0; i<N; i++) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_qr_code);
 
-            String username = ParseUser.getCurrentUser().getUsername();
-            if (username.length() == 0) {
-                username = "test2";
+            String username = "test";
+            if (ParseUser.getCurrentUser() != null) {
+                username = ParseUser.getCurrentUser().getUsername();
             }
+
             remoteViews.setTextViewText(R.id.tvUserName, username);
 
             // TODO(emily) refactor this, copied from SearchUsernameFragment.java
