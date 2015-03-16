@@ -33,7 +33,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -54,7 +53,7 @@ public class CreateProfileFragment extends Fragment {
 
     public final static int PICK_PHOTO_CODE = 1046;
 
-    public String PHOTO_FILE_NAME = "photo.jpg";
+    public String photoFileName;
 
     public static final String OBJECT_ID = "objectId";
     //private OnFragmentInteractionListener mListener;
@@ -207,7 +206,10 @@ public class CreateProfileFragment extends Fragment {
         tvMapTitle = (TextView) v.findViewById(R.id.tvMapTitle);
 
         showTextViews();
+        long start = System.currentTimeMillis();
         fetchUser();
+        long elapsed = System.currentTimeMillis() - start;
+        Log.d(TAG, "fetchUser took: " + elapsed);
     }
 
     private void setUpEmailAndPhoneOnClick(){
@@ -513,11 +515,11 @@ public class CreateProfileFragment extends Fragment {
 
     private void openImageIntent() {
         // Determine Uri of camera image to save.
-        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + TAG + File.separator);
         root.mkdirs();
-        final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-        final File sdImageMainDirectory = new File(root, fname);
-        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+        photoFileName = "img_" + System.currentTimeMillis() + ".jpg";
+        final File sdImageMainDirectory = new File(root, photoFileName);
+        //outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
         // Camera.
         final List<Intent> cameraIntents = new ArrayList<>();
@@ -529,7 +531,8 @@ public class CreateProfileFragment extends Fragment {
             final Intent intent = new Intent(captureIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
             intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            //intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(photoFileName));
             cameraIntents.add(intent);
         }
 
@@ -550,7 +553,7 @@ public class CreateProfileFragment extends Fragment {
         // camera
         if (requestCode == SELECT_PICTURE_REQUEST_CODE && data == null) {
             if (resultCode == getActivity().RESULT_OK) {
-                setProfileImage(getPhotoFileUri(PHOTO_FILE_NAME));
+                setProfileImage(getPhotoFileUri(photoFileName));
             } else { // Result was a failure
                 Log.d(TAG, "Picture wasn't taken!");
             }
@@ -590,16 +593,16 @@ public class CreateProfileFragment extends Fragment {
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
                     googleMap.animateCamera(cameraUpdate);
                     shouldShowMap(true);
-                    Log.w("TAG", "found lat/long and updated map.");
+                    Log.w(TAG, "found lat/long and updated map.");
                     return;
                 }else{
-                    Log.e("TAG", "could not find lat/long to update map.");
+                    Log.e(TAG, "could not find lat/long to update map.");
                 }
             }else{
-                Log.e("TAG", "could not find user to update map.");
+                Log.e(TAG, "could not find user to update map.");
             }
         }else{
-            Log.e("TAG", "could not find map to update map.");
+            Log.e(TAG, "could not find map to update map.");
         }
         shouldShowMap(false);
     }
@@ -629,6 +632,10 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void setProfileImage(byte[] photo){
+        if (photo == null){
+            Log.e(TAG, "Photo is null. Cannot set profile image.");
+            return;
+        }
         Log.d(TAG, "photo is " + photo.length + " bytes");
         Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
         ivProfileImage.setImageBitmap(bitmap);

@@ -185,6 +185,9 @@ public class ContactInfo extends ParseObject {
     }
 
     public void setProfileImage(byte[] profileImage) {
+        if (profileImage == null || profileImage.length == 0){
+            return;
+        }
         ParseFile file = new ParseFile("profileImage.png", profileImage);
         put("profileImage", file);
     }
