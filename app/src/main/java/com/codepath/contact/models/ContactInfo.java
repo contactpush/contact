@@ -132,6 +132,8 @@ public class ContactInfo extends ParseObject {
         return getString("company");
     }
 
+    public ParseUser getUser(){ return (ParseUser) get("User"); }
+
     public void setUserId(String userId) {
         put("userId", userId);
     }
@@ -192,4 +194,6 @@ public class ContactInfo extends ParseObject {
     public void setCompany(String company){
         put("company", company);
     }
+
+    public void setParseUser(ParseUser user) { put("User", user); }
 }
