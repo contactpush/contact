@@ -32,7 +32,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -604,14 +608,23 @@ public class CreateProfileFragment extends Fragment {
                                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
                                 googleMap.animateCamera(cameraUpdate);
                                 shouldShowMap(true);
-                                Log.w("TAG", "found lat/long and updated map.");
+
+                                // Define color of marker icon
+                                BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+
+                                // Creates and adds marker to the map
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
+                                        .position(latLng)
+                                        .icon(defaultMarker));
+
+                                Log.d(TAG, "found lat/long and updated map with location:" + latLng.toString());
                                 return;
                             }else{
-                                Log.e("TAG", "could not find lat/long to update map.");
+                                Log.e(TAG, "could not find lat/long to update map.");
                                 shouldShowMap(false);
                             }
                         }else{
-                            Log.e("TAG", "error fetching user data.", e);
+                            Log.e(TAG, "error fetching user data.", e);
                             shouldShowMap(false);
                         }
                     }

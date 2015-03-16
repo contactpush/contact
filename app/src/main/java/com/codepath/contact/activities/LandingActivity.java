@@ -60,7 +60,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pb = (ProgressBar) findViewById(R.id.pbLoading);
+        pb = (ProgressBar) findViewById(R.id.pbLoading);getSupportFragmentManager();
 
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         pagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
@@ -68,7 +68,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
 
-        locationHelper = new LocationHelper();
+        locationHelper = new LocationHelper(this);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
     }
 
     private void updateCurrentLocation(){
-        this.locationHelper.getRecentLocation(this, this);
+        this.locationHelper.getRecentLocation(this);
     }
 
     private void logOut(){
@@ -117,6 +117,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         editor.remove(USERNAME);
         editor.remove(PASSWORD);
         editor.commit();
+        ParseUser.logOut();
         finish();
     }
 
@@ -240,6 +241,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
 
     @Override
     public void onLocationUpdated(Location location){
+        Log.d(TAG, "location updated: " + location.toString());
         ParseUser.getCurrentUser().put("lastLocation", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
         ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
             @Override
