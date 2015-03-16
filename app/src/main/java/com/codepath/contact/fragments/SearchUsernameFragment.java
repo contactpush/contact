@@ -109,7 +109,7 @@ public class SearchUsernameFragment extends Fragment{
         return v;
     }
 
-    private void searchForUsername(final String username){
+    public void searchForUsername(final String username){
         Request.makeRequestForUsername(username, new Request.requestAttemptHandler(){
             @Override
             public void onSuccess(ParseUser requestee, Request request){
