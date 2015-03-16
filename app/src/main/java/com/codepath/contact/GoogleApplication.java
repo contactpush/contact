@@ -5,14 +5,15 @@ import android.util.Log;
 
 import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.Request;
-import com.codepath.contact.models.UserData;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 public class GoogleApplication extends com.activeandroid.app.Application {
@@ -41,23 +42,23 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         // register classes extending ParseObject.
         ParseObject.registerSubclass(Request.class);
         ParseObject.registerSubclass(ContactInfo.class);
-        ParseObject.registerSubclass(UserData.class);
 
         // Add your initialization code here
         Parse.initialize(this, "uXNe2kO8BuPKGuhLNF4zhMH1VD2YyIVPfjn5h9ZM", "plrTKpseHWkO1eLnn0OzMrV1lnhdv6DRRY8brqlS");
 
-        //ParseUser.enableAutomaticUser();
-        //ParseUser.getCurrentUser().saveInBackground();
         ParseACL defaultACL = new ParseACL();
+
         // Optionally enable public read access.
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+
+        subscribeToPush();
     }
 
     private static void subscribeToPush(){
         // register device for push notifications by subscribing to a particular channel
-       /* ParsePush.subscribeInBackground("", new SaveCallback() {
+        ParsePush.subscribeInBackground("", new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
@@ -66,7 +67,7 @@ public class GoogleApplication extends com.activeandroid.app.Application {
                     Log.e("com.parse.push", "failed to subscribe for push", e);
                 }
             }
-        });*/
+        });
     }
 
     public static void signIntoParse(String userName, String password, final ParseLoginListener listener){

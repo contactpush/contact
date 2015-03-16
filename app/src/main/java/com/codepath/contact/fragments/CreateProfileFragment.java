@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.ContactInfo;
-import com.codepath.contact.models.UserData;
 import com.codepath.contact.tasks.PhotoReader;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,7 +38,6 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -52,8 +50,16 @@ public class CreateProfileFragment extends Fragment {
 
     private static final int SELECT_PICTURE_REQUEST_CODE = 3237;
 
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+
+    public final static int PICK_PHOTO_CODE = 1046;
+
+    public String PHOTO_FILE_NAME = "photo.jpg";
+
     public static final String OBJECT_ID = "objectId";
     //private OnFragmentInteractionListener mListener;
+    private Button btDone;
+    private Button btEdit;
 
     enum ProfileMode{
         EDIT,
@@ -61,9 +67,6 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private ProfileMode profileMode;
-
-    private Button btDone;
-    private Button btEdit;
 
     private ImageView ivProfileImage;
 
@@ -107,7 +110,6 @@ public class CreateProfileFragment extends Fragment {
     private TextView tvMapTitle;
 
     private ParseUser user;
-    private ArrayList<UserData> userData;
     private ContactInfo currentUser;
 
     private Uri outputFileUri;
@@ -135,9 +137,13 @@ public class CreateProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        long start = System.currentTimeMillis();
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
         setUpViews(v);
         setUpMapIfNeeded();
+        long end = System.currentTimeMillis();
+        long elapsed = end - start;
+        Log.d(TAG, "onCreateView took: " + elapsed);
         return v;
     }
 
@@ -331,14 +337,6 @@ public class CreateProfileFragment extends Fragment {
         currentUser.setLastName(etLastName.getText().toString());
         currentUser.setCompany(etCompany.getText().toString());
 
-        ArrayList<UserData> newUserData = new ArrayList<>();
-        newUserData.add(new UserData(user, "first_name", "", etFirstName.getText().toString()));
-        newUserData.add(new UserData(user, "middle_name", "", etMiddleName.getText().toString()));
-        newUserData.add(new UserData(user, "last_name", "", etLastName.getText().toString()));
-        // UserData company
-
-        ParseObject.saveAllInBackground(newUserData);
-
         if (etPhone.getText().toString() != null
                 && etPhone.getText().toString().trim().length() > 0){
             currentUser.setPhoneType(spPhoneType.getSelectedItem().toString());
@@ -401,8 +399,11 @@ public class CreateProfileFragment extends Fragment {
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     if (e == null) {
+                        long start = System.currentTimeMillis();
                         setCurrentValues();
-                        //queryUserData();
+                        long end = System.currentTimeMillis();
+                        long elapsed = end - start;
+                        Log.d(TAG, "setCurrentValues took: " + elapsed);
                     } else {
                         Log.e(TAG, e.getMessage());
                     }
@@ -424,54 +425,15 @@ public class CreateProfileFragment extends Fragment {
                     btEdit.setVisibility(View.INVISIBLE);
                     currentUser = contactInfo;
                     setCurrentValues();
-                    //queryUserData();
                 }
             });
-        }
-    }
-
-    private void queryUserData() {
-        // Define the class we would like to query
-        ParseQuery<UserData> query = ParseQuery.getQuery(UserData.class);
-        // Define our query conditions
-        query.whereEqualTo("user", user);
-        // Execute the find asynchronously
-        query.findInBackground(new FindCallback<UserData>() {
-            public void done(List<UserData> queryUserData, ParseException e) {
-                if (e == null) {
-                    // Access the array of results here
-                    userData = (ArrayList<UserData>) queryUserData;
-                    setCurrentValues(queryUserData);
-                } else {
-                    Log.d("item", "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void setCurrentValues(List<UserData> currentUserData) {
-        for (UserData aData : currentUserData) {
-            switch (aData.getDataType()) {
-                case "first_name":
-                    tvFirstName.setText(currentUser.getFirstName());
-                    etFirstName.setText(currentUser.getFirstName());
-                    break;
-                case "middle_name":
-                    tvMiddleName.setText(currentUser.getMiddleName());
-                    etMiddleName.setText(currentUser.getMiddleName());
-                    break;
-                case "last_name":
-                    tvLastName.setText(currentUser.getLastName());
-                    etLastName.setText(currentUser.getLastName());
-                    break;
-            }
         }
     }
 
     private void setCurrentValues(){
         ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 if(CreateProfileFragment.this.profileMode == ProfileMode.EDIT){
                     openImageIntent();
                 }
@@ -534,8 +496,22 @@ public class CreateProfileFragment extends Fragment {
         }
     }
 
-    private void openImageIntent() {
+    // Returns the Uri for a photo stored on disk given the fileName
+    public Uri getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        File mediaStorageDir = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), TAG);
 
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(TAG, "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+    }
+
+    private void openImageIntent() {
         // Determine Uri of camera image to save.
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
         root.mkdirs();
@@ -557,13 +533,11 @@ public class CreateProfileFragment extends Fragment {
             cameraIntents.add(intent);
         }
 
-        // Filesystem.
-        final Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        // photos
+        Intent photoPicker = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         // Chooser of filesystem options.
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+        final Intent chooserIntent = Intent.createChooser(photoPicker, "Select Source");
 
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
@@ -573,43 +547,21 @@ public class CreateProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == SELECT_PICTURE_REQUEST_CODE) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
-                } else {
-                    final String action = data.getAction();
-                    if (action == null) {
-                        isCamera = false;
-                    } else {
-                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    }
-                }
-
-                Uri selectedImageUri;
-                if (isCamera) {
-                    selectedImageUri = outputFileUri;
-                } else {
-                    selectedImageUri = data == null ? null : data.getData();
-                }
-                if (selectedImageUri != null){
-                    PhotoReader reader = new PhotoReader(new PhotoReader.PhotoReadCompletionListener() {
-                        @Override
-                        public void onPhotoReadCompletion(byte[] photoBytes) {
-                            setProfileImage(photoBytes);
-                            currentUser.setProfileImage(photoBytes);
-                        }
-                    });
-                    reader.execute(selectedImageUri);
-                }
+        // camera
+        if (requestCode == SELECT_PICTURE_REQUEST_CODE && data == null) {
+            if (resultCode == getActivity().RESULT_OK) {
+                setProfileImage(getPhotoFileUri(PHOTO_FILE_NAME));
+            } else { // Result was a failure
+                Log.d(TAG, "Picture wasn't taken!");
             }
         }
-    }
 
-    private void setProfileImage(byte[] photo){
-        Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
-        ivProfileImage.setImageBitmap(bitmap);
+        // photo
+        if (requestCode == SELECT_PICTURE_REQUEST_CODE && data != null) {
+            if (resultCode == getActivity().RESULT_OK) {
+                setProfileImage(data.getData());
+            }
+        }
     }
 
     protected void setUpMapIfNeeded() {
@@ -662,26 +614,24 @@ public class CreateProfileFragment extends Fragment {
         }
     }
 
-   /* @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+
+    private void setProfileImage(Uri photoUri){
+        if (photoUri != null){
+            PhotoReader reader = new PhotoReader(getActivity(), new PhotoReader.PhotoReadCompletionListener() {
+                @Override
+                public void onPhotoReadCompletion(byte[] photo) {
+                    currentUser.setProfileImage(photo);
+                    setProfileImage(photo);
+                }
+            });
+            reader.execute(photoUri);
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void setProfileImage(byte[] photo){
+        Log.d(TAG, "photo is " + photo.length + " bytes");
+        Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+        ivProfileImage.setImageBitmap(bitmap);
+        currentUser.setProfileImage(photo);
     }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }*/
-
 }

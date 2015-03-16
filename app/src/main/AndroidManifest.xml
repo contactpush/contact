@@ -18,17 +18,15 @@
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--
-       <uses-permission android:name="android.permission.WAKE_LOCK" />
-       <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-       <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-       <uses-permission android:name="android.permission.VIBRATE" />
-       <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <permission android:name="com.codepath.contact.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.codepath.contact.permission.C2D_MESSAGE" />
 
-       <permission android:protectionLevel="signature"
-           android:name="com.codepath.contact.permission.C2D_MESSAGE" />
-       <uses-permission android:name="com.codepath.contact.permission.C2D_MESSAGE" />
-   -->
     <application
         android:name=".GoogleApplication"
         android:allowBackup="true"
@@ -45,6 +43,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name"
+            android:noHistory="true"
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -91,7 +90,7 @@
             android:name=".activities.AddContactActivity"
             android:label="@string/title_activity_add_contact" >
         </activity>
-<!--
+
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
@@ -116,7 +115,6 @@
             </intent-filter>
         </receiver>
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/ic_push_icon"/>
-        -->
 
         <activity
             android:name=".activities.ProfileActivity"

@@ -4,19 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.SearchUsernameFragment;
+import com.codepath.contact.fragments.SearchUsernameFragment.SearchUsernameFragmentListener;
 import com.codepath.contact.models.Request;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
-public class AddContactActivity extends ActionBarActivity implements SearchUsernameFragment.SearchUsernameFragmentListener{
-
+public class AddContactActivity extends ActionBarActivity implements SearchUsernameFragmentListener{
+    private static final String TAG = "ActionBarActivity";
     public static final int SUCCESSFUL_REQUEST = 524;
     public static final String SUCCESSFUL_REQUEST_ID_KEY = "requestId";
-
     public static final int FAILED_REQUEST = 234;
+
+    private SearchUsernameFragment searchUsernameFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -24,7 +29,7 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
         setContentView(R.layout.activity_add_contact);
 
         // place username search fragment in activity first
-        SearchUsernameFragment searchUsernameFragment = SearchUsernameFragment.newInstance(this);
+        searchUsernameFragment = SearchUsernameFragment.newInstance(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flAddContactActivityFragmentFrame, searchUsernameFragment);
         transaction.commit();
@@ -65,6 +70,32 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
     public void searchFailure(){
         setResult(AddContactActivity.FAILED_REQUEST);
         finish();
+    }
+
+    @Override
+    public void launchQRScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.addExtra("SCAN_WIDTH", 640);
+        integrator.addExtra("SCAN_HEIGHT", 480);
+        integrator.addExtra("SCAN_MODE", "QR_CODE_MODE");
+
+        //customize the prompt message before scanning
+        integrator.addExtra("PROMPT_MESSAGE", "Scanning Contact card...");
+        integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            String contents = result.getContents();
+            if (contents != null) {
+                Log.d(TAG, contents);
+                searchUsernameFragment.searchForUsername(contents);
+            } else {
+                Log.d(TAG, "QR scan failed");
+            }
+        }
     }
 
     @Override

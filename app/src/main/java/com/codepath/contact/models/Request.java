@@ -159,6 +159,10 @@ public class Request extends ParseObject {
                     ContactInfo fromUser = (ContactInfo) currentUser.getParseObject(ContactInfo.CONTACT_INFO_TABLE_NAME);
                     if (fromUser != null){
                         request.setFromUser(fromUser);
+                    } else {
+                        // Real users would likely never hit this edge case, but worth noting.
+                        Log.d(TAG, "ContactInfo is empty, please put something in your profile");
+                        return;
                     }
                     request.setTo(username);
                     request.setApprovedStatus(false);

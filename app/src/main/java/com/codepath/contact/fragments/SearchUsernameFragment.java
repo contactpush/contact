@@ -1,5 +1,9 @@
 package com.codepath.contact.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,10 +15,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.models.Request;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.encoder.QRCode;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -23,11 +36,13 @@ public class SearchUsernameFragment extends Fragment{
 
     Button btnSearch;
     EditText etUsername;
+    ProgressBar pbTryingRequest;
     SearchUsernameFragmentListener listener;
 
     public interface SearchUsernameFragmentListener{
         public void searchSuccess(Request request);
         public void searchFailure();
+        public void launchQRScanner();
     }
 
     /**
@@ -48,6 +63,8 @@ public class SearchUsernameFragment extends Fragment{
                 public void searchSuccess(Request request){}
                 @Override
                 public void searchFailure(){}
+                @Override
+                public void launchQRScanner() {}
             };
         }
 
@@ -65,6 +82,7 @@ public class SearchUsernameFragment extends Fragment{
 
         btnSearch = (Button) v.findViewById(R.id.btnSearchContactButton);
         etUsername = (EditText) v.findViewById(R.id.etAddContactUsername);
+        pbTryingRequest = (ProgressBar) v.findViewById(R.id.pbTryingRequest);
 
         etUsername.addTextChangedListener(new TextWatcher(){
             @Override
@@ -93,13 +111,39 @@ public class SearchUsernameFragment extends Fragment{
             }
         });
 
+        Button btnQR = (Button) v.findViewById(R.id.btnAddByQR);
+        ImageView image = (ImageView) v.findViewById(R.id.ivQRCode);
+
+        btnQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.launchQRScanner();
+            }
+        });
+
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        try {
+            BitMatrix qrBitMatrix = qrCodeWriter.encode(ParseUser.getCurrentUser().getUsername(), BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap qrBitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.RGB_565);
+            for (int x = 0; x < 400; x++){
+                for (int y = 0; y < 400; y++){
+                    qrBitmap.setPixel(x, y, qrBitMatrix.get(x,y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            image.setImageBitmap(qrBitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
         return v;
     }
 
-    private void searchForUsername(final String username){
+    public void searchForUsername(final String username){
+        pbTryingRequest.setVisibility(ProgressBar.VISIBLE);
         Request.makeRequestForUsername(username, new Request.requestAttemptHandler(){
             @Override
             public void onSuccess(ParseUser requestee, Request request){
+                pbTryingRequest.setVisibility(ProgressBar.INVISIBLE);
                 Toast.makeText(getActivity(), "Request to " + requestee.getUsername() + " sent.", Toast.LENGTH_SHORT).show();
                 listener.searchSuccess(request);
             }
