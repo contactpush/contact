@@ -26,7 +26,6 @@ import com.codepath.contact.fragments.sent.SentRequestInteractionFragment;
 import com.codepath.contact.helpers.LocationHelper;
 import com.codepath.contact.models.Request;
 import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
@@ -137,8 +136,13 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         if(requestCode == LandingActivity.ADD_USER){
             switch(resultCode){
                 case AddContactActivity.SUCCESSFUL_REQUEST:
-                    String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
-                    Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
+                    vpPager.setCurrentItem(pagerAdapter.SENT);
+
+                    // the code below is causing duplicates to be added to the sent list
+                    // I'm not sure if we want to remove this piece, or change the way the
+                    // fragment loads the list onCreate
+                   // String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
+                   /* Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
                         @Override
                         public void receiveRequest(Request request) {
                             //int currentPosition = vpPager.getCurrentItem();
@@ -147,7 +151,7 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
                                     .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
                             //vpPager.setCurrentItem(currentPosition);
                         }
-                    });
+                    });*/
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:

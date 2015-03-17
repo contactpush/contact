@@ -35,9 +35,13 @@ public abstract class ListFragment extends Fragment {
         return v;
     }
 
-    public void addRequestToList(Request request){
+    // the code below is called by LandingActivity.onActivityResult
+    // and is causing duplicates to be added to the sent list
+    // I'm not sure if we want to remove this piece, or change the way the
+    // fragment loads the list onCreate
+  /*  public void addRequestToList(Request request){
         requestsAdapter.add(request);
-    }
+    }*/
 
     public void refreshList(){
         this.requestsAdapter.clear();
