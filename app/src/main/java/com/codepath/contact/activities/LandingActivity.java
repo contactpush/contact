@@ -117,7 +117,12 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         editor.remove(PASSWORD);
         editor.commit();
         ParseUser.logOut();
-        finish();
+
+        // Bring us to the login screen, clear the task stack
+        Intent i = new Intent(this, LoginActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
 
     public void addContactButtonPressed(){
