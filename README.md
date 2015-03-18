@@ -40,6 +40,11 @@ User stories:
 [Wireframes](http://contactpush.github.io./)
 
 Walkthrough of all user stories:
+## Sprint 2
+
+![Video Walkthrough](img/demo_sprint2.gif)
+
+## Sprint 1
 
 ![Video Walkthrough](img/demo_sprint1.gif)
 
