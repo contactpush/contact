@@ -7,12 +7,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
 
 import java.util.Calendar;
 
@@ -58,6 +58,7 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
         // Connect the client.
         if (isGooglePlayServicesAvailable() && mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+            Log.d(TAG, "attempting to connect to google");
         }
     }
 
@@ -104,6 +105,7 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
      */
     @Override
     public void onConnected(Bundle dataBundle) {
+        Log.d(TAG, "received location service response from google");
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
@@ -120,12 +122,14 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
     }
 
     protected void startLocationUpdates() {
+        Log.d(TAG, "starting location updates");
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);// TODO emulator requires this, but PRIORITY_BALANCED_POWER_ACCURACY is good enough in production
         locationRequest.setNumUpdates(1);
         locationRequest.setExpirationDuration(30000);//don't let location requests take longer than 30 seconds
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, this);
+        Log.d(TAG, "finished location updates");
     }
 
     /*

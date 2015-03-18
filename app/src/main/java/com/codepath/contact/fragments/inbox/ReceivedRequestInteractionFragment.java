@@ -1,6 +1,8 @@
 package com.codepath.contact.fragments.inbox;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.contact.R;
@@ -39,6 +42,7 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View v = inflater.inflate(R.layout.fragment_request, container, false);
         TextView tvName = (TextView) v.findViewById(R.id.tvName);
+        ImageView ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
         Button btAccept = (Button) v.findViewById(R.id.btnRight);
         Button btDecline = (Button) v.findViewById(R.id.btnLeft);
         btAccept.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +80,14 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
         });
         ContactInfo fromUser = request.getFromUser();
         tvName.setText(fromUser.getName());
+        byte[] photo = fromUser.getProfileImage();
+        if (photo != null && photo.length > 0){
+            Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+            ivProfileImage.setImageBitmap(bitmap);
+        } else {
+            Log.d(TAG, "Image for requested contact is null");
+        }
+
         return v;
     }
 

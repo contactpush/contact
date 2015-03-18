@@ -249,10 +249,21 @@ public class CreateProfileFragment extends Fragment {
                 }
             }
         });
+
+        ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(profileMode == ProfileMode.EDIT){
+                    openImageIntent();
+                } else {
+                    Log.d(TAG, "profileMode: " + profileMode);
+                }
+            }
+        });
     }
 
     private void showEditTexts(){
-        this.profileMode = ProfileMode.EDIT;
+        profileMode = ProfileMode.EDIT;
 
         btEdit.setVisibility(View.INVISIBLE);
         btDone.setVisibility(View.VISIBLE);
@@ -298,7 +309,7 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void showTextViews(){
-        this.profileMode = ProfileMode.VIEW;
+        profileMode = ProfileMode.VIEW;
 
         btEdit.setVisibility(View.VISIBLE);
         btDone.setVisibility(View.INVISIBLE);
@@ -408,19 +419,18 @@ public class CreateProfileFragment extends Fragment {
             user = ParseUser.getCurrentUser();
             setUpMapIfNeeded();
             currentUser = (ContactInfo) user.get(ContactInfo.CONTACT_INFO_TABLE_NAME);
-            if (currentUser == null){
+            if (currentUser == null){ // new user
                 currentUser = new ContactInfo();
+                setUpEmailAndPhoneOnClick();
+                showEditTexts();
                 return;
             }
             currentUser.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     if (e == null) {
-                        long start = System.currentTimeMillis();
                         setCurrentValues();
-                        long end = System.currentTimeMillis();
-                        long elapsed = end - start;
-                        Log.d(TAG, "setCurrentValues took: " + elapsed);
+                        setUpEmailAndPhoneOnClick();
                     } else {
                         Log.e(TAG, e.getMessage());
                     }
@@ -441,14 +451,6 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void setCurrentValues(){
-        ivProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(CreateProfileFragment.this.profileMode == ProfileMode.EDIT){
-                    openImageIntent();
-                }
-            }
-        });
         byte[] photo = currentUser.getProfileImage();
         if (photo != null){
             setProfileImage(photo);
