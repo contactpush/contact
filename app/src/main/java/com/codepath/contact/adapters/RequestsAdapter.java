@@ -32,6 +32,7 @@ public abstract class RequestsAdapter extends ArrayAdapter<Request> {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.requestObjectId = request.getObjectId();
         setItemValues(viewHolder, request);
         return convertView;
     }
@@ -41,5 +42,10 @@ public abstract class RequestsAdapter extends ArrayAdapter<Request> {
     static class ViewHolder{
         ImageView ivProfileImage;
         TextView tvName;
+
+        /**
+         * remember requestObjectId so we don't async-ly load the wrong data in this viewholder
+         */
+        String requestObjectId;
     }
 }
