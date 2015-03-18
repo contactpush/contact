@@ -20,13 +20,13 @@ public class SentListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestsAdapter = new SentAdapter(getActivity(), requests);
-        populateList();
     }
 
     protected void populateList() {
         Request.getSentRequestsInBackground(ParseUser.getCurrentUser().getUsername(), new Request.OnRequestsReturnedListener() {
             @Override
             public void receiveRequests(List<Request> requests) {
+                swipeContainer.setRefreshing(false);
                 requestsAdapter.addAll(requests);
             }
         });

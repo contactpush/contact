@@ -20,7 +20,6 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestsAdapter = new InboxAdapter(getActivity(), requests);
-        populateList();
     }
 
     @Override
@@ -44,6 +43,7 @@ public class InboxListFragment extends ListFragment implements Request.OnRequest
         Request.getRequestsInBackground(ParseUser.getCurrentUser().getUsername(), new Request.OnRequestsReturnedListener() {
             @Override
             public void receiveRequests(List<Request> requests) {
+                swipeContainer.setRefreshing(false);
                 requestsAdapter.addAll(requests);
             }
         });
