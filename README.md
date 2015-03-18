@@ -1,22 +1,25 @@
 # contact
 Let your contacts update their contact info in your address book so you don't have to.
 
-User stories:
+## User stories
  * [x] Create an account 
 	* [x] Allow user to create user name and password
-	* [x] Display AccountPicker
-	* [x] Request permissions to read/write user's Google Contacts and aquire Google OAuth token
+	* [ ] Display AccountPicker (optional)
+	* [ ] Request permissions to read/write user's Google Contacts and aquire Google OAuth token  (optional)
 	* [x] Create Parse account for user
 	* [x] Store Parse login info in shared preferences for future logins
  * [x] Create your profile
-   * Allow user to upload photo (optional)
+   * [x] Allow user to upload photo
    * [x] Allow user to enter name, phone#, email, address, etc.
    * [x] Allow user to enter social media profiles, web sites, etc
  * Display Contacts
    * [x] Display contacts in list view
    * [x] Display invites to connect
    * [x] Display list of people user has sent invites to
-   * Display detail view on click (optional)
+   * [x] Display detail view on click (optional)
+   * [x] Display contact's photo
+   * [x] Allow user to call or email contact by clicking their phone number or email
+   * [x] Swipe refresh for lists
    * Allow user to filter contacts by group (based on profile type) (optional)
    * Allow user to sort by frequently contacted or recently contacted (optional)
  * Contact management
@@ -39,7 +42,7 @@ User stories:
    
 [Wireframes](http://contactpush.github.io./)
 
-Walkthrough of all user stories:
+## Walkthrough of User Stories
 ## Sprint 2
 
 ![Video Walkthrough](img/demo_sprint2.gif)
