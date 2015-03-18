@@ -75,17 +75,6 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         ParseUser.logInInBackground(userName, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
-                    /*ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                    installation.put("username", user.getUsername());
-                    installation.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Log.d(TAG, "done saving installation");
-                            subscribeToPush();
-                            Log.d(TAG, "done subscribing");
-                        }
-                    }); */
-
                     Log.d(TAG, "Login successful");
                     listener.onLoginResponse(true);
                 } else {
@@ -106,10 +95,6 @@ public class GoogleApplication extends com.activeandroid.app.Application {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
-                    /*ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-                    installation.put("username", ParseUser.getCurrentUser().getUsername());
-                    installation.saveInBackground();*/
-
                     Log.d(TAG, "SignUp successful");
                     listener.onAccountCreationResponse(true);
                 } else {

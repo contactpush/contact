@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
 
 public class CreateAccountFragment extends Fragment {
     private GoogleApplication.ParseAccountCreationListener listener;
@@ -138,6 +140,11 @@ public class CreateAccountFragment extends Fragment {
         editor.putString(USERNAME, userName);
         editor.putString(PASSWORD, password);
         editor.commit();
+
+        // Register userName for push notifications on this device
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("username", ParseUser.getCurrentUser().getUsername());
+        installation.saveInBackground();
     }
 
   /* @Override
