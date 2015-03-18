@@ -28,6 +28,7 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
 
     public interface RequestInteractionFragmentListener{
         public void updateInbox();
+        public void updateContacts();
     }
 
     public static ReceivedRequestInteractionFragment newInstance(Request request) {
@@ -57,6 +58,7 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
                             return;
                         }
                         listener.updateInbox();
+                        listener.updateContacts();
                     }
                 });
                 dismiss();

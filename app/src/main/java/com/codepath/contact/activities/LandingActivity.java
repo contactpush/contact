@@ -195,6 +195,11 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
     }
 
     @Override
+    public void updateContacts(){
+        ((ContactsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).refreshList();
+    }
+
+    @Override
     public void updateSent(){
         ((SentListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
     }
