@@ -26,13 +26,14 @@ Let your contacts update their contact info in your address book so you don't ha
    * [x] Accept/Decline an invite to share info
    * [x] Revoke or delete a connection (optional)
    * Share your profile via email or text (optional)
-   * Share via QR code (advanced)
+   * [x] Share via QR code (advanced)
    * Build "business card" widget for easy sharing  (advanced)
    * Propose connections based on users in native address book using Contact (advanced)
  * Data management
    * [x] Read contacts from native address book
    * [x] Store created profile in parse
-   * Push updates to Contact and native address book (via google contacts) (optional)
+   * [x] Push updates to Contact
+   * Push updates to native address book (via google contacts) (optional)
  * Allow user to message other users (advanced)
  * User acquisition
    * Invite friends via Facebook, Twitter or other social media (optional)
