@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.RequestsAdapter;
+import com.codepath.contact.fragments.contacts.ContactsListFragment;
 import com.codepath.contact.models.Request;
 
 import java.util.ArrayList;
@@ -31,6 +32,16 @@ public abstract class ListFragment extends Fragment {
         lvRequests = (ListView) v.findViewById(R.id.lvContacts);
         lvRequests.setAdapter(requestsAdapter);
         pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
+
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh(){
+                ListFragment.this.refreshList();
+            }
+        });
+
+        this.refreshList();
         setUpOnClickListener();
         return v;
     }

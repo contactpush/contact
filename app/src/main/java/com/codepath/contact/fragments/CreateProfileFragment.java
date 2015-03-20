@@ -14,12 +14,14 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -144,6 +146,38 @@ public class CreateProfileFragment extends Fragment {
         long start = System.currentTimeMillis();
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
         setUpViews(v);
+
+        // see http://stackoverflow.com/a/17315956/2544629 for the reason for this
+        // it allows the map to be interacted with in a scrollview
+        final ScrollView mainScrollView = (ScrollView) v.findViewById(R.id.svProfile);
+        final View transparentView = v.findViewById(R.id.vInvisibleView);
+
+        transparentView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        // Disable touch on transparent view
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(false);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
+        });
+
         long end = System.currentTimeMillis();
         long elapsed = end - start;
         Log.d(TAG, "onCreateView took: " + elapsed);

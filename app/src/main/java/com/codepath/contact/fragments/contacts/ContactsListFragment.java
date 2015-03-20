@@ -44,9 +44,18 @@ public class ContactsListFragment extends Fragment implements ContactInfo.OnCont
         lvContacts = (ListView) v.findViewById(R.id.lvContacts);
         lvContacts.setAdapter(contactsAdapter);
         pb = (ProgressBar) getActivity().findViewById(R.id.pbLoading);
-        pb.setVisibility(View.VISIBLE);
-        ContactInfo.getContacts(this);
+
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh(){
+                ContactsListFragment.this.refreshList();
+            }
+        });
+
+        this.refreshList();
         setUpOnClickListener();
+
         return v;
     }
 
@@ -61,9 +70,16 @@ public class ContactsListFragment extends Fragment implements ContactInfo.OnCont
         });
     }
 
+    public void refreshList(){
+        this.contactsAdapter.clear();
+        pb.setVisibility(View.VISIBLE);
+        ContactInfo.getContacts(this);
+    }
+
     @Override
     public void receiveContacts(List<ContactInfo> contactInfos) {
         pb.setVisibility(View.INVISIBLE);
+        swipeContainer.setRefreshing(false);
         contactsAdapter.addAll(contactInfos);
     }
 

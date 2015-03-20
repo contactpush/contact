@@ -1,4 +1,5 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:id="@+id/svProfile"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -229,14 +230,29 @@
             android:text="Last Reported Location"
             android:textSize="20sp"
             />
-        <fragment
-            android:id="@+id/map"
-            class="com.google.android.gms.maps.SupportMapFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:layout_below="@id/tvMapTitle"
+            >
+            <fragment
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                class="com.google.android.gms.maps.SupportMapFragment"
 
-            />
-
+                />
+            <!--
+                see http://stackoverflow.com/a/17315956/2544629 for the reason for this
+                it allows the map to be interacted with in a scrollview
+            -->
+            <View
+                android:id="@+id/vInvisibleView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                >
+            </View>
+        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>
