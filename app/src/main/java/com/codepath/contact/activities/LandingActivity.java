@@ -56,10 +56,13 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
+        setTheme(R.style.Theme_Contact);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pb = (ProgressBar) findViewById(R.id.pbLoading);getSupportFragmentManager();
+        pb = (ProgressBar) findViewById(R.id.pbLoading);
+        getSupportFragmentManager();
 
         vpPager = (ViewPager) findViewById(R.id.viewpager);
         pagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());

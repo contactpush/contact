@@ -1,15 +1,19 @@
 package com.codepath.contact.fragments.login;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.codepath.contact.GoogleApplication;
 import com.codepath.contact.R;
@@ -35,6 +39,8 @@ public class CreateAccountFragment extends Fragment {
     private String userName;
     private String password;
     private String email;
+    private Button btLogin;
+    private TextView tvCreateAccount;
 
     public static CreateAccountFragment newInstance() {
         CreateAccountFragment fragment = new CreateAccountFragment();
@@ -50,19 +56,23 @@ public class CreateAccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
+        TextView tvAppName = (TextView) v.findViewById(R.id.tvAppName);
+        tvAppName.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"fonts/Roboto-MediumItalic.ttf"));
         etUserName = (EditText) v.findViewById(R.id.etUserName);
         etPassword = (EditText) v.findViewById(R.id.etPassword);
         etEmail = (EditText) v.findViewById(R.id.etEmail);
-        Button btCreateAccount = (Button) v.findViewById(R.id.btCreateAccount);
-        btCreateAccount.setOnClickListener(new View.OnClickListener() {
+        etEmail.setVisibility(View.INVISIBLE);
+
+        tvCreateAccount = (TextView) v.findViewById(R.id.tvCreateAccount);
+        tvCreateAccount.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/RobotoCondensed-Italic.ttf"));
+
+        tvCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validateCredentials()) {
-                    signUpUserWithParse();
-                }
+                revealEmail();
             }
         });
-        Button btLogin = (Button) v.findViewById(R.id.btLogin);
+        btLogin = (Button) v.findViewById(R.id.btLogin);
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +82,33 @@ public class CreateAccountFragment extends Fragment {
             }
         });
         return v;
+    }
+
+    private void revealEmail(){
+        // get the center for the clipping circle
+        int cx = etEmail.getMeasuredWidth() / 2;
+        int cy = etEmail.getMeasuredHeight() / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(etEmail.getWidth(), etEmail.getHeight()) / 2;
+        final Animator reveal = ViewAnimationUtils.createCircularReveal(etEmail, cx, cy, 0, finalRadius);
+        etEmail.setVisibility(View.VISIBLE);
+        etEmail.requestFocus();
+        revealCreateAccountButton();
+        reveal.start();
+        tvCreateAccount.setVisibility(View.INVISIBLE);
+    }
+
+    private void revealCreateAccountButton(){
+        btLogin.setText(R.string.create_account);
+        btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateCredentials()) {
+                    signUpUserWithParse();
+                }
+            }
+        });
     }
 
     //TODO implement better validation logic

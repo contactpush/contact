@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Contact" parent="AppTheme">
+        <item name="pageBackground">@style/page_background_dr</item>
+        <item name="textSubheader">@style/text_subheader_dr</item>
+        <item name="textLarge">@style/text_large_dr</item>
+        <item name="textRegular">@style/text_regular_dr</item>
+        <item name="button">@style/button_dr</item>
+        <item name="editText">@style/edit_text_dr</item>
+    </style>
+</resources>

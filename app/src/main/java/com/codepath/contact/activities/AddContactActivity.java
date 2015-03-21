@@ -28,6 +28,8 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
 
+        setTheme(R.style.Theme_Contact);
+
         // place username search fragment in activity first
         searchUsernameFragment = SearchUsernameFragment.newInstance(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

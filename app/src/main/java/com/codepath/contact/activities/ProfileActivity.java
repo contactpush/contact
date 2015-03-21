@@ -15,6 +15,9 @@ public class ProfileActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        setTheme(R.style.Theme_Contact);
+
         String objectId = getIntent().getExtras().getString(CreateProfileFragment.OBJECT_ID);
 
         CreateProfileFragment createProfileFragment = CreateProfileFragment.newInstance(objectId);
