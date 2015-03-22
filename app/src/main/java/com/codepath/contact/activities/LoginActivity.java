@@ -25,7 +25,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
     private static final int REQUEST_CODE_SHOW_LANDING_ACTIVITY = 3245;
 
     private static final String LOGIN_CREATE_FRAGMENT_TAG = "login_or_create_fragment";
-    private static final String WELCOME_FRAGMENT_TAG = "wecome_fragment";
+    private static final String WELCOME_FRAGMENT_TAG = "welcome_fragment";
 
     private CreateAccountFragment createAccountFragment;
 

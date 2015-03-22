@@ -42,8 +42,16 @@ public class CreateAccountFragment extends Fragment {
     private Button btLogin;
     private TextView tvCreateAccount;
 
+    enum AccountType{
+        LOGIN,
+        CREATE
+    }
+
+    AccountType accountType;
+
     public static CreateAccountFragment newInstance() {
         CreateAccountFragment fragment = new CreateAccountFragment();
+        fragment.accountType = AccountType.LOGIN;//default
         return fragment;
     }
 
@@ -69,18 +77,17 @@ public class CreateAccountFragment extends Fragment {
         tvCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                revealEmail();
-            }
-        });
-        btLogin = (Button) v.findViewById(R.id.btLogin);
-        btLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateCredentials()) {
-                    signIntoParse();
+                if(accountType == AccountType.LOGIN){
+                    accountType = AccountType.CREATE;
+                    revealEmail();
+                }else if(accountType == AccountType.CREATE){
+                    accountType = AccountType.LOGIN;
+                    hideEmail();
                 }
             }
         });
+        btLogin = (Button) v.findViewById(R.id.btLogin);
+        revealLoginButton();
         return v;
     }
 
@@ -93,10 +100,47 @@ public class CreateAccountFragment extends Fragment {
         int finalRadius = Math.max(etEmail.getWidth(), etEmail.getHeight()) / 2;
         final Animator reveal = ViewAnimationUtils.createCircularReveal(etEmail, cx, cy, 0, finalRadius);
         etEmail.setVisibility(View.VISIBLE);
-        etEmail.requestFocus();
+        reveal.addListener(new Animator.AnimatorListener(){
+            @Override
+            public void onAnimationStart(Animator animation){}
+            @Override
+            public void onAnimationEnd(Animator animation){
+                etEmail.requestFocus();
+            }
+            @Override
+            public void onAnimationCancel(Animator animation){}
+            @Override
+            public void onAnimationRepeat(Animator animation){}
+        });
         revealCreateAccountButton();
         reveal.start();
-        tvCreateAccount.setVisibility(View.INVISIBLE);
+        tvCreateAccount.setText(R.string.login_existing_account);
+    }
+
+    private void hideEmail(){
+        // get the center for the clipping circle
+        int cx = etEmail.getMeasuredWidth() / 2;
+        int cy = etEmail.getMeasuredHeight() / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(etEmail.getWidth(), etEmail.getHeight()) / 2;
+        final Animator reveal = ViewAnimationUtils.createCircularReveal(etEmail, cx, cy, finalRadius, 0);
+        revealLoginButton();
+        reveal.addListener(new Animator.AnimatorListener(){
+            @Override
+            public void onAnimationStart(Animator animation){}
+            @Override
+            public void onAnimationEnd(Animator animation){
+                etEmail.setVisibility(View.INVISIBLE);
+            }
+            @Override
+            public void onAnimationCancel(Animator animation){}
+            @Override
+            public void onAnimationRepeat(Animator animation){}
+        });
+        reveal.start();
+        //tvCreateAccount.setVisibility(View.INVISIBLE);
+        tvCreateAccount.setText(R.string.create_account);
     }
 
     private void revealCreateAccountButton(){
@@ -106,6 +150,18 @@ public class CreateAccountFragment extends Fragment {
             public void onClick(View v) {
                 if (validateCredentials()) {
                     signUpUserWithParse();
+                }
+            }
+        });
+    }
+
+    private void revealLoginButton(){
+        btLogin.setText(R.string.login_label);
+        btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateCredentials()) {
+                    signIntoParse();
                 }
             }
         });
