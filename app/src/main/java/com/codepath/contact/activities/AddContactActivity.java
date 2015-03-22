@@ -46,32 +46,19 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_create_profile){
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void searchSuccess(Request request){
         Intent i = new Intent();
         i.putExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY, request.getObjectId());
         setResult(AddContactActivity.SUCCESSFUL_REQUEST, i);
         finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
     }
 
     @Override
     public void searchFailure(){
         setResult(AddContactActivity.FAILED_REQUEST);
         finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
     }
 
     @Override
