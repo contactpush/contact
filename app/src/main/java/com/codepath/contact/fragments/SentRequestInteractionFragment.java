@@ -1,4 +1,4 @@
-package com.codepath.contact.fragments.sent;
+package com.codepath.contact.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,17 +18,23 @@ import com.parse.ParseException;
 
 
 public class SentRequestInteractionFragment extends DialogFragment{
-    private static final String TAG = "SentRequestInteractionFragment";
+    private static final String TAG = "SentRequestIntFrag";
+    public static final String REQUEST_OBJ_ID = "objectId";
     protected Request request;
+    private String requestObjId;
     protected SentRequestInteractionFragmentListener listener;
+    private Button btnRevoke;
+    private TextView tvName;
 
     public interface SentRequestInteractionFragmentListener{
-        public void updateSent();
+        public void updateContacts();
     }
 
-    public static SentRequestInteractionFragment newInstance(Request request) {
+    public static SentRequestInteractionFragment newInstance(String requestObjId) {
         SentRequestInteractionFragment fragment = new SentRequestInteractionFragment();
-        fragment.request = request;
+        Bundle args = new Bundle();
+        args.putString(REQUEST_OBJ_ID, requestObjId);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -37,10 +43,12 @@ public class SentRequestInteractionFragment extends DialogFragment{
                              Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View v = inflater.inflate(R.layout.fragment_request, container, false);
-        TextView tvName = (TextView) v.findViewById(R.id.tvName);
+        TextView tvRequestFragmentTitle = (TextView) v.findViewById(R.id.tvRequestFragmentTitle);
+        tvRequestFragmentTitle.setText("Sent Request");
+        tvName = (TextView) v.findViewById(R.id.tvName);
         Button btnClose = (Button) v.findViewById(R.id.btnRight);
         btnClose.setText(getActivity().getResources().getString(R.string.close));
-        Button btnRevoke = (Button) v.findViewById(R.id.btnLeft);
+        btnRevoke = (Button) v.findViewById(R.id.btnLeft);
         btnRevoke.setText(getActivity().getResources().getString(R.string.revoke));
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +56,23 @@ public class SentRequestInteractionFragment extends DialogFragment{
                 dismiss();
             }
         });
+        fetchRequest();
+        return v;
+    }
+
+    private void fetchRequest(){
+        if (getArguments() == null) return;
+        requestObjId = getArguments().getString(REQUEST_OBJ_ID);
+        Request.getRequestForObjectId(requestObjId, new Request.OnRequestReturnedListener() {
+            @Override
+            public void receiveRequest(Request request) {
+                SentRequestInteractionFragment.this.request = request;
+                setValues();
+            }
+        });
+    }
+
+    private void setValues(){
         btnRevoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,14 +83,13 @@ public class SentRequestInteractionFragment extends DialogFragment{
                             Log.e(TAG, "Error with background delete revoke", e);
                             return;
                         }
-                        listener.updateSent();
+                        listener.updateContacts();
                     }
                 });
                 dismiss();
             }
         });
         tvName.setText(request.getTo());
-        return v;
     }
 
     @Override

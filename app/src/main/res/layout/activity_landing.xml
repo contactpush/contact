@@ -43,6 +43,13 @@
         android:layout_below="@+id/tabs"
         android:background="@android:color/white" />
 
+    <FrameLayout
+        android:id="@+id/fragment_test"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
     <ProgressBar
         android:id="@+id/pbLoading"
         android:visibility="invisible"

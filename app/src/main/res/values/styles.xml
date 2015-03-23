@@ -45,6 +45,7 @@
     <style name="text_regular_dr">
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textSize">@dimen/text_regular_text_size</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="button_dr" parent="text_large_dr">

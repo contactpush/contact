@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -45,6 +44,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -485,9 +485,9 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void setCurrentValues(){
-        byte[] photo = currentUser.getProfileImage();
-        if (photo != null){
-            setProfileImage(photo);
+        String imageFileUrl = currentUser.getProfileImage();
+        if (imageFileUrl != null){
+            Picasso.with(getActivity()).load(imageFileUrl).into(ivProfileImage);
         } else {
             Log.d(TAG, "user's photo is null");
         }
@@ -709,16 +709,5 @@ public class CreateProfileFragment extends Fragment {
             });
             reader.execute(photoUri);
         }
-    }
-
-    private void setProfileImage(byte[] photo){
-        if (photo == null && photo.length > 0){
-            Log.e(TAG, "Photo is null. Cannot set profile image.");
-            return;
-        }
-        Log.d(TAG, "photo is " + photo.length + " bytes");
-        Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
-        ivProfileImage.setImageBitmap(bitmap);
-        //currentUser.setProfileImage(photo);
     }
 }

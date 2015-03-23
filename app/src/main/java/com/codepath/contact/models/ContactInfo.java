@@ -23,6 +23,14 @@ public class ContactInfo extends ParseObject {
     private static final String TAG = "ContactInfo";
     public static final String CONTACT_INFO_TABLE_NAME = "ContactInfo";
 
+    public enum RequestStatus{
+        INCOMING, SENT, NA;
+    }
+
+    private RequestStatus requestStatus = RequestStatus.NA;
+
+    private String requestObjectId;
+
     public interface OnContactsReturnedListener{
         void receiveContacts(List<ContactInfo> contactInfos);
     }
@@ -61,6 +69,21 @@ public class ContactInfo extends ParseObject {
         });
     }
 
+    public RequestStatus getRequestStatus(){
+        return requestStatus;
+    }
+
+    public void setRequestStatus(RequestStatus status){
+        this.requestStatus = status;
+    }
+
+    public String getRequestObjectId() {
+        return requestObjectId;
+    }
+
+    public void setRequestObjectId(String requestObjectId) {
+        this.requestObjectId = requestObjectId;
+    }
 
     public String getUserId() {
         return getString("userId");
@@ -71,15 +94,15 @@ public class ContactInfo extends ParseObject {
     }
 
     public String getFirstName() {
-        return getString("firstName");
+        return getString("firstName") == null ? "" : getString("firstName");
     }
 
     public String getMiddleName() {
-        return getString("middleName");
+        return getString("middleName") == null ? "" : getString("middleName");
     }
 
     public String getLastName() {
-        return getString("lastName");
+        return getString("lastName")  == null ? "" : getString("lastName");
     }
 
     public String getAddressType() {
@@ -114,18 +137,12 @@ public class ContactInfo extends ParseObject {
         return getString("phone");
     }
 
-    public byte[] getProfileImage(){
+    public String getProfileImage(){
         ParseFile file = getParseFile("profileImage");
         if (file == null){
             return null;
         }
-        byte[] photo = null;
-        try {
-            photo = file.getData();
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        return photo;
+        return file.getUrl();
     }
 
     public String getCompany(){

@@ -64,7 +64,7 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
         createAccountFragment = CreateAccountFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flLogin, createAccountFragment, LoginActivity.LOGIN_CREATE_FRAGMENT_TAG);
-        transaction.commitAllowingStateLoss();
+        transaction.commitAllowingStateLoss(); // why commitAllowingStateLoss instead of commit?
     }
 
     private void showWelcomeFragment(){

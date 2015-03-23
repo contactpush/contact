@@ -113,6 +113,8 @@ public class CreateAccountFragment extends Fragment {
             public void onAnimationRepeat(Animator animation){}
         });
         revealCreateAccountButton();
+        etEmail.requestFocus();
+        reveal.setDuration(300);
         reveal.start();
         tvCreateAccount.setText(R.string.login_existing_account);
     }

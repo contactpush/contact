@@ -39,14 +39,19 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     // Picasso for remote image loading
-    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.0'
     // Android Async Http for sending async network requests
     compile 'com.loopj.android:android-async-http:1.4.6'
     // ActiveAndroid for simple persistence with an ORM
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
-    compile 'com.google.android.gms:play-services:6.5.+'
+    compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.parse.bolts:bolts-android:1.1.4'
     compile 'com.google.zxing:core:3.2.0'
     compile 'com.google.zxing:android-integration:3.2.0'
+
+    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:cardview-v7:21.0.3'
+    compile 'com.android.support:palette-v7:21.0.3'
+    compile 'com.melnykov:floatingactionbutton:1.2.0'
 }

@@ -1,8 +1,6 @@
-package com.codepath.contact.fragments.inbox;
+package com.codepath.contact.fragments;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -20,20 +18,28 @@ import com.codepath.contact.models.Request;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Picasso;
 
 public class ReceivedRequestInteractionFragment extends DialogFragment {
     private static final String TAG = "ReceivedReqIntFrag";
+    public static final String SENT_OBJ_ID = "objectId";
     protected Request request;
     protected RequestInteractionFragmentListener listener;
+    private String requestObjId;
+    private ImageView ivProfileImage;
+    private TextView tvName;
+    private Button btAccept;
+    private Button btDecline;
 
     public interface RequestInteractionFragmentListener{
-        public void updateInbox();
         public void updateContacts();
     }
 
-    public static ReceivedRequestInteractionFragment newInstance(Request request) {
+    public static ReceivedRequestInteractionFragment newInstance(String requestObjId) {
         ReceivedRequestInteractionFragment fragment = new ReceivedRequestInteractionFragment();
-        fragment.request = request;
+        Bundle args = new Bundle();
+        args.putString(SENT_OBJ_ID, requestObjId);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -42,10 +48,29 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View v = inflater.inflate(R.layout.fragment_request, container, false);
-        TextView tvName = (TextView) v.findViewById(R.id.tvName);
-        ImageView ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
-        Button btAccept = (Button) v.findViewById(R.id.btnRight);
-        Button btDecline = (Button) v.findViewById(R.id.btnLeft);
+        TextView tvRequestFragmentTitle = (TextView) v.findViewById(R.id.tvRequestFragmentTitle);
+        tvRequestFragmentTitle.setText("Incoming Request");
+        tvName = (TextView) v.findViewById(R.id.tvName);
+        ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
+        btAccept = (Button) v.findViewById(R.id.btnRight);
+        btDecline = (Button) v.findViewById(R.id.btnLeft);
+        fetchRequest();
+        return v;
+    }
+
+    private void fetchRequest(){
+        if (getArguments() == null) return;
+        requestObjId = getArguments().getString(SENT_OBJ_ID);
+        Request.getRequestForObjectId(requestObjId, new Request.OnRequestReturnedListener() {
+            @Override
+            public void receiveRequest(Request request) {
+                ReceivedRequestInteractionFragment.this.request = request;
+                setValues();
+            }
+        });
+    }
+
+    private void setValues(){
         btAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,10 +80,9 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
                     public void done(ParseException e){
                         if(e != null){
                             Log.e(TAG, "Error with background save accept", e);
-                            return;
+                        } else {
+                            listener.updateContacts();
                         }
-                        listener.updateInbox();
-                        listener.updateContacts();
                     }
                 });
                 dismiss();
@@ -72,9 +96,9 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
                     public void done(ParseException e){
                         if(e != null){
                             Log.e(TAG, "Error with background delete deny", e);
-                            return;
+                        } else {
+                            listener.updateContacts();
                         }
-                        listener.updateInbox();
                     }
                 });
                 dismiss();
@@ -82,15 +106,10 @@ public class ReceivedRequestInteractionFragment extends DialogFragment {
         });
         ContactInfo fromUser = request.getFromUser();
         tvName.setText(fromUser.getName());
-        byte[] photo = fromUser.getProfileImage();
-        if (photo != null && photo.length > 0){
-            Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
-            ivProfileImage.setImageBitmap(bitmap);
-        } else {
-            Log.d(TAG, "Image for requested contact is null");
+        String imageFileUrl = fromUser.getProfileImage();
+        if (imageFileUrl != null){
+            Picasso.with(getActivity()).load(imageFileUrl).into(ivProfileImage);
         }
-
-        return v;
     }
 
     @Override

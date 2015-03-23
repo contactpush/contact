@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,32 +13,23 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.contact.R;
-import com.codepath.contact.adapters.SmartFragmentStatePagerAdapter;
-import com.codepath.contact.fragments.contacts.ContactsListFragment;
-import com.codepath.contact.fragments.inbox.InboxListFragment;
-import com.codepath.contact.fragments.inbox.ReceivedRequestInteractionFragment;
-import com.codepath.contact.fragments.sent.SentListFragment;
-import com.codepath.contact.fragments.sent.SentRequestInteractionFragment;
+import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
+import com.codepath.contact.fragments.SentRequestInteractionFragment;
 import com.codepath.contact.helpers.LocationHelper;
-import com.codepath.contact.models.Request;
-import com.codepath.contact.tasks.GetAuthTokenTask.OnAuthTokenResolvedListener;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-public class LandingActivity extends ActionBarActivity implements InboxListFragment.OnRequestListFragListener,
-        OnAuthTokenResolvedListener, ReceivedRequestInteractionFragment.RequestInteractionFragmentListener,
+public class LandingActivity extends ActionBarActivity implements ReceivedRequestInteractionFragment.RequestInteractionFragmentListener,
         SentRequestInteractionFragment.SentRequestInteractionFragmentListener,
-        SentListFragment.OnSentListFragListener, ContactsListFragment.ContactClickListener, LocationHelper.LocationHelperListener{
+        ContactsListFragment.ContactClickListener,
+        LocationHelper.LocationHelperListener{
     private static final String TAG = "LandingActivity";
 
     private static final int ADD_USER = 432;
-
-    private ViewPager vpPager;
-    private ContactPagerAdapter pagerAdapter;
 
     private ProgressBar pb;
     private Toolbar toolbar;
@@ -50,6 +39,8 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
     private static final String CONTACT_PREFERENCES = "ContactPreferences";
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
+
+    private ContactsListFragment contactsListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +55,10 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         pb = (ProgressBar) findViewById(R.id.pbLoading);
         getSupportFragmentManager();
 
-        vpPager = (ViewPager) findViewById(R.id.viewpager);
-        pagerAdapter = new ContactPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(pagerAdapter);
-        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabStrip.setViewPager(vpPager);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        contactsListFragment = new ContactsListFragment();
+        ft.replace(R.id.fragment_test, contactsListFragment);
+        ft.commit();
 
         locationHelper = new LocationHelper(this);
     }
@@ -145,26 +135,11 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
         if(requestCode == LandingActivity.ADD_USER){
             switch(resultCode){
                 case AddContactActivity.SUCCESSFUL_REQUEST:
-                    vpPager.setCurrentItem(pagerAdapter.SENT);
-
-                    // the code below is causing duplicates to be added to the sent list
-                    // I'm not sure if we want to remove this piece, or change the way the
-                    // fragment loads the list onCreate
-                   // String requestId = data.getStringExtra(AddContactActivity.SUCCESSFUL_REQUEST_ID_KEY);
-                   /* Request.getRequestForObjectId(requestId, new Request.OnRequestReturnedListener() {
-                        @Override
-                        public void receiveRequest(Request request) {
-                            //int currentPosition = vpPager.getCurrentItem();
-                            vpPager.setCurrentItem(pagerAdapter.SENT);
-                            ((SentListFragment) pagerAdapter
-                                    .getRegisteredFragment(pagerAdapter.SENT)).addRequestToList(request);
-                            //vpPager.setCurrentItem(currentPosition);
-                        }
-                    });*/
+                    contactsListFragment.refreshList();
                     break;
 
                 case AddContactActivity.FAILED_REQUEST:
-                    // TODO need to do anything here?
+                    Log.d(TAG, "request failed");
                     break;
             }
         }
@@ -181,80 +156,26 @@ public class LandingActivity extends ActionBarActivity implements InboxListFragm
     }
 
     @Override
-    public void onReceivedRequestClick(Request request) {
-        ReceivedRequestInteractionFragment receivedRequestInteractionFragment = ReceivedRequestInteractionFragment.newInstance(request);
+    public void onReceivedRequestClick(String objectId) {
+        ReceivedRequestInteractionFragment receivedRequestInteractionFragment =
+                ReceivedRequestInteractionFragment.newInstance(objectId);
         receivedRequestInteractionFragment.show(getSupportFragmentManager(), "fragment_request");
     }
 
     @Override
-    public void onSentRequestClick(Request request) {
-        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(request);
+    public void onSentRequestClick(String objectId) {
+        SentRequestInteractionFragment requestInteractionFragment = SentRequestInteractionFragment.newInstance(objectId);
         requestInteractionFragment.show(getSupportFragmentManager(), "fragment_sent_request");
-    }
-
-
-    @Override
-    public void updateInbox(){
-        ((InboxListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.INBOX)).refreshList();
     }
 
     @Override
     public void updateContacts(){
-        ((ContactsListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).refreshList();
-    }
-
-    @Override
-    public void updateSent(){
-        ((SentListFragment) pagerAdapter.getRegisteredFragment(pagerAdapter.SENT)).refreshList();
-    }
-
-    @Override
-    public void receiveAuthToken(String token) {
-        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).receiveAuthToken(token);
-    }
-
-    @Override
-    public void handleAuthTokenException(Exception e) {
-        ((OnAuthTokenResolvedListener) pagerAdapter.getRegisteredFragment(pagerAdapter.CONTACTS)).handleAuthTokenException(e);
+        contactsListFragment.refreshList();
     }
 
     @Override
     public void onContactClicked(String objectId) {
         createProfileButtonPressed(objectId);
-    }
-
-    public class ContactPagerAdapter extends SmartFragmentStatePagerAdapter {
-        final int CONTACTS = 0;
-        final int INBOX = 1;
-        final int SENT = 2;
-        private final String[] tabTitles = {"Contacts", "Inbox", "Sent"};
-
-        public ContactPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0){
-                return new ContactsListFragment();
-            } else if (position == 1) {
-                return new InboxListFragment();
-            } else if(position == 2){
-                return new SentListFragment();
-            }
-            Log.e(TAG, "frag index not found");
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
     }
 
     @Override

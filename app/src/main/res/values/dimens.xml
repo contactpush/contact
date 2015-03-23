@@ -16,5 +16,16 @@
     <dimen name="edittext_margin_right">7dp</dimen>
     <dimen name="spinner_margin_left">10dp</dimen>
     <dimen name="card_margin_top">40dp</dimen>
+    <dimen name="palette_height">20dp</dimen>
+
+    <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="card_elevation">8dp</dimen>
+    <dimen name="grid_margin">4dp</dimen>
+    <dimen name="cell_margin">16dp</dimen>
+    <dimen name="profile_height_width">80dp</dimen>
+    <dimen name="contact_detail_image_height">380dp</dimen>
+    <dimen name="contact_text_size">18sp</dimen>
+    <dimen name="contact_details_phone_margin_top">8dp</dimen>
+    <dimen name="fab_elevation">8dp</dimen>
 
 </resources>

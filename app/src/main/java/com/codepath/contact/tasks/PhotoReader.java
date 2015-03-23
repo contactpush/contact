@@ -148,11 +148,14 @@ public class PhotoReader extends AsyncTask<Uri, Void, Bitmap>{
             return null;
         }
         String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        Log.d(TAG, "orientString: " + orientString);
         int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        Log.d(TAG, "orientation: " + orientation);
         int rotationAngle = 0;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        Log.d(TAG, "rotationAngle: " + rotationAngle);
         // Rotate Bitmap
         Matrix matrix = new Matrix();
         matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);

@@ -1,8 +1,6 @@
 package com.codepath.contact.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +33,11 @@ public class ContactsAdapter extends ArrayAdapter<ContactInfo> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.tvName.setText(contact.getName());
-        byte[] photo = contact.getProfileImage();
+        /*byte[] photo = contact.getProfileImage();
         if (photo != null){
             Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
             viewHolder.ivProfileImage.setImageBitmap(bitmap);
-        }
+        }*/
         return convertView;
     }
 
