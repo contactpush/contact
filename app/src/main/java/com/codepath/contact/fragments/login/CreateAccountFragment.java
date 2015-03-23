@@ -7,10 +7,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -87,6 +89,17 @@ public class CreateAccountFragment extends Fragment {
             }
         });
         btLogin = (Button) v.findViewById(R.id.btLogin);
+        etPassword.setImeActionLabel("done", EditorInfo.IME_ACTION_DONE);
+        etPassword.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId==EditorInfo.IME_ACTION_DONE){
+                    btLogin.callOnClick();
+                }
+                return false;
+            }
+        });
         revealLoginButton();
         return v;
     }
