@@ -9,6 +9,7 @@
     <color name="black">#000000</color>
     <color name="gray">#E5E4E2</color>
 
+    <!-- new color scheme  TODO remove the colors above -->
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>
     <color name="primary_light">#C5CAE9</color>

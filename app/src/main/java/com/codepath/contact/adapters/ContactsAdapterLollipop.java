@@ -1,11 +1,7 @@
 package com.codepath.contact.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +12,6 @@ import com.codepath.contact.R;
 import com.codepath.contact.fragments.ContactsListFragment;
 import com.codepath.contact.models.ContactInfo;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -25,6 +20,10 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
     private Context mContext;
     private List<ContactInfo> mContacts;
     private final ContactsListFragment.ContactClickListener listener;
+    private int primaryLight;
+    private int accentColor;
+    private int primaryText;
+    private int secondaryText;
 
     public ContactsAdapterLollipop(Context context, List<ContactInfo> contacts) {
         mContext = context;
@@ -36,6 +35,11 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
             throw new IllegalArgumentException("contacts must not be null");
         }
         mContacts = contacts;
+
+        accentColor = context.getResources().getColor(R.color.accent);
+        secondaryText = context.getResources().getColor(R.color.secondary_text);
+        primaryLight = context.getResources().getColor(R.color.primary_light);
+        primaryText = context.getResources().getColor(R.color.primary_text);
     }
 
     @Override
@@ -53,50 +57,18 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
 
         switch (contact.getRequestStatus()){
             case INCOMING:
-                holder.tvName.setText(contact.getName() + "*");
+                holder.vPalette.setBackgroundColor(accentColor);
                 break;
             case SENT:
-                holder.tvName.setText(contact.getName().trim() + "**");
+                holder.vPalette.setBackgroundColor(primaryLight);
                 break;
-            default:
-                holder.tvName.setText(contact.getName());
+            case NA:
                 break;
         }
-
-        Target target = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                if (bitmap == null || bitmap.getByteCount() == 0) {
-                    return;
-                }
-                holder.ivProfileImage.setImageBitmap(bitmap);
-
-                Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        Palette.Swatch vibrant = palette.getVibrantSwatch();
-                        if (vibrant != null) {
-                            // If we have a vibrant color, update the title TextView
-                            holder.vPalette.setBackgroundColor(vibrant.getRgb());
-                            holder.tvName.setTextColor(vibrant.getTitleTextColor());
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Log.d(TAG, "onBitmapFailed");
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-            }
-        };
+        holder.tvName.setText(contact.getName());
         String imageFileUrl = contact.getProfileImage();
         if (imageFileUrl != null){
-            holder.ivProfileImage.setTag(target);
-            Picasso.with(mContext).load(imageFileUrl).into(target);
+            Picasso.with(mContext).load(imageFileUrl).into(holder.ivProfileImage);
         }
     }
 
@@ -104,7 +76,7 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
         holder.ivProfileImage.setTag(null);
         holder.ivProfileImage.setImageResource(android.R.drawable.alert_dark_frame);
         holder.vPalette.setBackgroundColor(0x00000000);
-        holder.tvName.setTextColor(R.color.primary_text);
+        holder.tvName.setTextColor(primaryText);
     }
 
     @Override

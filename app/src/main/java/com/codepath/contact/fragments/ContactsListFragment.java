@@ -1,7 +1,6 @@
 package com.codepath.contact.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -32,7 +31,6 @@ public class ContactsListFragment extends Fragment {
     private ContactClickListener listener;
     private ContactsAdapterLollipop contactsAdapter;
     private RecyclerView rvContacts;
-    private Context mContext;
 
     public interface ContactClickListener{
         void onContactClicked(String objectId);
@@ -57,10 +55,10 @@ public class ContactsListFragment extends Fragment {
 
         // Unlike ListView, you have to explicitly give a LayoutManager to the RecyclerView to position items on the screen.
         // There are three LayoutManager provided at the moment: GridLayoutManager, StaggeredGridLayoutManager and LinearLayoutManager.
-        rvContacts.setLayoutManager(new LinearLayoutManager(mContext));
+        rvContacts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Create an adapter
-        contactsAdapter = new ContactsAdapterLollipop(mContext, contacts);
+        contactsAdapter = new ContactsAdapterLollipop(getActivity(), contacts);
         refreshList();
 
         // Bind adapter to list
@@ -144,7 +142,6 @@ public class ContactsListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mContext = activity;
         try {
             listener = (ContactClickListener) activity;
         } catch (ClassCastException e) {
