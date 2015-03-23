@@ -100,6 +100,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
     }
 
     private void updateCurrentLocation(){
+        showProgressBar();
         this.locationHelper.getRecentLocation(this);
     }
 
@@ -180,6 +181,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
 
     @Override
     public void onLocationUpdated(Location location){
+        hideProgressBar();
         Log.d(TAG, "location updated: " + location.toString());
         ParseUser.getCurrentUser().put("lastLocation", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
         ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
