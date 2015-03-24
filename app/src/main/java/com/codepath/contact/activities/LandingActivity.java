@@ -120,10 +120,11 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
         startActivity(i);
     }
 
-    public void addContactButtonPressed(){
+    @Override
+    public void addContactButtonPressed() {
         //go to AddContactActivity
         startActivityForResult(new Intent(this, AddContactActivity.class), LandingActivity.ADD_USER);
-        overridePendingTransition(R.anim.right_in, R.anim.leftt_out);
+        overridePendingTransition(R.anim.right_in, R.anim.left_out);
     }
 
     public void createProfileButtonPressed(String objectId, Bundle bundle){

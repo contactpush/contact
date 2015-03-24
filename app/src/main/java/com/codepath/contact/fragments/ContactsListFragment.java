@@ -18,6 +18,7 @@ import com.codepath.contact.R;
 import com.codepath.contact.adapters.ContactsAdapterLollipop;
 import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.Request;
+import com.melnykov.fab.FloatingActionButton;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -33,11 +34,13 @@ public class ContactsListFragment extends Fragment {
     private ContactClickListener listener;
     private ContactsAdapterLollipop contactsAdapter;
     private RecyclerView rvContacts;
+    private FloatingActionButton fabAddContact;
 
     public interface ContactClickListener{
         void onContactClicked(String objectId, Bundle bundle);
         void onSentRequestClick(String objectId);
         void onReceivedRequestClick(String objectId);
+        void addContactButtonPressed();
     }
 
     @Override
@@ -78,6 +81,16 @@ public class ContactsListFragment extends Fragment {
                 refreshList();
             }
         });
+
+        // Fab to launch Add Contact
+        fabAddContact = (FloatingActionButton) v.findViewById(R.id.fabAddContact);
+        fabAddContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.addContactButtonPressed();
+            }
+        });
+
         return v;
     }
 
