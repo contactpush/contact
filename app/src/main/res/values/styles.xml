@@ -7,8 +7,9 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="windowActionBar">false</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <!-- Contact dark theme -->
@@ -60,4 +61,7 @@
         <item name="android:background">@color/primary_dark</item>
     </style>
 
+    <style name="card_view_style_dr" parent="CardView.Light">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
 </resources>

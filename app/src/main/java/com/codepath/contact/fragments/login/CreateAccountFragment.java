@@ -2,11 +2,13 @@ package com.codepath.contact.fragments.login;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +67,12 @@ public class CreateAccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_login, container, false);
+        // create ContextThemeWrapper from the original Activity Context with the custom theme
+        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.Theme_Contact);
+
+        // clone the inflater using the ContextThemeWrapper
+        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
+        View v = localInflater.inflate(R.layout.fragment_login, container, false);
         TextView tvAppName = (TextView) v.findViewById(R.id.tvAppName);
         tvAppName.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"fonts/Roboto-MediumItalic.ttf"));
         etUserName = (EditText) v.findViewById(R.id.etUserName);

@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/card_elevation"
-    android:clickable="true">
+    android:clickable="true"
+    style="@style/card_view_style_dr">
 
     <LinearLayout
         android:orientation="horizontal"

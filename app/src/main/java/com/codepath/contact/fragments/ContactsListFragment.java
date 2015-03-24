@@ -1,12 +1,14 @@
 package com.codepath.contact.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ public class ContactsListFragment extends Fragment {
     private RecyclerView rvContacts;
 
     public interface ContactClickListener{
-        void onContactClicked(String objectId);
+        void onContactClicked(String objectId, Bundle bundle);
         void onSentRequestClick(String objectId);
         void onReceivedRequestClick(String objectId);
     }
@@ -46,7 +48,12 @@ public class ContactsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_list, container, false);
+        // create ContextThemeWrapper from the original Activity Context with the custom theme
+        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.Theme_Contact);
+
+        // clone the inflater using the ContextThemeWrapper
+        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
+        View v = localInflater.inflate(R.layout.fragment_list, container, false);
         pb = (ProgressBar) v.findViewById(R.id.pbLoading);
 
         rvContacts = (RecyclerView) v.findViewById(R.id.rvContacts);

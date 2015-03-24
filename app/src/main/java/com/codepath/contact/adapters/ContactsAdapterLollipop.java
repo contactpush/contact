@@ -1,7 +1,15 @@
 package com.codepath.contact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +18,7 @@ import android.widget.TextView;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.DetailsFragment;
 import com.codepath.contact.models.ContactInfo;
 import com.squareup.picasso.Picasso;
 
@@ -89,10 +98,12 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
         private ImageView ivProfileImage;
         private TextView tvName;
         View vPalette;
+        CardView cardView;
 
-        public VH(View itemView, Context context) {
+        public VH(View itemView, final Context context) {
             super(itemView);
             rootView = itemView;
+            cardView = (CardView) itemView;
             vPalette = itemView.findViewById(R.id.vPalette);
             ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
             tvName = (TextView) itemView.findViewById(R.id.tvName);
@@ -110,7 +121,29 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
                                 listener.onSentRequestClick(contact.getRequestObjectId());
                                 break;
                             default:
-                                listener.onContactClicked(contact.getObjectId());
+                                Pair<View, String> p1 = Pair.create((View) ivProfileImage, "profile");
+                                Pair<View, String> p2 = Pair.create((View)tvName, "name");
+                                ActivityOptionsCompat options = ActivityOptionsCompat.
+                                        makeSceneTransitionAnimation((Activity)context, p1, p2);
+                                Fragment fragment = DetailsFragment.newInstance(contact.getObjectId());
+                                fragment.setSharedElementEnterTransition(TransitionInflater.from(context)
+                                        .inflateTransition(R.transition.change_image_transform));
+                                fragment.setEnterTransition(TransitionInflater.from(context)
+                                        .inflateTransition(android.R.transition.slide_right));
+                                fragment.setSharedElementReturnTransition(TransitionInflater.from(context)
+                                        .inflateTransition(R.transition.change_image_transform));
+                                fragment.setExitTransition(TransitionInflater.from(context)
+                                        .inflateTransition(android.R.transition.slide_left));
+
+                                FragmentTransaction ft = ((ActionBarActivity)context)
+                                        .getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.contactListFragment, fragment)
+                                        .addToBackStack("transaction")
+                                        .addSharedElement(ivProfileImage, "profileImage")
+                                        .addSharedElement(tvName, "name");
+                                ft.commit();
+                                //listener.onContactClicked(contact.getObjectId(), options.toBundle());
                                 break;
                         }
                     }

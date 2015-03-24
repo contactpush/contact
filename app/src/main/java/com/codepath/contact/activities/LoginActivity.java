@@ -31,10 +31,9 @@ public class LoginActivity extends ActionBarActivity implements OnAuthTokenResol
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Contact);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        setTheme(R.style.Theme_Contact);
 
         this.showWelcomeFragment();
     }

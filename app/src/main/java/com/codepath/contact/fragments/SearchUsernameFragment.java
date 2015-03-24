@@ -1,8 +1,7 @@
 package com.codepath.contact.fragments;
 
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +24,7 @@ import com.codepath.contact.models.Request;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.encoder.QRCode;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -78,8 +75,13 @@ public class SearchUsernameFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View v = inflater.inflate(R.layout.fragment_search_username, container, false);
+        // create ContextThemeWrapper from the original Activity Context with the custom theme
+        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.Theme_Contact);
 
+        // clone the inflater using the ContextThemeWrapper
+        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
+        View v = localInflater.inflate(R.layout.fragment_search_username, container, false);
+        etUsername = (EditText) v.findViewById(R.id.etAddContactUsername);
         btnSearch = (Button) v.findViewById(R.id.btnSearchContactButton);
         etUsername = (EditText) v.findViewById(R.id.etAddContactUsername);
         pbTryingRequest = (ProgressBar) v.findViewById(R.id.pbTryingRequest);

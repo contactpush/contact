@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" style="?pageBackground"
+    android:paddingLeft="0dp" android:paddingRight="0dp">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+        <fragment
+            android:id="@+id/map"
+            android:layout_below="@id/tvMapTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+        <!--
+            see http://stackoverflow.com/a/17315956/2544629 for the reason for this
+            it allows the map to be interacted with in a scrollview
+        -->
+        <View
+            android:id="@+id/vInvisibleView"
+            android:layout_below="@id/tvMapTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:transitionName="profileImage"
+            android:layout_width="@dimen/profile_height_width"
+            android:layout_height="@dimen/profile_height_width"
+            android:src="@android:drawable/alert_dark_frame"
+            android:layout_margin="10dp"
+            android:scaleType="centerCrop"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true" />
+        </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:transitionName="name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        style="?textRegular"/>
+
+</LinearLayout>

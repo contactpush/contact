@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.SearchUsernameFragment;
@@ -25,10 +24,9 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        setTheme(R.style.Theme_Contact);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
-
-        setTheme(R.style.Theme_Contact);
 
         // place username search fragment in activity first
         searchUsernameFragment = SearchUsernameFragment.newInstance(this);
@@ -36,7 +34,6 @@ public class AddContactActivity extends ActionBarActivity implements SearchUsern
         transaction.replace(R.id.flAddContactActivityFragmentFrame, searchUsernameFragment);
         transaction.commit();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

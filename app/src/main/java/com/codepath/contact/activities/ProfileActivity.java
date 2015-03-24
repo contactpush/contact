@@ -10,16 +10,32 @@ import com.codepath.contact.R;
 import com.codepath.contact.fragments.CreateProfileFragment;
 
 public class ProfileActivity extends ActionBarActivity {
+    private static final String TAG = "ProfileActivity";
+    public static final String DETAILS_BUNDLE = "details bundle";
+    private String objectId;
+    private Bundle detailsBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Contact);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        setTheme(R.style.Theme_Contact);
+        objectId = getIntent().getExtras().getString(CreateProfileFragment.OBJECT_ID);
+        detailsBundle = getIntent().getExtras().getBundle(DETAILS_BUNDLE);
+        if (objectId == null){
+            startCreateProfileFragment();
+        } else {
+            // start detail frag...
+        }
 
-        String objectId = getIntent().getExtras().getString(CreateProfileFragment.OBJECT_ID);
+    }
 
+    private void startDetailFragment(){
+
+    }
+
+    private void startCreateProfileFragment(){
         CreateProfileFragment createProfileFragment = CreateProfileFragment.newInstance(objectId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flCreateProfile, createProfileFragment);

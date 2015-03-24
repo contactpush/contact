@@ -488,8 +488,6 @@ public class CreateProfileFragment extends Fragment {
         String imageFileUrl = currentUser.getProfileImage();
         if (imageFileUrl != null){
             Picasso.with(getActivity()).load(imageFileUrl).into(ivProfileImage);
-        } else {
-            Log.d(TAG, "user's photo is null");
         }
 
         tvFirstName.setText(currentUser.getFirstName());

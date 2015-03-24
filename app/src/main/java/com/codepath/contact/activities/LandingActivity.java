@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.codepath.contact.R;
 import com.codepath.contact.fragments.ContactsListFragment;
+import com.codepath.contact.fragments.CreateProfileFragment;
 import com.codepath.contact.fragments.ReceivedRequestInteractionFragment;
 import com.codepath.contact.fragments.SentRequestInteractionFragment;
 import com.codepath.contact.helpers.LocationHelper;
@@ -57,7 +58,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         contactsListFragment = new ContactsListFragment();
-        ft.replace(R.id.fragment_test, contactsListFragment);
+        ft.replace(R.id.contactListFragment, contactsListFragment);
         ft.commit();
 
         locationHelper = new LocationHelper(this);
@@ -83,7 +84,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
         }
 
         if (id == R.id.action_create_profile) {
-            createProfileButtonPressed(null);
+            createProfileButtonPressed(null, null);
             return true;
         }
 
@@ -125,9 +126,10 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
         overridePendingTransition(R.anim.right_in, R.anim.leftt_out);
     }
 
-    public void createProfileButtonPressed(String objectId){
+    public void createProfileButtonPressed(String objectId, Bundle bundle){
         Intent i = new Intent(this, ProfileActivity.class);
-        i.putExtra("objectId", objectId);
+        i.putExtra(CreateProfileFragment.OBJECT_ID, objectId);
+        i.putExtra(ProfileActivity.DETAILS_BUNDLE, bundle);
         startActivity(i);
     }
 
@@ -175,8 +177,8 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
     }
 
     @Override
-    public void onContactClicked(String objectId) {
-        createProfileButtonPressed(objectId);
+    public void onContactClicked(String objectId, Bundle bundle) {
+        createProfileButtonPressed(objectId, bundle);
     }
 
     @Override

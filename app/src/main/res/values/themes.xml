@@ -7,5 +7,6 @@
         <item name="textRegular">@style/text_regular_dr</item>
         <item name="button">@style/button_dr</item>
         <item name="editText">@style/edit_text_dr</item>
+        <item name="cardViewStyle">@style/card_view_style_dr</item>
     </style>
 </resources>

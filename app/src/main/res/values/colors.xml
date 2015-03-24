@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="toolbarColor">
-        #8800ddbd
+        #607D8B
     </color>
     <color name="simple_yellow">#ECD078</color>
     <color name="primary_blue">#38AEEA</color>

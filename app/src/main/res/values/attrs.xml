@@ -9,4 +9,5 @@
     <attr name="button" format="reference" />
     <attr name="spinner" format="reference" />
     <attr name="editText" format="reference" />
+    <attr name="cardViewStyle" format="reference" />
 </resources>
