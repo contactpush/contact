@@ -1,49 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vPalette"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:padding="16dp"
+    style="?pageBackground" >
 
-    <View
-        android:id="@+id/vPalette"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        style="?pageBackground" />
+    <ImageView
+        android:id="@+id/ivKeyboardInputIcon"
+        android:src="@drawable/ic_keyboard_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <EditText android:id="@+id/etAddContactUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textWebEmailAddress"
-        android:layout_toLeftOf="@+id/btnSearchContactButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignBaseline="@id/btnSearchContactButton"
+        android:layout_toEndOf="@id/ivKeyboardInputIcon"
+        android:layout_alignParentEnd="true"
         android:hint="@string/username"
         android:singleLine="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         />
+
     <Button android:id="@+id/btnSearchContactButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignStart="@id/etAddContactUsername"
+        android:layout_below="@id/etAddContactUsername"
         android:enabled="false"
         android:text="@string/search"
         />
+
+    <ImageView
+        android:id="@+id/ivQRInputIcon"
+        android:src="@drawable/ic_qr_input"
+        android:layout_marginTop="24dp"
+        android:layout_below="@id/btnSearchContactButton"
+        android:layout_alignStart="@id/ivKeyboardInputIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnAddByQR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_by_qr"
-        android:layout_below="@+id/btnSearchContactButton"
-        android:layout_alignRight="@+id/btnSearchContactButton"
+        android:layout_alignTop="@id/ivQRInputIcon"
+        android:layout_alignRight="@id/btnSearchContactButton"
         android:layout_alignEnd="@+id/btnSearchContactButton" />
 
+    <TextView
+        android:id="@+id/tvYourQRCode"
+        android:text="@string/your_qr_code"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="4dp"
+        android:layout_below="@id/btnAddByQR"
+        android:layout_alignStart="@id/btnAddByQR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
+        android:id="@+id/ivQRCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ivQRCode"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/etAddContactUsername" />
+        android:minWidth="100dp"
+        android:minHeight="100dp"
+        android:layout_alignStart="@id/btnAddByQR"
+        android:layout_below="@id/tvYourQRCode" />
 
     <ProgressBar
         android:id="@+id/pbTryingRequest"

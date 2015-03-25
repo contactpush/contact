@@ -10,11 +10,12 @@
     <string name="parse_app_id">uXNe2kO8BuPKGuhLNF4zhMH1VD2YyIVPfjn5h9ZM</string>
     <string name="parse_client_key">plrTKpseHWkO1eLnn0OzMrV1lnhdv6DRRY8brqlS</string>
 
-    <string name="add_contact">Add contact</string>
+    <string name="add_contact">Add Contact</string>
     <string name="username">username</string>
     <string name="title_activity_add_contact">AddContactActivity</string>
     <string name="search">Search</string>
     <string name="add_by_qr">QR</string>
+    <string name="your_qr_code">Your QR code</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

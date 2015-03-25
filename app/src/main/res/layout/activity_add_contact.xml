@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:textAllCaps="false"
-            android:text="find contact"
+            android:text="@string/add_contact"
             android:textColor="@android:color/white"
             />
 
@@ -28,7 +28,7 @@
 
     <FrameLayout android:id="@+id/flAddContactActivityFragmentFrame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_below="@id/toolbar"
         >
 

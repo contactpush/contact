@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:textAllCaps="false"
-            android:text="@string/edit_profile"
+            android:text="@string/EditProfile"
             android:textColor="@android:color/white"
             />
 

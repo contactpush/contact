@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:textAllCaps="false"
-            android:text="contact"
+            android:text="@string/app_name"
             android:textColor="@android:color/white"
             />
     </android.support.v7.widget.Toolbar>
