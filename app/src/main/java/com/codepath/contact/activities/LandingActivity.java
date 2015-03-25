@@ -127,6 +127,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
         i.putExtra(CreateProfileFragment.OBJECT_ID, objectId);
         i.putExtra(ProfileActivity.DETAILS_BUNDLE, bundle);
         startActivity(i);
+        overridePendingTransition(R.anim.right_in, R.anim.left_out);
     }
 
     @Override
@@ -170,11 +171,6 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
     @Override
     public void updateContacts(){
         contactsListFragment.refreshList();
-    }
-
-    @Override
-    public void onContactClicked(String objectId, Bundle bundle) {
-        createProfileButtonPressed(objectId, bundle);
     }
 
     @Override

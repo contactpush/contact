@@ -38,7 +38,6 @@ public class ContactsListFragment extends Fragment {
     private FloatingActionButton fabAddContact;
 
     public interface ContactClickListener{
-        void onContactClicked(String objectId, Bundle bundle);
         void onSentRequestClick(String objectId);
         void onReceivedRequestClick(String objectId);
         void addContactButtonPressed();
