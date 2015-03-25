@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.codepath.contact.fragments.CreateProfileFragment">
+    tools:context="com.codepath.contact.fragments.CreateProfileFragment"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    style="?pageBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,7 +15,7 @@
             android:id="@+id/ivProfileImage"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:src="@android:drawable/alert_dark_frame"
+            android:src="@mipmap/ic_person"
             android:layout_margin="10dp"/>
 
         <Button

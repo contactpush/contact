@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.codepath.contact.R;
 import com.codepath.contact.adapters.ContactsAdapterLollipop;
+import com.codepath.contact.helpers.DividerItemDecoration;
 import com.codepath.contact.models.ContactInfo;
 import com.codepath.contact.models.Request;
 import com.melnykov.fab.FloatingActionButton;
@@ -61,7 +62,9 @@ public class ContactsListFragment extends Fragment {
 
         rvContacts = (RecyclerView) v.findViewById(R.id.rvContacts);
         // allows for optimizations
-        rvContacts.setHasFixedSize(true);
+        //rvContacts.setHasFixedSize(true);
+
+        rvContacts.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         // Unlike ListView, you have to explicitly give a LayoutManager to the RecyclerView to position items on the screen.
         // There are three LayoutManager provided at the moment: GridLayoutManager, StaggeredGridLayoutManager and LinearLayoutManager.

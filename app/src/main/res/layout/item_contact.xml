@@ -1,10 +1,9 @@
-<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    card_view:cardCornerRadius="@dimen/card_corner_radius"
-    card_view:cardElevation="@dimen/card_elevation"
     android:clickable="true"
+    android:focusable="true"
     style="@style/card_view_style_dr">
 
     <LinearLayout
@@ -17,7 +16,7 @@
             android:transitionName="profileImage"
             android:layout_width="@dimen/profile_height_width"
             android:layout_height="@dimen/profile_height_width"
-            android:src="@android:drawable/alert_dark_frame"
+            android:src="@mipmap/ic_person"
             android:layout_margin="5dp"
             android:scaleType="centerCrop" />
 

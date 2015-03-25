@@ -41,6 +41,7 @@ public class DetailsFragment extends Fragment {
     private static final String TAG = "DetailsFragment";
     private ImageView ivProfileImage;
     private TextView tvName;
+    private TextView tvAddress;
     private String objectId;
     private ContactInfo contactInfo;
     private int primaryLight;
@@ -106,6 +107,7 @@ public class DetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
         tvName = (TextView) v.findViewById(R.id.tvName);
+        tvAddress = (TextView) v.findViewById(R.id.tvAddress);
         fabPhone = v.findViewById(R.id.fabPhone);
         fabPhone.setVisibility(View.INVISIBLE);
         // Dial contact's number.
@@ -150,6 +152,8 @@ public class DetailsFragment extends Fragment {
         }
         tvName.setText(contactInfo.getName());
         tvName.setTextColor(primaryText);
+        tvAddress.setText(contactInfo.getAddress());
+        tvAddress.setTextColor(primaryText);
         setUpMapIfNeeded();
         enterReveal();
     }

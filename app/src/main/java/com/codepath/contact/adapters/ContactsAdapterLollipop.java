@@ -80,7 +80,7 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
 
     private void clearCachedProfileImage(ContactsAdapterLollipop.VH holder){
         holder.ivProfileImage.setTag(null);
-        holder.ivProfileImage.setImageResource(android.R.drawable.alert_dark_frame);
+        holder.ivProfileImage.setImageResource(R.mipmap.ic_person);
         holder.vPalette.setBackgroundColor(0x00000000);
         holder.tvName.setTextColor(primaryText);
     }
