@@ -78,11 +78,6 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.action_add_contact){
-            this.addContactButtonPressed();
-            return true;
-        }
-
         if (id == R.id.action_create_profile) {
             createProfileButtonPressed(null, null);
             return true;
@@ -101,7 +96,7 @@ public class LandingActivity extends ActionBarActivity implements ReceivedReques
     }
 
     private void updateCurrentLocation(){
-        showProgressBar();
+        //showProgressBar();
         this.locationHelper.getRecentLocation(this);
     }
 

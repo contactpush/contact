@@ -126,7 +126,7 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);// TODO emulator requires this, but PRIORITY_BALANCED_POWER_ACCURACY is good enough in production
         locationRequest.setNumUpdates(1);
-        locationRequest.setExpirationDuration(30000);//don't let location requests take longer than 30 seconds
+        locationRequest.setExpirationDuration(5000);//don't let location requests take longer than 5 seconds
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, this);
         Log.d(TAG, "finished location updates");
