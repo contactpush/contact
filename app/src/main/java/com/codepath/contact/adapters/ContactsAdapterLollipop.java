@@ -2,6 +2,7 @@ package com.codepath.contact.adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
@@ -132,15 +133,18 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
                                 fragment.setExitTransition(TransitionInflater.from(context)
                                         .inflateTransition(android.R.transition.slide_left));
 
-                                FragmentTransaction ft = ((ActionBarActivity)context)
-                                        .getSupportFragmentManager()
-                                        .beginTransaction()
+                                FragmentManager fm = ((ActionBarActivity) context).getSupportFragmentManager();
+
+                                ContactsListFragment contactsListFragment = (ContactsListFragment) fm.findFragmentById(R.id.contactListFragment);
+                                contactsListFragment.setExitTransition(TransitionInflater.from(context)
+                                        .inflateTransition(android.R.transition.slide_left));
+
+                                fm.beginTransaction()
                                         .replace(R.id.contactListFragment, fragment)
                                         .addToBackStack("transaction")
                                         .addSharedElement(ivProfileImage, "profileImage")
-                                        .addSharedElement(tvName, "name");
-                                ft.commit();
-                                //listener.onContactClicked(contact.getObjectId(), options.toBundle());
+                                        .addSharedElement(tvName, "name")
+                                        .commit();
                                 break;
                         }
                     }
