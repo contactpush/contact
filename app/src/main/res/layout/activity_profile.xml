@@ -4,31 +4,21 @@
     tools:context="com.codepath.contact.activities.ProfileActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        app:title="@string/EditProfile"
+        android:textSize="22sp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title=" "
-        android:background="@color/toolbarColor"
-        >
+        android:background="@color/toolbarColor" />
 
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textAllCaps="false"
-            android:text="@string/EditProfile"
-            android:textColor="@android:color/white"
-            />
-
-    </android.support.v7.widget.Toolbar>
     <FrameLayout android:id="@+id/flCreateProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        >
-    </FrameLayout>
+        android:layout_below="@id/toolbar" />
 
 </RelativeLayout>

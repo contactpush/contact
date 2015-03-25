@@ -7,32 +7,18 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        app:title="@string/add_contact"
+        android:textSize="22sp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title=" "
-        android:background="@color/toolbarColor"
-        >
-
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textAllCaps="false"
-            android:text="@string/add_contact"
-            android:textColor="@android:color/white"
-            />
-
-    </android.support.v7.widget.Toolbar>
+        android:background="@color/toolbarColor" />
 
     <FrameLayout android:id="@+id/flAddContactActivityFragmentFrame"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/toolbar"
-        >
-
-
-        </FrameLayout>
+        android:layout_below="@id/toolbar" />
 
 </RelativeLayout>

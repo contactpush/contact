@@ -7,22 +7,14 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        app:title="@string/app_name"
+        android:textSize="22sp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title=" "
-        android:background="@color/toolbarColor"
-        >
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textAllCaps="false"
-            android:text="@string/app_name"
-            android:textColor="@android:color/white"
-            />
-    </android.support.v7.widget.Toolbar>
+        android:background="@color/toolbarColor" />
 
     <FrameLayout
         android:id="@+id/contactListFragment"
