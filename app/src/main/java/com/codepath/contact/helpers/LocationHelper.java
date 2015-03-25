@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
@@ -69,6 +70,7 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
     public void disconnect() {
         // Disconnecting the client invalidates it.
         if (mGoogleApiClient != null) {
+            Log.d(TAG, "disconnecting api client for location");
             mGoogleApiClient.disconnect();
         }
     }
@@ -108,8 +110,8 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
         Log.d(TAG, "received location service response from google");
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - millisecondsLocationAllowedStale) {
+        Log.d(TAG, "location age: " +( Calendar.getInstance().getTimeInMillis() - location.getTime()));
+        if(location != null ){//&& location.getTime() > Calendar.getInstance().getTimeInMillis() - millisecondsLocationAllowedStale) {
             //location is not too stale. use it
             Log.d(TAG, "Reusing location: " + location.toString());
             if(listener != null){
