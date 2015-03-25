@@ -48,7 +48,8 @@ public class DetailsFragment extends Fragment {
     private int primaryText;
     private int secondaryText;
     private SupportMapFragment mapFragment;
-    private View fab;
+    private View fabPhone;
+    private View fabEmail;
     private Transition.TransitionListener mEnterTransitionListener;
    // private DetailsFragmentListener listener;
 
@@ -105,17 +106,31 @@ public class DetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
         tvName = (TextView) v.findViewById(R.id.tvName);
-        fab = v.findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
+        fabPhone = v.findViewById(R.id.fabPhone);
+        fabPhone.setVisibility(View.INVISIBLE);
         // Dial contact's number.
         // This shows the dialer with the number, allowing you to explicitly initiate the call.
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String uri = "tel:" + contactInfo.getPhone();
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse(uri));
                 startActivity(intent);
+            }
+        });
+        fabEmail = v.findViewById(R.id.fabEmail);
+        fabEmail.setVisibility(View.INVISIBLE);
+        // Dial contact's number.
+        // This shows the dialer with the number, allowing you to explicitly initiate the call.
+        fabEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] emails = new String[]{contactInfo.getEmail()};
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/html");
+                intent.putExtra(Intent.EXTRA_EMAIL, emails);
+                startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
         ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
@@ -136,12 +151,6 @@ public class DetailsFragment extends Fragment {
         tvName.setText(contactInfo.getName());
         tvName.setTextColor(primaryText);
         setUpMapIfNeeded();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // this is a hack.  can't figure out how to get transitions to work...
         enterReveal();
     }
 
@@ -219,19 +228,21 @@ public class DetailsFragment extends Fragment {
     }
 
     void enterReveal() {
+        if (contactInfo.getEmail() != null) revealEmail();
+        if (contactInfo.getPhone() != null) revealPhone();
+    }
+
+    private void revealEmail(){
         // get the center for the clipping circle
-        int cx = fab.getMeasuredWidth() / 2;
-        int cy = fab.getMeasuredHeight() / 2;
+        int cx = fabEmail.getMeasuredWidth() / 2;
+        int cy = fabEmail.getMeasuredHeight() / 2;
 
         // get the final radius for the clipping circle
-        int finalRadius = Math.max(fab.getWidth(), fab.getHeight()) / 2;
+        int finalRadius = Math.max(fabEmail.getWidth(), fabEmail.getHeight()) / 2;
 
         // create the animator for this view (the start radius is zero)
-        // TODO getMeasure above is returning 0, so hard coding these for demo... ugly, i know :(
         Animator anim =
-                ViewAnimationUtils.createCircularReveal(fab, 84, 84, 0, 84);
-
-        Log.d(TAG, String.format("cx: %s, cy: %s, finalRadius: %s", cx, cy, finalRadius));
+                ViewAnimationUtils.createCircularReveal(fabEmail, cx, cy, 0, finalRadius);
 
         //anim.setInterpolator(new AccelerateInterpolator(1.0f));
         anim.setDuration(500);
@@ -259,28 +270,70 @@ public class DetailsFragment extends Fragment {
 
             }
         });
-        fab.setVisibility(View.VISIBLE);
+        fabEmail.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+
+    private void revealPhone(){
+        // get the center for the clipping circle
+        int cx = fabPhone.getMeasuredWidth() / 2;
+        int cy = fabPhone.getMeasuredHeight() / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(fabPhone.getWidth(), fabPhone.getHeight()) / 2;
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(fabPhone, cx, cy, 0, finalRadius);
+
+        //anim.setInterpolator(new AccelerateInterpolator(1.0f));
+        anim.setDuration(500);
+
+        // make the view visible and start the animation
+
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                getActivity().getWindow().getEnterTransition().removeListener(mEnterTransitionListener);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        fabPhone.setVisibility(View.VISIBLE);
         anim.start();
     }
 
     void exitReveal() {
         // get the center for the clipping circle
-        int cx = fab.getMeasuredWidth() / 2;
-        int cy = fab.getMeasuredHeight() / 2;
+        int cx = fabPhone.getMeasuredWidth() / 2;
+        int cy = fabPhone.getMeasuredHeight() / 2;
 
         // get the initial radius for the clipping circle
-        int initialRadius = fab.getWidth() / 2;
+        int initialRadius = fabPhone.getWidth() / 2;
 
         // create the animation (the final radius is zero)
         Animator anim =
-                ViewAnimationUtils.createCircularReveal(fab, cx, cy, initialRadius, 0);
+                ViewAnimationUtils.createCircularReveal(fabPhone, cx, cy, initialRadius, 0);
 
         // make the view invisible when the animation is done
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                fab.setVisibility(View.INVISIBLE);
+                fabPhone.setVisibility(View.INVISIBLE);
                 getActivity().supportFinishAfterTransition();
             }
         });
