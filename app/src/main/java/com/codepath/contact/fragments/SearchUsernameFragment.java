@@ -1,5 +1,6 @@
 package com.codepath.contact.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,18 +29,20 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
 public class SearchUsernameFragment extends Fragment{
     private static final String TAG = "SearchUsernameFragment";
 
-    Button btnSearch;
-    EditText etUsername;
-    ProgressBar pbTryingRequest;
-    SearchUsernameFragmentListener listener;
+    private Button btnSearch;
+    private EditText etUsername;
+    private ProgressBar pbTryingRequest;
+    private ZXingScannerView mScannerView;
+    private SearchUsernameFragmentListener listener;
 
     public interface SearchUsernameFragmentListener{
         public void searchSuccess(Request request);
         public void searchFailure();
-        public void launchQRScanner();
     }
 
     /**
@@ -60,8 +63,6 @@ public class SearchUsernameFragment extends Fragment{
                 public void searchSuccess(Request request){}
                 @Override
                 public void searchFailure(){}
-                @Override
-                public void launchQRScanner() {}
             };
         }
 
@@ -115,11 +116,12 @@ public class SearchUsernameFragment extends Fragment{
 
         Button btnQR = (Button) v.findViewById(R.id.btnAddByQR);
         ImageView image = (ImageView) v.findViewById(R.id.ivQRCode);
+        mScannerView = new ZXingScannerView((Context) listener);
 
         btnQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.launchQRScanner();
+                ((Activity) listener).setContentView(mScannerView);
             }
         });
 
@@ -137,7 +139,21 @@ public class SearchUsernameFragment extends Fragment{
             e.printStackTrace();
         }
 
+
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mScannerView.setResultHandler((ZXingScannerView.ResultHandler) listener);
+        mScannerView.startCamera();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mScannerView.stopCamera();
     }
 
     public void searchForUsername(final String username){
