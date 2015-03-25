@@ -36,13 +36,35 @@
             android:layout_alignParentBottom="true" />
         </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvName"
-        android:transitionName="name"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="5dp"
-        style="?textRegular"/>
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/tvName"
+            android:transitionName="name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_centerVertical="true"
+            style="?textRegular"/>
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:fab="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_button"
+            android:layout_alignParentEnd="true" >
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/fab_elevation"
+                android:layout_gravity="center"
+                fab:fab_shadow="true"
+                android:src="@drawable/ic_call" />
+        </FrameLayout>
+        </RelativeLayout>
+
 
 </LinearLayout>

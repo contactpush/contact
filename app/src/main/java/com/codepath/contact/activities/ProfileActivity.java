@@ -3,6 +3,7 @@ package com.codepath.contact.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -50,12 +51,13 @@ public class ProfileActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_create_profile) {
-            return true;
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Log.d(TAG, "calling supportFinishAfterTransition");
+                supportFinishAfterTransition();
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

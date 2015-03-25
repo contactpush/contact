@@ -1,11 +1,18 @@
 package com.codepath.contact.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,6 +48,9 @@ public class DetailsFragment extends Fragment {
     private int primaryText;
     private int secondaryText;
     private SupportMapFragment mapFragment;
+    private View fab;
+    private Transition.TransitionListener mEnterTransitionListener;
+   // private DetailsFragmentListener listener;
 
     public static DetailsFragment newInstance(String objectId) {
         DetailsFragment fragment = new DetailsFragment();
@@ -59,6 +69,34 @@ public class DetailsFragment extends Fragment {
         secondaryText = getActivity().getResources().getColor(R.color.secondary_text);
         primaryLight = getActivity().getResources().getColor(R.color.primary_light);
         primaryText = getActivity().getResources().getColor(R.color.primary_text);
+        mEnterTransitionListener = new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                Log.d(TAG, "calling enterReveal");
+                enterReveal();
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        };
+        getActivity().getWindow().getEnterTransition().addListener(mEnterTransitionListener);
     }
 
     @Override
@@ -66,6 +104,19 @@ public class DetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
         tvName = (TextView) v.findViewById(R.id.tvName);
+        fab = v.findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+        // Dial contact's number.
+        // This shows the dialer with the number, allowing you to explicitly initiate the call.
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "tel:" + contactInfo.getPhone();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
         ContactInfo.getContactInfo(objectId, new ContactInfo.OnContactReturnedListener() {
             @Override
             public void receiveContact(ContactInfo contactInfo) {
@@ -158,4 +209,99 @@ public class DetailsFragment extends Fragment {
             this.mapFragment.getView().setVisibility(View.GONE);
         }
     }
+
+    void enterReveal() {
+        // get the center for the clipping circle
+        int cx = fab.getMeasuredWidth() / 2;
+        int cy = fab.getMeasuredHeight() / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(fab.getWidth(), fab.getHeight()) / 2;
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(fab, cx, cy, 0, finalRadius);
+
+        // make the view visible and start the animation
+        fab.setVisibility(View.VISIBLE);
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                getActivity().getWindow().getEnterTransition().removeListener(mEnterTransitionListener);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        anim.start();
+    }
+
+    void exitReveal() {
+        // get the center for the clipping circle
+        int cx = fab.getMeasuredWidth() / 2;
+        int cy = fab.getMeasuredHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = fab.getWidth() / 2;
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(fab, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                fab.setVisibility(View.INVISIBLE);
+                getActivity().supportFinishAfterTransition();
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                exitReveal();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+/*
+    @Override
+    public void onBackPressed() {
+        exitReveal();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (DetailsFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement DetailsFragmentListener");
+        }
+    }
+
+    public interface DetailsFragmentListener{
+        void onBackPressed();
+    } */
 }
