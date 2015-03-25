@@ -53,12 +53,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@drawable/circular_button"
             android:layout_alignParentEnd="true" >
             <com.melnykov.fab.FloatingActionButton
                 android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:elevation="@dimen/fab_elevation"
                 android:layout_gravity="center"
                 fab:fab_shadow="true"

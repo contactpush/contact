@@ -99,13 +99,14 @@ public class DetailsFragment extends Fragment {
         getActivity().getWindow().getEnterTransition().addListener(mEnterTransitionListener);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
         tvName = (TextView) v.findViewById(R.id.tvName);
         fab = v.findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.INVISIBLE);
         // Dial contact's number.
         // This shows the dialer with the number, allowing you to explicitly initiate the call.
         fab.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +136,13 @@ public class DetailsFragment extends Fragment {
         tvName.setText(contactInfo.getName());
         tvName.setTextColor(primaryText);
         setUpMapIfNeeded();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // this is a hack.  can't figure out how to get transitions to work...
+        enterReveal();
     }
 
     protected void setUpMapIfNeeded() {
@@ -219,11 +227,17 @@ public class DetailsFragment extends Fragment {
         int finalRadius = Math.max(fab.getWidth(), fab.getHeight()) / 2;
 
         // create the animator for this view (the start radius is zero)
+        // TODO getMeasure above is returning 0, so hard coding these for demo... ugly, i know :(
         Animator anim =
-                ViewAnimationUtils.createCircularReveal(fab, cx, cy, 0, finalRadius);
+                ViewAnimationUtils.createCircularReveal(fab, 84, 84, 0, 84);
+
+        Log.d(TAG, String.format("cx: %s, cy: %s, finalRadius: %s", cx, cy, finalRadius));
+
+        //anim.setInterpolator(new AccelerateInterpolator(1.0f));
+        anim.setDuration(500);
 
         // make the view visible and start the animation
-        fab.setVisibility(View.VISIBLE);
+
         anim.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -245,6 +259,7 @@ public class DetailsFragment extends Fragment {
 
             }
         });
+        fab.setVisibility(View.VISIBLE);
         anim.start();
     }
 
@@ -284,7 +299,8 @@ public class DetailsFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-/*
+
+    /*
     @Override
     public void onBackPressed() {
         exitReveal();

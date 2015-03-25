@@ -1,11 +1,8 @@
 package com.codepath.contact.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -121,10 +118,10 @@ public class ContactsAdapterLollipop extends RecyclerView.Adapter<ContactsAdapte
                                 listener.onSentRequestClick(contact.getRequestObjectId());
                                 break;
                             default:
-                                Pair<View, String> p1 = Pair.create((View) ivProfileImage, "profile");
+                               /* Pair<View, String> p1 = Pair.create((View) ivProfileImage, "profile");
                                 Pair<View, String> p2 = Pair.create((View)tvName, "name");
                                 ActivityOptionsCompat options = ActivityOptionsCompat.
-                                        makeSceneTransitionAnimation((Activity)context, p1, p2);
+                                        makeSceneTransitionAnimation((Activity)context, p1, p2); */
                                 Fragment fragment = DetailsFragment.newInstance(contact.getObjectId());
                                 fragment.setSharedElementEnterTransition(TransitionInflater.from(context)
                                         .inflateTransition(R.transition.change_image_transform));
