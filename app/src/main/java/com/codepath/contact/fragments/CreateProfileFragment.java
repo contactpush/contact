@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.melnykov.fab.FloatingActionButton;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -63,8 +64,8 @@ public class CreateProfileFragment extends Fragment {
 
     public static final String OBJECT_ID = "objectId";
     //private OnFragmentInteractionListener mListener;
-    private Button btDone;
-    private Button btEdit;
+
+    private FloatingActionButton fabEditDone;
 
     enum ProfileMode{
         EDIT,
@@ -145,6 +146,7 @@ public class CreateProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         long start = System.currentTimeMillis();
         View v = inflater.inflate(R.layout.fragment_create_profile, container, false);
+        profileMode = ProfileMode.VIEW;
         setUpViews(v);
 
         // see http://stackoverflow.com/a/17315956/2544629 for the reason for this
@@ -187,8 +189,7 @@ public class CreateProfileFragment extends Fragment {
     private void setUpViews(View v){
         ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
 
-        btDone = (Button) v.findViewById(R.id.btDone);
-        btEdit = (Button) v.findViewById(R.id.btEdit);
+        fabEditDone = (FloatingActionButton) v.findViewById(R.id.fabEditDone);
 
         tvFirstName = (TextView) v.findViewById(R.id.tvFirstName);
         etFirstName = (EditText) v.findViewById(R.id.etFirstName);
@@ -226,29 +227,21 @@ public class CreateProfileFragment extends Fragment {
         tvSocialProfile = (TextView) v.findViewById(R.id.tvSocialProfile);
         etSocialProfile = (EditText) v.findViewById(R.id.etSocialProfile);
 
-        btDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                save();
-                showTextViews();
-            }
-        });
-
-        btEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showEditTexts();
-            }
-        });
-
         tvMapTitle = (TextView) v.findViewById(R.id.tvMapTitle);
 
         showTextViews();
 
-        if(objectId != null){
-            //not viewing our own profile, disable edit functionality
-            btEdit.setVisibility(View.GONE);
-        }
+        fabEditDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(profileMode == ProfileMode.VIEW) {
+                    showEditTexts();
+                } else {
+                    save();
+                    showTextViews();
+                }
+            }
+        });
 
         long start = System.currentTimeMillis();
         fetchUser();
@@ -297,10 +290,8 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void showEditTexts(){
+        fabEditDone.setImageResource(R.drawable.ic_save_profile);
         profileMode = ProfileMode.EDIT;
-
-        btEdit.setVisibility(View.INVISIBLE);
-        btDone.setVisibility(View.VISIBLE);
 
         etFirstName.setVisibility(View.VISIBLE);
         tvFirstName.setVisibility(View.INVISIBLE);
@@ -343,10 +334,8 @@ public class CreateProfileFragment extends Fragment {
     }
 
     private void showTextViews(){
+        fabEditDone.setImageResource(android.R.drawable.ic_menu_edit);
         profileMode = ProfileMode.VIEW;
-
-        btEdit.setVisibility(View.VISIBLE);
-        btDone.setVisibility(View.INVISIBLE);
 
         etFirstName.setVisibility(View.INVISIBLE);
         tvFirstName.setVisibility(View.VISIBLE);

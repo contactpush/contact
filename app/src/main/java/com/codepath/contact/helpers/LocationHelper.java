@@ -110,8 +110,8 @@ public class LocationHelper implements com.google.android.gms.location.LocationL
         Log.d(TAG, "received location service response from google");
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.d(TAG, "location age: " +( Calendar.getInstance().getTimeInMillis() - location.getTime()));
         if(location != null ){//&& location.getTime() > Calendar.getInstance().getTimeInMillis() - millisecondsLocationAllowedStale) {
+            Log.d(TAG, "location age: " +( Calendar.getInstance().getTimeInMillis() - location.getTime()));
             //location is not too stale. use it
             Log.d(TAG, "Reusing location: " + location.toString());
             if(listener != null){
